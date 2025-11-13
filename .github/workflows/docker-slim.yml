@@ -7,16 +7,17 @@ on:
     types:
       - completed
 
-# on:
-#   push:
-#     branches:
-#       - 'master'
-
 jobs:
   build:
-    # https://docs.github.com/en/actions/using-workflows/events-that-trigger-workflows#running-a-workflow-based-on-the-conclusion-of-another-workflow
-    if: ${{ github.event.workflow_run.conclusion == 'success' }} and github.repository_owner == 'alshedivat'
+    # run only when the upstream workflow succeeded
+    if: ${{ github.event.workflow_run.conclusion == 'success' }} and github.repository_owner == 'micheletizzani'
     runs-on: ubuntu-latest
+
+    # give permission to write packages (GHCR)
+    permissions:
+      contents: read
+      packages: write
+
     defaults:
       run:
         working-directory: ${{ github.workspace }}
@@ -25,27 +26,28 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Login
+      - name: Log in to GHCR
         uses: docker/login-action@v3
         with:
-          username: ${{ secrets.DOCKER_USERNAME }}
-          password: ${{ secrets.DOCKER_PASSWORD }}
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
 
       - name: update docker-compose
         shell: bash
         run: |
-          sed -i "s|\.:|${{ github.workspace }}:|g" ${{ github.workspace }}/docker-compose.yml
-          cat ${{ github.workspace }}/docker-compose.yml
+          sed -i "s|\.:|${{ github.workspace }}:|g" ${{ github.workspace }}/docker-compose-slim.yml
+          cat ${{ github.workspace }}/docker-compose-slim.yml
 
       - uses: kitabisa/docker-slim-action@v1.0.3
         env:
           DSLIM_PULL: true
-          DSLIM_COMPOSE_FILE: ${{ github.workspace }}/docker-compose.yml
+          DSLIM_COMPOSE_FILE: ${{ github.workspace }}/docker-compose-slim.yml
           DSLIM_TARGET_COMPOSE_SVC: jekyll
           DSLIM_CONTINUE_AFTER: signal
         with:
-          target: amirpourmand/al-folio
+          target: ghcr.io/${{ github.repository_owner }}/al-folio
           tag: "slim"
 
-      # Push to the registry
-      - run: docker image push amirpourmand/al-folio:slim
+      # Push to GHCR
+      - run: docker image push ghcr.io/${{ github.repository_owner }}/al-folio:slim
