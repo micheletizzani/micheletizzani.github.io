@@ -78,6 +78,10 @@ jobs:
           propertyPath: "giscus.repo"
           value: ${{ github.repository }}
 
+      - name: Disable Jekyll-Scholar 🔧
+        run: |
+          sed -i 's/- jekyll-scholar/# - jekyll-scholar/' _config.yml
+
       - name: Install and Build 🔧
         run: |
           export JEKYLL_ENV=production
@@ -92,6 +96,6 @@ jobs:
         if: github.event_name != 'pull_request'
         uses: JamesIves/github-pages-deploy-action@v4
         with:
-          branch: master
+          branch: gh-pages
           folder: _site
           clean: true
