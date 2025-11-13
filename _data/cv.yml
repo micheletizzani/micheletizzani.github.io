@@ -16,7 +16,7 @@
         - Thesis. Dynamical processes and memory effects on temporal networks.
 
     - title: Master Degree
-      institution: Theoretical Physics - Università degli Studi di Roma Tor Vergata , Italy
+      institution: Theoretical Physics - Università degli Studi di Roma Tor Vergata, Italy
       year: 2015
       description:
         - Thesis. The kinetic equation for the Bose-Einstein condensate in the limit of dilute gases.
@@ -27,12 +27,12 @@
     - title: Postdoc researcher
       institution: Technical University of Denmark (DTU)
       year: 2025
-      description:
-      
+      description: []
+
     - title: Postdoc researcher
       institution: ISI Foundation
       year: 2019
-      description:
+      description: []
 
     - title: Internship
       institution: LAPD - Aix-Marseille Université, Marseille, France
@@ -47,7 +47,7 @@
     - title: Lecturer for Analysis and Visualization of Complex Network
       institution: University of Turin, Turin, Italy
       year: 2023-2024
-      description:
+      description: []
 
     - title: High school teacher of mathematics and physics
       institution: Convitto Maria Luigia, Parma, Parma, Italy
@@ -83,12 +83,12 @@
   type: nested_list
   contents:
     - title: Music.
-    - items:
+      items:
         - Music composition
         - Jazz Guitar
         - Ethnic Music
     - title: Photography
-    - items:
+      items:
         - Digital photography
         - Film photography
         - B&W
