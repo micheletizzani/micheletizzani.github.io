@@ -78,9 +78,8 @@ jobs:
           propertyPath: "giscus.repo"
           value: ${{ github.repository }}
 
-      - name: Disable Jekyll-Scholar 🔧
-        run: |
-          sed -i 's/- jekyll-scholar/# - jekyll-scholar/' _config.yml
+      - name: Disable Jekyll-Scholar for CI
+        run: sed -i 's/- jekyll-scholar/# - jekyll-scholar/' _config.yml
 
       - name: Install and Build 🔧
         run: |
