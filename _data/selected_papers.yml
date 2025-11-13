@@ -1,0 +1,120 @@
+- title: Phase Transitions and Stability of Dynamical Processes on Hypergraphs
+  author: "{Ferraz de Arruda}, Guilherme; Tizzani, Michele; Moreno, Yamir"
+  journal: Communications Physics
+  year: "2021"
+  volume: "4"
+  pages: 1--9
+  url: ""
+  abstract: Hypergraphs naturally represent higher-order interactions, which persistently
+    appear in social interactions, neural networks, and other natural systems. Although
+    their importance is well recognized, a theoretical framework to describe general
+    dynamical processes on hypergraphs is not available yet. In this paper, we derive
+    expressions for the stability of dynamical systems defined on an arbitrary hypergraph.
+    The framework allows us to reveal that, near the fixed point, the relevant structure
+    is a weighted graph-projection of the hypergraph and that it is possible to identify
+    the role of each structural order for a given process. We analytically solve two
+    dynamics of general interest, namely, social contagion and diffusion processes,
+    and show that the stability conditions can be decoupled in structural and dynamical
+    components. Our results show that in social contagion process, only pairwise interactions
+    play a role in the stability of the absorbing state, while for the diffusion dynamics,
+    the order of the interactions plays a differential role. Our work provides a general
+    framework for further exploration of dynamical processes on hypergraphs.
+  bibkey: ferrazdearrudaPhaseTransitionsStability2021
+- title: Epidemic Spreading and Aging in Temporal Networks with Memory
+  author: Tizzani, M.; Lenti, S.; Ubaldi, E.; Vezzani, A.; Castellano, C.; Burioni,
+    R.
+  journal: Physical Review E
+  year: "2018"
+  volume: "98"
+  pages: ""
+  url: ""
+  abstract: '{\copyright} 2018 American Physical Society. Time-varying network topologies
+    can deeply influence dynamical processes mediated by them. Memory effects in the
+    pattern of interactions among individuals are also known to affect how diffusive
+    and spreading phenomena take place. In this paper we analyze the combined effect
+    of these two ingredients on epidemic dynamics on networks. We study the susceptible-infected-susceptible
+    (SIS) and the susceptible-infected-recovered (SIR) models on the recently introduced
+    activity-driven networks with memory. By means of an activity-based mean-field
+    approach, we derive, in the long-time limit, analytical predictions for the epidemic
+    threshold as a function of the parameters describing the distribution of activities
+    and the strength of the memory effects. Our results show that memory reduces the
+    threshold, which is the same for SIS and SIR dynamics, therefore favoring epidemic
+    spreading. The theoretical approach perfectly agrees with numerical simulations
+    in the long-time asymptotic regime. Strong aging effects are present in the preasymptotic
+    regime and the epidemic threshold is deeply affected by the starting time of the
+    epidemics. We discuss in detail the origin of the model-dependent preasymptotic
+    corrections, whose understanding could potentially allow for epidemic control
+    on correlated temporal networks.'
+  bibkey: tizzaniEpidemicSpreadingAging2018
+- title: Impact of Tiered Measures on Social Contact and Mixing Patterns of in {{Italy}}
+    during the Second Wave of {{COVID-19}
+  author: Tizzani, Michele; De Gaetano, Alessandro; Jarvis, Christopher; Gimma, Amy;
+    Wong, Kerry; Edmunds, W.; Beutels, Philippe; Hens, Niel; Coletti, Pietro; Paolotti,
+    Daniela
+  journal: BMC Public Health
+  year: "2023"
+  volume: "23"
+  pages: "906"
+  url: ""
+  abstract: Most countries around the world enforced non-pharmaceutical interventions
+    against COVID-19. Italy was one of the first countries to be affected by the pandemic,
+    imposing a hard lockdown, in the first epidemic wave. During the second wave,
+    the country implemented progressively restrictive tiers at the regional level
+    according to weekly epidemiological risk assessments. This paper quantifies the
+    impact of these restrictions on contacts and on the reproduction number.
+  bibkey: tizzaniImpactTieredMeasures2023
+- title: "Integrating Digital and Field Surveillance as Complementary Efforts to Manage
+    Epidemic Diseases of Livestock: {{African}} Swine Fever as a Case Study"
+  author: Tizzani, Michele; {Mu{\~n}oz-G{\'o}mez}, Violeta; Nardi, Marco; Paolotti,
+    Daniela; Mu{\~n}oz, Olga; Ceschi, Piera; Viltrop, Arvo; Capua, Ilaria
+  journal: PLOS ONE
+  year: "2021"
+  volume: "16"
+  pages: e0252972
+  url: ""
+  abstract: SARS-CoV-2 has clearly shown that efficient management of infectious diseases
+    requires a top-down approach which must be complemented with a bottom-up response
+    to be effective. Here we investigate a novel approach to surveillance for transboundary
+    animal diseases using African Swine (ASF) fever as a model. We collected data
+    both at a population level and at the local level on information-seeking behavior
+    respectively through digital data and targeted questionnaire-based surveys to
+    relevant stakeholders such as pig farmers and veterinary authorities. Our study
+    shows how information-seeking behavior and resulting public attention during an
+    epidemic, can be identified through novel data streams from digital platforms
+    such as Wikipedia. Leveraging attention in a critical moment can be key to providing
+    the correct information at the right moment, especially to an interested cohort
+    of people. We also bring evidence on how field surveys aimed at local workers
+    and veterinary authorities remain a crucial tool to assess more in-depth preparedness
+    and awareness among front-line actors. We conclude that these two tools should
+    be used in combination to maximize the outcome of surveillance and prevention
+    activities for selected transboundary animal diseases such as ASF.
+  bibkey: tizzaniIntegratingDigitalField2021
+- title: "Socioeconomic determinants of protective behaviors and contact patterns
+    in the post-COVID-19 pandemic era: A cross-sectional study in Italy"
+  author: Tizzani, Michele; Gauvin, Laetitia
+  journal: PLOS Computational Biology
+  year: "2025"
+  volume: "21"
+  pages: 1-25
+  url: https://doi.org/10.1371/journal.pcbi.1013262
+  abstract: Socioeconomic inequalities significantly influence infectious disease
+    outcomes, as seen with COVID-19, but the pathways through which socioeconomic
+    conditions affect transmission dynamics remain unclear. To address this, we conducted
+    a survey representative of the Italian population, stratified by age, gender,
+    geographical area, city size, employment status, and education level. The survey’s
+    final aim was to estimate differences in contact and protective behaviors across
+    various population strata, both of which are crucial for understanding transmission
+    dynamics. Our initial insights based on the survey indicate that years after the
+    pandemic began, the perceived impact of COVID-19 on professional, economic, social,
+    and psychological dimensions vary across socioeconomic strata, extending beyond
+    the epidemiological outcomes. This reinforces the need for approaches that systematically
+    consider socioeconomic determinants. In this context, using generalized linear
+    models, we identified associations between socioeconomic factors and vaccination
+    status for both COVID-19 and influenza, as well as the influence of socioeconomic
+    conditions on mask-wearing and social distancing. Importantly, we also observed
+    differences in contact behaviors based on employment status while education level
+    did not show a significant association. These findings highlight the complex interplay
+    of socioeconomic and demographic factors in shaping protective behavior and contact
+    patterns. Understanding these dynamics can contribute to the improvement of epidemic
+    models and better guide public health efforts for at-risk groups.
+  bibkey: 10.1371/journal.pcbi.1013262

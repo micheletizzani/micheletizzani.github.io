@@ -58,10 +58,14 @@ layout: default
 
     <!-- Selected papers -->
     {% if page.selected_papers %}
-      <h2>
-        <a href="{{ '/publications/' | relative_url }}" style="color: inherit">selected publications</a>
-      </h2>
-      {% include selected_papers.liquid %}
+      {% if site.data.selected_papers and site.data.selected_papers.size > 0 %}
+        <h2>
+          <a href="{{ '/publications/' | relative_url }}" style="color: inherit">selected publications</a>
+        </h2>
+        {% include selected_papers.liquid %}
+      {% else %}
+        <!-- selected_papers requested on this page but no data/_data/selected_papers.yml found; skipping. -->
+      {% endif %}
     {% endif %}
 
     <!-- Social -->

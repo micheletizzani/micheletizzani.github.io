@@ -1,3 +1,38 @@
-<div class="publications">
-  {% bibliography --group_by none --query @*[selected=true]* %}
-</div>
+{% comment %}
+  Render selected publications from _data/selected_papers.yml
+  This avoids calling the bibtex Liquid tag which triggers bibtex-ruby errors.
+  Create _data/selected_papers.yml (see generator below).
+{% endcomment %}
+
+{% if site.data.selected_papers and site.data.selected_papers.size > 0 %}
+  <div class="publications">
+    {% for pub in site.data.selected_papers %}
+      <div class="publication">
+        <h3 class="pub-title">
+          {% if pub.url %}
+            <a href="{{ pub.url | escape }}">{{ pub.title }}</a>
+          {% else %}
+            {{ pub.title }}
+          {% endif %}
+        </h3>
+
+        {% if pub.author %}
+          <div class="pub-authors">{{ pub.author }}</div>
+        {% endif %}
+
+        <div class="pub-meta">
+          {% if pub.journal %}{{ pub.journal }}{% endif %}
+          {% if pub.volume %}, vol. {{ pub.volume }}{% endif %}
+          {% if pub.pages %}, pp. {{ pub.pages }}{% endif %}
+          {% if pub.year %} — {{ pub.year }}{% endif %}
+        </div>
+
+        {% if pub.abstract %}
+          <div class="pub-abstract">{{ pub.abstract }}</div>
+        {% endif %}
+      </div>
+    {% endfor %}
+  </div>
+{% else %}
+  <!-- No selected publications data found (skipping). -->
+{% endif %}
