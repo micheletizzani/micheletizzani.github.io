@@ -78,6 +78,9 @@ jobs:
           propertyPath: "giscus.repo"
           value: ${{ github.repository }}
 
+      - name: Install Jupyter for notebook conversion
+        run: pip3 install --upgrade jupyter
+
       - name: Disable Jekyll-Scholar for CI
         run: sed -i 's/- jekyll-scholar/# - jekyll-scholar/' _config.yml
 
