@@ -210,15 +210,15 @@ kramdown:
 include: ["_pages"]
 exclude:
   - bin
-  - CONTRIBUTING.md
-  - CUSTOMIZE.md
+  #- CONTRIBUTING.md
+  #- CUSTOMIZE.md
   - docker-compose.yml
-  - Dockerfile
-  - FAQ.md
+  #- Dockerfile
+  #- FAQ.md
   - Gemfile
   - Gemfile.lock
-  - INSTALL.md
-  - LICENSE
+  #- INSTALL.md
+  #- LICENSE
   - package.json
   - package-lock.json
   - purgecss.config.js

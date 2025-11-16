@@ -2,7 +2,7 @@
 layout: page
 title: photoexperiments
 permalink: /fine-art/
-nav: true
+nav: false
 nav_order: 6
 ---
 

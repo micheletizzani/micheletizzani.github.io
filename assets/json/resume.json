@@ -22,12 +22,21 @@
   },
   "work": [
     {
+      "name": "Technical University of Denmark",
+      "position": "Postdoc researcher",
+      "url": "https://orbit.dtu.dk/en/persons/michele-tizzani/",
+      "startDate": "2025-01-01",
+      "endDate": "2027-01-01",
+      "summary": "Research human behavior and residential mobilty usnig registry data.",
+      "highlights": ["Complex Systems", "Epidemics", "Computational Social Science", "Infodemics", "Network Science"]
+    },
+    {
       "name": "ISI FOundation",
       "position": "Postdoc researcher",
-      "url": "https://www.isi.it/en/people/michele-tizzani",
+      "url": "www.isi.it/",
       "startDate": "2019-05-01",
       "endDate": "2025-01-01",
-      "summary": "Research on epidemics and human behavior using non-conventional.",
+      "summary": "Research on epidemics and human behavior using non-conventional data.",
       "highlights": ["Complex Systems", "Epidemics", "Computational Social Science", "Infodemics", "Network Science"]
     }
   ],

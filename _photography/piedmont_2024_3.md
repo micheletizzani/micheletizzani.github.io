@@ -1,7 +1,7 @@
 ---
 layout: page
 title: Piedmont Alps
-image: /assets/img/photography/mountain3.jpg
+image: /assets/img/photography/piedmont/mountain3.jpg
 category: piedmont
 location: Piedmont
 date: 2024-11-15
