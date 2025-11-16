@@ -41,40 +41,40 @@ nav_order: 4
 <style>
 /* ========== LIGHT MODE (Default) ========== */
 :root {
-  --pub-bg: rgb(215, 211, 211);
+  --pub-bg:rgb(28,28,29) ;
   --pub-border: #0066cc;
-  --pub-title-color: #1a1a1a;
-  --pub-meta-color: #333333;
-  --pub-text-color: #555555;
+  --pub-title-color:rgb(211, 211, 211);
+  --pub-meta-color:rgb(222, 222, 222);
+  --pub-text-color:rgb(184, 184, 184);
   --pub-link-color: #0066cc;
   --pub-shadow: rgba(0, 0, 0, 0.1);
-  --pub-details-bg: #ffffff;
+  --pub-details-bg: rgb(28,28,29);
 }
 
 /* ========== DARK MODE (al-folio's .dark-mode class) ========== */
 html.dark-mode:root,
 html.dark-mode {
-  --pub-bg: #2a2a2a !important;
+  --pub-bg: rgb(28,28,29) !important;
   --pub-border: #4da6ff !important;
   --pub-title-color: #e6e6e6 !important;
   --pub-meta-color: #cccccc !important;
   --pub-text-color: #b3b3b3 !important;
   --pub-link-color: #66b3ff !important;
   --pub-shadow: rgba(0, 0, 0, 0.3) !important;
-  --pub-details-bg: #1f1f1f !important;
+  --pub-details-bg: rgb(28,28,29) !important;
 }
 
 /* ========== LIGHT MODE EXPLICIT (al-folio's .light-mode class) ========== */
 html.light-mode:root,
 html.light-mode {
-  --pub-bg: #f8f9fa !important;
+  --pub-bg:rgb(28,28,29)  !important;
   --pub-border: #0066cc !important;
   --pub-title-color: #1a1a1a !important;
-  --pub-meta-color: #333333 !important;
-  --pub-text-color: #555555 !important;
+  --pub-meta-color: #cccccc !important;
+  --pub-text-color: #b3b3b3  !important;
   --pub-link-color: #0066cc !important;
   --pub-shadow: rgba(0, 0, 0, 0.1) !important;
-  --pub-details-bg: #ffffff !important;
+  --pub-details-bg: rgb(28,28,29) !important;
 }
 
 /* ========== STYLES ========== */
