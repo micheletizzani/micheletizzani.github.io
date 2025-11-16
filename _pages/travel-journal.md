@@ -72,6 +72,35 @@ document.addEventListener('keydown', function(e) {
 </script>
 
 <style>
+
+/* Make the main content container full width */
+.page-content {
+  max-width: 90vw !important;
+  width: 90vw !important;
+  margin: 0 !important;
+  padding-left: 0 !important;
+  padding-right: 0 !important;
+  overflow-x: hidden;
+}
+
+/* Override any container within the page */
+.container,
+.container-lg,
+.container-md {
+  max-width: 90% !important;
+  padding-left: 0 !important;
+  padding-right: 0 !important;
+}
+
+/* Ensure gallery spans full width */
+.photo-gallery-container,
+.gallery-section {
+  width: 90vw !important;
+  margin-left: 0 !important;
+  padding-left: 2rem !important; /* Optional: add some padding */
+  padding-right: 2rem !important; /* Optional: add some padding */
+}
+
 /*---- POPUP/LIGHTBOX ----*/
 #photo-popup {
   position: fixed;
