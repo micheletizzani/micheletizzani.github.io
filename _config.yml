@@ -287,8 +287,8 @@ display_categories: ["blockquotes"] # these categories will be displayed on the 
 # -----------------------------------------------------------------------------
 
 scholar:
-  last_name: [Michele]
-  first_name: [Tizzani]
+  last_name: [Tizzani]
+  first_name: [Michele]
 
   style: apa
   locale: en

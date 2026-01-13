@@ -39,45 +39,38 @@ nav_order: 4
 </div>
 
 <style>
-/* ========== LIGHT MODE (Default) ========== */
+/* =========================================
+   1. DEFAULT (LIGHT MODE)
+   ========================================= */
 :root {
-  --pub-bg:rgb(28,28,29) ;
-  --pub-border: #0066cc;
-  --pub-title-color:rgb(211, 211, 211);
-  --pub-meta-color:rgb(222, 222, 222);
-  --pub-text-color:rgb(184, 184, 184);
-  --pub-link-color: #0066cc;
+  --pub-bg: #ffffff;
+  --pub-border:rgb(255,66,65);
+  --pub-title-color: #1a1a1a;
+  --pub-meta-color: #555555;
+  --pub-text-color: #444444;
+  --pub-link-color:rgb(255,66,65);
   --pub-shadow: rgba(0, 0, 0, 0.1);
-  --pub-details-bg: rgb(28,28,29);
+  --pub-details-bg: #f8f9fa;
 }
 
-/* ========== DARK MODE (al-folio's .dark-mode class) ========== */
-html.dark-mode:root,
-html.dark-mode {
-  --pub-bg: rgb(28,28,29) !important;
-  --pub-border: #4da6ff !important;
-  --pub-title-color: #e6e6e6 !important;
-  --pub-meta-color: #cccccc !important;
-  --pub-text-color: #b3b3b3 !important;
-  --pub-link-color: #66b3ff !important;
-  --pub-shadow: rgba(0, 0, 0, 0.3) !important;
-  --pub-details-bg: rgb(28,28,29) !important;
+/* =========================================
+   2. DARK MODE OVERRIDES
+   ========================================= */
+html.dark-mode,
+html[data-theme="dark"] {
+  --pub-bg: rgb(28,28,29);
+  --pub-border: #2691B2;
+  --pub-title-color: #e6e6e6;
+  --pub-meta-color: #cccccc;
+  --pub-text-color: #b3b3b3;
+  --pub-link-color: #2691B2;
+  --pub-shadow: rgba(0, 0, 0, 0.5);
+  --pub-details-bg: rgb(35,35,36);
 }
 
-/* ========== LIGHT MODE EXPLICIT (al-folio's .light-mode class) ========== */
-html.light-mode:root,
-html.light-mode {
-  --pub-bg:rgb(28,28,29)  !important;
-  --pub-border: #0066cc !important;
-  --pub-title-color: #1a1a1a !important;
-  --pub-meta-color: #cccccc !important;
-  --pub-text-color: #b3b3b3  !important;
-  --pub-link-color: #0066cc !important;
-  --pub-shadow: rgba(0, 0, 0, 0.1) !important;
-  --pub-details-bg: rgb(28,28,29) !important;
-}
-
-/* ========== STYLES ========== */
+/* =========================================
+   3. COMPONENT STYLES
+   ========================================= */
 .selected-publications {
   margin-top: 2rem;
   margin-bottom: 2rem;
@@ -86,22 +79,23 @@ html.light-mode {
 .publication-item {
   margin-bottom: 2.5rem;
   padding: 1.5rem;
-  background-color: var(--pub-bg) !important;
-  border-left: 4px solid var(--pub-border) !important;
+  /* Use variables directly - no !important needed if selectors are correct */
+  background-color: var(--pub-bg);
+  border-left: 4px solid var(--pub-border);
   border-radius: 4px;
   box-shadow: 0 1px 3px var(--pub-shadow);
   transition: background-color 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
 }
 
 .publication-item:hover {
-  box-shadow: 0 2px 6px var(--pub-shadow);
+  box-shadow: 0 4px 12px var(--pub-shadow);
 }
 
-.publication-item h3 {
+.publication-item h4 {
   margin: 0 0 0.8rem 0;
   font-size: 1.2rem;
   font-weight: 600;
-  color: var(--pub-title-color) !important;
+  color: var(--pub-title-color);
   line-height: 1.5;
   transition: color 0.3s ease;
 }
@@ -109,26 +103,26 @@ html.light-mode {
 .pub-meta {
   margin: 0.3rem 0;
   font-size: 0.95rem;
-  color: var(--pub-meta-color) !important;
+  color: var(--pub-meta-color);
   transition: color 0.3s ease;
 }
 
 .pub-meta em {
-  color: var(--pub-meta-color) !important;
+  color: var(--pub-meta-color);
   font-style: italic;
 }
 
 .pub-journal {
   margin: 0.5rem 0;
   font-size: 0.95rem;
-  color: var(--pub-text-color) !important;
+  color: var(--pub-text-color);
   transition: color 0.3s ease;
 }
 
 .pub-abstract {
   margin: 1rem 0 0 0;
   font-size: 0.9rem;
-  color: var(--pub-text-color) !important;
+  color: var(--pub-text-color);
   line-height: 1.6;
   transition: color 0.3s ease;
 }
@@ -136,17 +130,17 @@ html.light-mode {
 details {
   margin: 1rem 0;
   padding: 0.5rem;
-  background-color: var(--pub-details-bg) !important;
+  background-color: var(--pub-details-bg);
   border-radius: 3px;
   cursor: pointer;
-  border: 1px solid var(--pub-border) !important;
+  border: 1px solid var(--pub-border);
   border-left: none;
   transition: background-color 0.3s ease;
 }
 
 details summary {
   font-weight: 600;
-  color: var(--pub-link-color) !important;
+  color: var(--pub-link-color);
   transition: color 0.3s ease;
   user-select: none;
   padding: 0.25rem;
