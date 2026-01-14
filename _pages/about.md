@@ -18,9 +18,7 @@ social: true
   <div class="about-hero-inner">
     <div class="about-hero-profile">
       <img src="/assets/img/prof_pic.jpg" class="about-hero-avatar" />
-
     </div>
-
   </div>
 </div>
 
@@ -70,6 +68,26 @@ The main purpose of my research is to integrate data-driven approaches with mode
 </div>
 
 <style>
+
+/* Make the main content container full width */
+.page-content {
+  max-width: 60vw !important;
+  width: 60vw !important;
+  margin: 0 !important;
+  padding-left: 0 !important;
+  padding-right: 0 !important;
+  overflow-x: hidden;
+}
+
+/* Override any container within the page */
+.container,
+.container-lg,
+.container-md {
+  max-width: 60% !important;
+  padding-left: 0 !important;
+  padding-right: 0 !important;
+}
+
 /* =========================================
    1. DEFAULT (LIGHT MODE)
    ========================================= */
@@ -205,7 +223,7 @@ details[open] summary {
 </style>
 
 <style>
-.about-hero {
+ .about-hero {
   position: relative;
   width: 100vw;
   left: 50%;
@@ -220,26 +238,28 @@ details[open] summary {
 
 .about-hero-bg {
   position: absolute;
-    inset: 0;
-    width: 100%;
-    height: 100%;
-    background-image: url("/assets/img/about-bg.jpg");
-    background-size: 100% 100%;    /* Ensures the image covers the entire area */
-    background-position: center;
-    background-repeat: no-repeat;  /* Prevents tiling */
-    filter: brightness(0.8);
-    z-index: 0;
+  inset: 0;
+  width: 60%;
+  height: 100%;
+  background-image: url("/assets/img/about-bg.jpg");
+  background-position: top;
+  background-size: cover;
+  background-repeat: no-repeat;
+  filter: brightness(0.8);
+  z-index: 0;
+  left: 50%;
+  transform: translateX(-50%);
 }
 
 .about-hero-inner {
   position: relative;
   height: 100%;
-  max-width: 1000px;
+  max-width: 60%;
   margin: 0 auto;
-  padding: 0 1.5rem;
+  padding: 0 2rem;
   display: flex;
-  align-items: bottom;      /* top */
-  justify-content: right;  /* left */
+  align-items: flex-end;      /* Bottom alignment */
+  justify-content: flex-end;  /* Right alignment */
   z-index: 1;
 }
 
@@ -247,8 +267,8 @@ details[open] summary {
   display: flex;
   flex-direction: column;
   align-items: center;
-  margin-bottom: -20px;
-  padding: 10rem 0 0 10rem;
+  margin-bottom: -30px;  /* Overlaps slightly below hero */
+  padding: 0 0 1rem 0;
 }
 
 .about-hero-avatar {
@@ -283,8 +303,12 @@ html.dark-mode .about-hero-avatar {
   .about-hero {
     height: 280px;
   }
+  .about-hero-inner {
+    padding: 0 1rem;
+  }
   .about-hero-profile {
-    padding: 1rem 0 0 0;
+    margin-bottom: -20px;
+    padding-bottom: 0.5rem;
   }
   .about-hero-avatar {
     width: 130px;

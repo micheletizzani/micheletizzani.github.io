@@ -6,6 +6,13 @@ nav: true
 nav_order: 5
 ---
 
+<div class="travel-hero">
+  <div class="travel-hero-bg"></div>
+  <div class="travel-hero-inner">
+    <!-- Optional: Add a travel icon or title -->
+  </div>
+</div>
+
 <div class="photo-gallery-container">
   <div class="gallery-section piedmont-section">
     <h2 class="section-title">Sweden - 2025</h2>
@@ -75,8 +82,8 @@ document.addEventListener('keydown', function(e) {
 
 /* Make the main content container full width */
 .page-content {
-  max-width: 90vw !important;
-  width: 90vw !important;
+  max-width: 60vw !important;
+  width: 60vw !important;
   margin: 0 !important;
   padding-left: 0 !important;
   padding-right: 0 !important;
@@ -87,15 +94,78 @@ document.addEventListener('keydown', function(e) {
 .container,
 .container-lg,
 .container-md {
-  max-width: 90% !important;
+  max-width: 60% !important;
   padding-left: 0 !important;
   padding-right: 0 !important;
+}
+
+/* =========================================
+   HERO HEADER - Same style as about page
+   ========================================= */
+.travel-hero {
+  position: relative;
+  width: 100vw;
+  left: 50%;
+  right: 50%;
+  margin-left: -50vw;
+  margin-right: -50vw;
+  margin-top: -1.5rem;
+  margin-bottom: 3rem;
+  height: 320px;
+  overflow: visible;
+}
+
+.travel-hero-bg {
+  position: absolute;
+  inset: 0;
+  width: 60%;
+  height: 100%;
+  background-image: url("/assets/img/travel-bg.jpg"); 
+  background-position: bottom;
+  background-size: cover;
+  background-repeat: no-repeat;
+  filter: brightness(0.7);
+  z-index: 0;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+.travel-hero-inner {
+  position: relative;
+  height: 100%;
+  max-width: 60%;
+  margin: 0 auto;
+  padding: 0 2rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1;
+}
+
+html.dark-mode .travel-hero-bg {
+  filter: brightness(0.5);
+}
+
+@media (max-width: 768px) {
+  .travel-hero {
+    height: 280px;
+  }
+  .travel-hero-bg {
+    width: 60%;
+  }
+  .travel-hero-inner {
+    max-width: 60%;
+  }
+  .page-content {
+    max-width: 60vw !important;
+    width: 60vw !important;
+  }
 }
 
 /* Ensure gallery spans full width */
 .photo-gallery-container,
 .gallery-section {
-  width: 90vw !important;
+  width: 60vw !important;
   margin-left: 0 !important;
   padding-left: 2rem !important; /* Optional: add some padding */
   padding-right: 2rem !important; /* Optional: add some padding */
@@ -120,8 +190,8 @@ document.addEventListener('keydown', function(e) {
 }
 #photo-popup img {
   z-index: 2;
-  max-width: 90vw;
-  max-height: 90vh;
+  max-width: 60vw;
+  max-height: 60vh;
   border-radius: 6px;
   box-shadow: 0 4px 40px rgba(0,0,0,0.76);
   background: #222;
