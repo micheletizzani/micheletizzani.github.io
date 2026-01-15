@@ -82,8 +82,8 @@ document.addEventListener('keydown', function(e) {
 
 /* Make the main content container full width */
 .page-content {
-  max-width: 60vw !important;
-  width: 60vw !important;
+  max-width: 62vw !important;
+  width: 62vw !important;
   margin: 0 !important;
   padding-left: 0 !important;
   padding-right: 0 !important;
@@ -94,7 +94,7 @@ document.addEventListener('keydown', function(e) {
 .container,
 .container-lg,
 .container-md {
-  max-width: 60% !important;
+  max-width: 62% !important;
   padding-left: 0 !important;
   padding-right: 0 !important;
 }
@@ -118,13 +118,13 @@ document.addEventListener('keydown', function(e) {
 .travel-hero-bg {
   position: absolute;
   inset: 0;
-  width: 60%;
+  width: 62%;
   height: 100%;
   background-image: url("/assets/img/travel-bg.jpg"); 
   background-position: bottom;
   background-size: cover;
   background-repeat: no-repeat;
-  filter: brightness(0.7);
+  filter: brightness(0.8);
   z-index: 0;
   left: 50%;
   transform: translateX(-50%);
@@ -133,7 +133,7 @@ document.addEventListener('keydown', function(e) {
 .travel-hero-inner {
   position: relative;
   height: 100%;
-  max-width: 60%;
+  max-width: 62%;
   margin: 0 auto;
   padding: 0 2rem;
   display: flex;
@@ -143,7 +143,7 @@ document.addEventListener('keydown', function(e) {
 }
 
 html.dark-mode .travel-hero-bg {
-  filter: brightness(0.5);
+  filter: brightness(0.8);
 }
 
 @media (max-width: 768px) {
@@ -209,7 +209,7 @@ html.dark-mode .travel-hero-bg {
   opacity: 0.65;
 }
 #photo-popup .close-popup:hover { opacity: 1; }
-@media(max-width:700px){
+@media(max-width:600px){
   #photo-popup img { max-width:97vw; max-height:70vh; }
   #photo-popup .close-popup { top: 16px; right: 16px; font-size: 2rem;}
 }
