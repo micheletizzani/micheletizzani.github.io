@@ -36,5 +36,9 @@
     "remark-wiki-link": "^2.0.1",
     "tailwindcss": "^4.3.0",
     "three": "^0.184.0"
+  },
+  "devDependencies": {
+    "@shopify/prettier-plugin-liquid": "^1.10.2",
+    "prettier-plugin-astro": "^0.14.1"
   }
 }

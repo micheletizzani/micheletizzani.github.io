@@ -1,6 +1,6 @@
-import exifr from 'exifr';
-import fs from 'fs/promises';
-import path from 'path';
+import exifr from "exifr";
+import fs from "fs/promises";
+import path from "path";
 
 export interface PhotoExifData {
   src: string;
@@ -21,7 +21,7 @@ export async function getPhotosWithExif(directoryPath: string): Promise<PhotoExi
   try {
     const fullPath = path.resolve(process.cwd(), directoryPath);
     const files = await fs.readdir(fullPath);
-    const imageFiles = files.filter(file => /\.(jpg|jpeg|png|webp|heic)$/i.test(file));
+    const imageFiles = files.filter((file) => /\.(jpg|jpeg|png|webp|heic)$/i.test(file));
 
     const photos: PhotoExifData[] = [];
 

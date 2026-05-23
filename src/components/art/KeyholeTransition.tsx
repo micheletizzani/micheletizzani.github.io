@@ -1,7 +1,7 @@
-import React, { useEffect, useState } from 'react';
-import { useStore } from '@nanostores/react';
-import { motion, AnimatePresence } from 'framer-motion';
-import { isArtMode } from '../../store/modeStore';
+import React, { useEffect, useState } from "react";
+import { useStore } from "@nanostores/react";
+import { motion, AnimatePresence } from "framer-motion";
+import { isArtMode } from "../../store/modeStore";
 
 export default function KeyholeTransition() {
   const artModeActive = useStore(isArtMode);
@@ -24,7 +24,7 @@ export default function KeyholeTransition() {
           className="fixed inset-0 z-40 bg-black pointer-events-none"
           style={{
             clipPath: 'path("M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z")',
-            transformOrigin: 'top right' // Roughly where the button is
+            transformOrigin: "top right", // Roughly where the button is
           }}
         />
       )}
