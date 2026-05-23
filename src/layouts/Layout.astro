@@ -1,0 +1,114 @@
+---
+import '../styles/global.css';
+
+interface Props {
+	title: string;
+}
+
+const { title } = Astro.props;
+---
+
+<!doctype html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="description" content="Academic Portfolio and Digital Garden" />
+		<meta name="viewport" content="width=device-width" />
+		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+		<meta name="generator" content={Astro.generator} />
+		<title>{title}</title>
+
+		<!-- Preload fonts for the high-end academic feel -->
+		<link rel="preconnect" href="https://fonts.googleapis.com">
+		<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+		<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Lora:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+
+		<!-- KaTeX CSS for rendering math -->
+		<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.css" integrity="sha384-GvrOXuhMATgEsSwCs4smul74iXGOixntILdUW9XmUC6+HX0sLNAK3q71b053+089" crossorigin="anonymous">
+
+		<script is:inline>
+			// Check local storage for theme preference, default to light
+			const theme = (() => {
+				if (typeof localStorage !== 'undefined' && localStorage.getItem('theme')) {
+					return localStorage.getItem('theme');
+				}
+				if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
+					return 'dark';
+				}
+				return 'light';
+			})();
+
+			if (theme === 'light') {
+				document.documentElement.classList.remove('dark');
+			} else {
+				document.documentElement.classList.add('dark');
+			}
+			window.localStorage.setItem('theme', theme);
+		</script>
+	</head>
+	<body class="antialiased min-h-screen flex flex-col relative overflow-x-hidden">
+		<div id="professional-plane" class="flex-grow z-10 transition-opacity duration-700">
+			<slot />
+		</div>
+
+		<!-- Artistic plane container (Z-Axis) -->
+		<div id="artistic-canvas-container" class="fixed inset-0 z-50 pointer-events-none opacity-0 bg-[var(--bg-color)]">
+			<button id="exit-art-mode" class="absolute top-6 left-6 text-[var(--text-color)] text-sm font-semibold tracking-wider hover:text-[var(--accent-color)] transition-colors z-50 opacity-0 pointer-events-none uppercase">
+				← Return to Surface
+			</button>
+
+			<div class="absolute inset-0 z-0" id="canvas-wrapper">
+				<!-- The canvas will be mounted here using Astro Islands architecture -->
+			</div>
+
+			<!-- Art Gallery Overlay Content -->
+			<div class="relative z-10 w-full h-full flex flex-col items-center justify-center pointer-events-none opacity-0 transition-opacity duration-1000 delay-500" id="art-content-overlay">
+				<h1 class="text-6xl font-serif text-[var(--heading-color)] mb-4 tracking-wider">The Gallery</h1>
+				<p class="text-[var(--text-color)] opacity-70 tracking-widest uppercase text-sm mb-12">Digital Art & Photography</p>
+
+				<div class="pointer-events-auto flex space-x-8">
+					<a href="/art/digital" class="px-8 py-4 border border-[var(--border-color)] hover:border-[var(--accent-color)] text-[var(--text-color)] hover:text-[var(--accent-color)] transition-colors bg-[var(--bg-color)]/50 backdrop-blur-sm">Digital Experiments</a>
+					<a href="/art/photography" class="px-8 py-4 border border-[var(--border-color)] hover:border-[var(--accent-color)] text-[var(--text-color)] hover:text-[var(--accent-color)] transition-colors bg-[var(--bg-color)]/50 backdrop-blur-sm">Photography</a>
+				</div>
+			</div>
+		</div>
+
+		<!-- Keyhole Transition Layer (Framer Motion injected via React) -->
+		<div id="transition-layer" class="pointer-events-none"></div>
+
+		<script>
+			import React from 'react';
+			import { createRoot } from 'react-dom/client';
+			import KeyholeTransition from '../components/art/KeyholeTransition';
+			import ArtisticCanvas from '../components/art/ArtisticCanvas';
+			import { isArtMode } from '../store/modeStore';
+
+			// Render KeyholeTransition
+			const transitionContainer = document.getElementById('transition-layer');
+			if (transitionContainer) {
+				const root = createRoot(transitionContainer);
+				root.render(React.createElement(KeyholeTransition, null));
+			}
+
+			// Render Artistic Canvas lazily
+			const canvasContainer = document.getElementById('canvas-wrapper');
+			let canvasRoot: any = null;
+
+			if (canvasContainer) {
+				isArtMode.subscribe((active) => {
+					if (active && !canvasRoot) {
+						canvasRoot = createRoot(canvasContainer);
+						canvasRoot.render(React.createElement(ArtisticCanvas, null));
+					} else if (!active && canvasRoot) {
+						setTimeout(() => {
+							if (!isArtMode.get()) {
+								canvasRoot.unmount();
+								canvasRoot = null;
+							}
+						}, 1000);
+					}
+				});
+			}
+		</script>
+	</body>
+</html>

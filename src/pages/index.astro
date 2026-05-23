@@ -1,0 +1,62 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Header from '../components/layout/Header.astro';
+
+// Dummy data for publications mapping to X-Y axis structural view
+const recentPublications = [
+  {
+    title: "Understanding Complex Systems through Generative Fluid Dynamics",
+    venue: "Journal of Computational Social Science, 2024",
+    link: "#"
+  },
+  {
+    title: "Network Effects in Peer-to-Peer Academic Knowledge Graphs",
+    venue: "Conference on Complex Networks, 2023",
+    link: "#"
+  }
+];
+---
+
+<Layout title="Dr. Jane Doe | Computational Social Science">
+  <Header />
+
+  <main class="max-w-4xl mx-auto px-6 py-16">
+    <section class="mb-20">
+      <h1 class="text-5xl font-serif mb-6 leading-tight">Exploring the intersection of <span class="italic text-[var(--accent-color)]">computational systems</span> and human behavior.</h1>
+      <p class="text-lg mb-8 max-w-2xl text-[var(--text-color)] opacity-90 leading-relaxed">
+        I am a researcher bridging the gap between qualitative human experiences and quantitative network models. My work primarily focuses on how information disseminates in low-trust environments.
+      </p>
+
+      <div class="flex space-x-4">
+        <a href="/cv" class="px-6 py-3 border border-[var(--border-color)] rounded hover:bg-[var(--bg-secondary)] transition-colors font-medium">Read CV</a>
+        <a href="mailto:contact@example.com" class="px-6 py-3 bg-[var(--heading-color)] text-[var(--bg-color)] rounded hover:opacity-90 transition-opacity font-medium">Get in Touch</a>
+      </div>
+    </section>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-12">
+      <section>
+        <h2 class="text-2xl font-serif mb-6 border-b border-[var(--border-color)] pb-2">Selected Publications</h2>
+        <ul class="space-y-6">
+          {recentPublications.map(pub => (
+            <li class="group">
+              <a href={pub.link} class="block">
+                <h3 class="font-medium text-[var(--heading-color)] group-hover:text-[var(--accent-color)] transition-colors">{pub.title}</h3>
+                <p class="text-sm opacity-75 mt-1">{pub.venue}</p>
+              </a>
+            </li>
+          ))}
+        </ul>
+        <a href="/publications" class="inline-block mt-6 text-sm font-medium hover:text-[var(--accent-color)] transition-colors">View all publications →</a>
+      </section>
+
+      <section>
+        <h2 class="text-2xl font-serif mb-6 border-b border-[var(--border-color)] pb-2">Recent Thoughts</h2>
+        <div class="p-6 bg-[var(--bg-secondary)] rounded border border-[var(--border-color)]">
+          <h3 class="font-medium text-lg mb-2">The architecture of a second brain</h3>
+          <p class="text-sm opacity-80 mb-4 line-clamp-3">Why maintaining a personal knowledge base is fundamentally an exercise in structural gardening rather than data hoarding. Notes from migrating to a markdown-native system.</p>
+          <a href="/thoughts/second-brain" class="text-sm font-medium hover:text-[var(--accent-color)] transition-colors">Read essay →</a>
+        </div>
+      </section>
+    </div>
+  </main>
+</Layout>

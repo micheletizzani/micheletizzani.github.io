@@ -1,0 +1,36 @@
+---
+import { getCollection } from 'astro:content';
+import Layout from '../../layouts/Layout.astro';
+import Header from '../../components/layout/Header.astro';
+
+// 1. Generate a new path for every collection entry
+export async function getStaticPaths() {
+  const thoughtsEntries = await getCollection('thoughts', ({ data }) => {
+    // Frontmatter filtering: Only build entries with publish: true
+    return data.publish === true;
+  });
+
+  return thoughtsEntries.map(entry => ({
+    params: { slug: entry.id },
+    props: { entry },
+  }));
+}
+
+import { render } from 'astro:content';
+
+// 2. For your template, you can get the entry directly from the prop
+const { entry } = Astro.props;
+const { Content } = await render(entry);
+---
+
+<Layout title={`${entry.data.title} | Dr. Jane Doe`}>
+  <Header />
+  <main class="max-w-3xl mx-auto px-6 py-16 prose dark:prose-invert prose-headings:font-serif prose-a:text-[var(--accent-color)]">
+    <a href="/thoughts" class="text-sm font-medium hover:underline mb-8 inline-block opacity-70">← Back to Thoughts</a>
+    <h1 class="text-4xl font-serif mb-2">{entry.data.title}</h1>
+    {entry.data.date && <p class="text-sm opacity-70 mb-8">{entry.data.date.toLocaleDateString()}</p>}
+    <article>
+      <Content />
+    </article>
+  </main>
+</Layout>

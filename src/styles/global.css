@@ -1,0 +1,53 @@
+@import "tailwindcss";
+@plugin "@tailwindcss/typography";
+
+@layer base {
+  :root {
+    --bg-color: #f8f9fa;
+    --text-color: #212529;
+    --heading-color: #1a1a1a;
+    --accent-color: #6a0dad;
+    --border-color: #dee2e6;
+    --bg-secondary: #e9ecef;
+  }
+
+  /* Dark mode variables - based on the deep gray #121212 request */
+  html.dark {
+    --bg-color: #121212;
+    --text-color: #e0e0e0;
+    --heading-color: #ffffff;
+    --accent-color: #bb86fc;
+    --border-color: #333333;
+    --bg-secondary: #1e1e1e;
+  }
+
+  body {
+    background-color: var(--bg-color);
+    color: var(--text-color);
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+    transition: background-color 0.3s ease, color 0.3s ease;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    color: var(--heading-color);
+    font-family: 'Lora', serif; /* Serif for high-end academic feel */
+  }
+
+  /* Ensure the artistic canvas stays hidden until active */
+  #artistic-canvas-container {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    z-index: 50; /* Above the content */
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.5s ease-in-out;
+  }
+
+  #artistic-canvas-container.active {
+    pointer-events: auto;
+    opacity: 1;
+  }
+}

@@ -1,6 +1,40 @@
 {
-  "devDependencies": {
-    "@shopify/prettier-plugin-liquid": "1.10.0",
-    "prettier": "3.6.2"
+  "name": "tremendous-trappist",
+  "type": "module",
+  "version": "0.0.1",
+  "engines": {
+    "node": ">=22.12.0"
+  },
+  "scripts": {
+    "dev": "astro dev",
+    "build": "astro build",
+    "preview": "astro preview",
+    "astro": "astro"
+  },
+  "dependencies": {
+    "@astrojs/mdx": "^5.0.6",
+    "@astrojs/react": "^5.0.5",
+    "@nanostores/react": "^1.1.0",
+    "@react-three/drei": "^10.7.7",
+    "@react-three/fiber": "^9.6.1",
+    "@tailwindcss/typography": "^0.5.19",
+    "@tailwindcss/vite": "^4.3.0",
+    "@types/react": "^19.2.15",
+    "@types/react-dom": "^19.2.3",
+    "@types/three": "^0.184.1",
+    "astro": "^6.3.7",
+    "exifr": "^7.1.3",
+    "framer-motion": "^12.40.0",
+    "maath": "^0.10.8",
+    "nanostores": "^1.3.0",
+    "react": "^19.2.6",
+    "react-dom": "^19.2.6",
+    "rehype-autolink-headings": "^7.1.0",
+    "rehype-katex": "^7.0.1",
+    "rehype-slug": "^6.0.0",
+    "remark-math": "^6.0.0",
+    "remark-wiki-link": "^2.0.1",
+    "tailwindcss": "^4.3.0",
+    "three": "^0.184.0"
   }
 }
