@@ -63,12 +63,23 @@ const sortedYears = Object.keys(papersByYear).sort((a, b) => b.localeCompare(a))
                     </a>
                   </div>
                 )}
-                {paper.abstract && (
-                  <details class="mt-4 text-sm text-[var(--text-color)] opacity-80 cursor-pointer">
-                    <summary class="font-medium hover:text-[var(--accent-color)] transition-colors">Abstract</summary>
-                    <p class="mt-2 pl-4 border-l-2 border-[var(--border-color)] leading-relaxed">{paper.abstract}</p>
-                  </details>
-                )}
+                <div class="mt-4 flex flex-wrap items-center gap-x-6 gap-y-2">
+                  {paper.abstract && (
+                    <details class="text-sm text-[var(--text-color)] opacity-80 cursor-pointer">
+                      <summary class="font-medium hover:text-[var(--accent-color)] transition-colors">Abstract</summary>
+                      <p class="mt-2 pl-4 border-l-2 border-[var(--border-color)] leading-relaxed">{paper.abstract}</p>
+                    </details>
+                  )}
+                  {paper.pages === 'e88519' && (
+                    <a
+                      href="/art/echo-battleground"
+                      class="art-portal-link inline-flex items-center text-sm font-medium"
+                      aria-label="State of the art: explore the paper as an interactive artwork"
+                    >
+                      State of the art: explore the paper →
+                    </a>
+                  )}
+                </div>
               </li>
             ))}
           </ul>

@@ -202,3 +202,29 @@
     line-height: 1.35;
   }
 }
+
+/* ------------------------------------------------------------------ */
+/*  Science → Art portal link: the text itself pulses from ink to the  */
+/*  accent colour, marking a doorway from the paper to the artwork.     */
+/* ------------------------------------------------------------------ */
+.art-portal-link {
+  color: var(--heading-color);
+  animation: art-portal-text 2.4s ease-in-out infinite;
+}
+
+@keyframes art-portal-text {
+  0%, 100% { color: var(--heading-color); }
+  50% { color: var(--accent-color); }
+}
+
+.art-portal-link:hover {
+  color: var(--accent-color);
+  animation-play-state: paused;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .art-portal-link {
+    animation: none;
+    color: var(--accent-color);
+  }
+}
