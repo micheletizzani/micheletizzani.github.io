@@ -1,6 +1,5 @@
 ---
 import '../styles/global.css';
-import ArtisticCanvasWrapper from '../components/art/ArtisticCanvasWrapper';
 
 interface Props {
 	title: string;
@@ -15,7 +14,7 @@ const { title } = Astro.props;
 		<meta charset="UTF-8" />
 		<meta name="description" content="Academic Portfolio and Digital Garden" />
 		<meta name="viewport" content="width=device-width" />
-		<link rel="icon" type="image/jpeg" href="/assets/img/icon.jpg" />
+		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
 		<meta name="generator" content={Astro.generator} />
 		<title>{title}</title>
 
@@ -65,71 +64,48 @@ const { title } = Astro.props;
 			<!-- Art Gallery Overlay Content -->
 			<div class="relative z-10 w-full h-full flex flex-col items-center justify-center pointer-events-none opacity-0 transition-opacity duration-1000 delay-500" id="art-content-overlay">
 				<h1 class="text-6xl font-serif text-[var(--heading-color)] mb-4 tracking-wider">The Gallery</h1>
-				<p class="text-[var(--text-color)] opacity-70 tracking-widest uppercase text-sm mb-12">Photography · Digital · Music · Writing</p>
+				<p class="text-[var(--text-color)] opacity-70 tracking-widest uppercase text-sm mb-12">Digital Art & Photography</p>
 
-				<div class="pointer-events-auto flex flex-wrap justify-center gap-4 max-w-xl">
-					<a href="/art/photography" class="px-6 py-4 border border-[var(--border-color)] hover:border-[var(--accent-color)] text-[var(--text-color)] hover:text-[var(--accent-color)] transition-colors bg-[var(--bg-color)]/50 backdrop-blur-sm">Photography</a>
-					<a href="/art/digital" class="px-6 py-4 border border-[var(--border-color)] hover:border-[var(--accent-color)] text-[var(--text-color)] hover:text-[var(--accent-color)] transition-colors bg-[var(--bg-color)]/50 backdrop-blur-sm">Digital Art</a>
-					<a href="/art/music" class="px-6 py-4 border border-[var(--border-color)] hover:border-[var(--accent-color)] text-[var(--text-color)] hover:text-[var(--accent-color)] transition-colors bg-[var(--bg-color)]/50 backdrop-blur-sm">Music</a>
-					<a href="/art/writing" class="px-6 py-4 border border-[var(--border-color)] hover:border-[var(--accent-color)] text-[var(--text-color)] hover:text-[var(--accent-color)] transition-colors bg-[var(--bg-color)]/50 backdrop-blur-sm">Writing</a>
-					<a href="/art" class="px-6 py-4 text-[var(--text-color)] opacity-70 hover:opacity-100 hover:text-[var(--accent-color)] transition-colors underline underline-offset-4">Gallery index</a>
+				<div class="pointer-events-auto flex space-x-8">
+					<a href="/art/digital" class="px-8 py-4 border border-[var(--border-color)] hover:border-[var(--accent-color)] text-[var(--text-color)] hover:text-[var(--accent-color)] transition-colors bg-[var(--bg-color)]/50 backdrop-blur-sm">Digital Experiments</a>
+					<a href="/art/photography" class="px-8 py-4 border border-[var(--border-color)] hover:border-[var(--accent-color)] text-[var(--text-color)] hover:text-[var(--accent-color)] transition-colors bg-[var(--bg-color)]/50 backdrop-blur-sm">Photography</a>
 				</div>
 			</div>
 		</div>
 
-		<!-- Keyhole Transition Layer -->
-		<div id="keyhole-transition-mask" class="pointer-events-none fixed inset-0 z-40 bg-black opacity-0" style="clip-path: path('M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z'); transform-origin: top right; transform: scale(0.01); transition: transform 1.5s cubic-bezier(0.76, 0, 0.24, 1), opacity 1.5s cubic-bezier(0.76, 0, 0.24, 1);"></div>
+		<!-- Keyhole Transition Layer (Framer Motion injected via React) -->
+		<div id="transition-layer" class="pointer-events-none"></div>
 
 		<script>
+			import React from 'react';
+			import { createRoot } from 'react-dom/client';
+			import KeyholeTransition from '../components/art/KeyholeTransition';
+			import ArtisticCanvas from '../components/art/ArtisticCanvas';
 			import { isArtMode } from '../store/modeStore';
 
-			const exitBtn = document.getElementById('exit-art-mode');
-			const profPlane = document.getElementById('professional-plane');
-			const artContent = document.getElementById('art-content-overlay');
-			const artContainer = document.getElementById('artistic-canvas-container');
-			const keyholeMask = document.getElementById('keyhole-transition-mask');
+			// Render KeyholeTransition
+			const transitionContainer = document.getElementById('transition-layer');
+			if (transitionContainer) {
+				const root = createRoot(transitionContainer);
+				root.render(React.createElement(KeyholeTransition, null));
+			}
 
-			if (exitBtn && profPlane && artContent && artContainer && keyholeMask) {
-				exitBtn.addEventListener('click', () => {
-					isArtMode.set(false);
-					
-					// Revert DOM
-					profPlane.style.opacity = '1';
-					profPlane.style.pointerEvents = 'auto';
-					
-					artContent.style.opacity = '0';
-					exitBtn.style.opacity = '0';
-					exitBtn.style.pointerEvents = 'none';
-					
-					keyholeMask.style.transform = 'scale(0.01)';
-					keyholeMask.style.opacity = '0';
+			// Render Artistic Canvas lazily
+			const canvasContainer = document.getElementById('canvas-wrapper');
+			let canvasRoot: any = null;
 
-					setTimeout(() => {
-						artContainer.classList.remove('active');
-					}, 300);
-				});
-
-				// We also need to listen to isArtMode changes to update exitBtn visibility in case someone else triggers it
+			if (canvasContainer) {
 				isArtMode.subscribe((active) => {
-					if (!active) {
-						// Ensure it's hidden if deactivated elsewhere
-						profPlane.style.opacity = '1';
-						profPlane.style.pointerEvents = 'auto';
-						
-						artContent.style.opacity = '0';
-						exitBtn.style.opacity = '0';
-						exitBtn.style.pointerEvents = 'none';
-						
-						keyholeMask.style.transform = 'scale(0.01)';
-						keyholeMask.style.opacity = '0';
-
+					if (active && !canvasRoot) {
+						canvasRoot = createRoot(canvasContainer);
+						canvasRoot.render(React.createElement(ArtisticCanvas, null));
+					} else if (!active && canvasRoot) {
 						setTimeout(() => {
-							artContainer.classList.remove('active');
-						}, 300);
-					} else {
-					    // Activate transition
-					    keyholeMask.style.transform = 'scale(100)';
-					    keyholeMask.style.opacity = '1';
+							if (!isArtMode.get()) {
+								canvasRoot.unmount();
+								canvasRoot = null;
+							}
+						}, 1000);
 					}
 				});
 			}
