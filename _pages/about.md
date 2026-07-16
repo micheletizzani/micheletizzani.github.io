@@ -48,14 +48,14 @@ The main purpose of my research is to integrate data-driven approaches with mode
         {% if pub.year %}({{ pub.year }}){% endif %}
         {% if pub.pages %}, pp. {{ pub.pages }}{% endif %}
       </p>
-      
+
       {% if pub.abstract %}
         <details>
           <summary>Abstract</summary>
           <p class="pub-abstract">{{ pub.abstract }}</p>
         </details>
       {% endif %}
-      
+
       {% if pub.url %}
         <p class="pub-links">
           <a href="{{ pub.url }}" target="_blank" rel="noopener" class="btn btn-sm btn-outline-primary">
@@ -64,7 +64,8 @@ The main purpose of my research is to integrate data-driven approaches with mode
         </p>
       {% endif %}
     </div>
-  {% endfor %}
+
+{% endfor %}
 </div>
 
 <style>
