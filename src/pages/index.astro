@@ -1,0 +1,194 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Header from '../components/layout/Header.astro';
+
+// Import YAML data using fs and js-yaml
+import fs from 'node:fs';
+import path from 'node:path';
+import * as yaml from 'js-yaml';
+
+// Load selected papers
+const papersFilePath = path.join(process.cwd(), '_data', 'scholar_selected_papers.yml');
+const papersFile = fs.readFileSync(papersFilePath, 'utf8');
+const selectedPapers: any = yaml.load(papersFile);
+---
+
+<Layout title="Michele Tizzani | Computational Social Science">
+  <Header />
+
+  <main class="w-full pb-16">
+    {/* Hero Section — the forest is the hidden portal into the Art world */}
+    <section class="relative w-full h-[320px] overflow-visible mb-16">
+      {/* Clickable forest portal */}
+      <button
+        id="hero-art-trigger"
+        type="button"
+        aria-label="Enter the art gallery"
+        class="portal absolute inset-0 w-[60%] mx-auto h-full block cursor-pointer overflow-hidden group focus:outline-none"
+      >
+        {/* Base sea image — cropped to the waterline (the surface) */}
+        <div class="absolute inset-0 w-full h-full bg-cover bg-center bg-no-repeat brightness-[0.8] dark:brightness-[0.4]" style="background-image: url('/assets/img/about-bg3.jpeg');"></div>
+
+        {/* Algorithmic edge-trace of the sea — softly pulses (heartbeat),
+            and holds steady while the pointer is over it */}
+        <div class="hero-trace absolute inset-0 w-full h-full pointer-events-none" style="--trace-src: url('/assets/img/about-bg3-trace.png'); --trace-pos: center;"></div>
+
+        {/* Discreet invitation (desktop) */}
+        <span class="hero-hint absolute bottom-4 left-1/2 -translate-x-1/2 text-[14px] uppercase tracking-[0.35em] text-white/70 opacity-10 transition-opacity duration-500 pointer-events-none">
+          Dive beneath the surface
+        </span>
+      </button>
+
+      {/* Portrait (no longer the portal — purely a portrait) */}
+      <div class="relative h-full max-w-[60%] mx-auto px-8 flex items-end justify-end z-10 pointer-events-none">
+        <img
+          src="/assets/img/prof_pic.jpg"
+          alt="Michele Tizzani"
+          class="w-[160px] h-[160px] rounded-full object-cover border-4 border-white dark:border-[#e6e6e6] shadow-[0_8px_20px_rgba(0,0,0,0.4)] -mb-10"
+        />
+      </div>
+    </section>
+
+    {/* Main Content Area */}
+    <div class="max-w-[60%] mx-auto px-8">
+        
+      {/* Identity & Contact */}
+      <section class="mb-14">
+        <h1 class="text-4xl md:text-5xl font-serif text-[var(--heading-color)] leading-tight">Michele Tizzani</h1>
+        <p class="mt-3 text-lg text-[var(--text-color)]">
+          Computational Social Scientist · Network Science · Computational Epidemiology
+        </p>
+        <p class="mt-1 text-sm text-[var(--text-color)] opacity-75">
+          Postdoctoral Researcher, DTU Compute (Technical University of Denmark) · Copenhagen, Denmark
+        </p>
+
+        <div class="mt-5 flex flex-wrap items-center gap-x-5 gap-y-2 text-sm font-medium">
+          <a href="mailto:micti@dtu.dk" class="hover:text-[var(--accent-color)] transition-colors">Email</a>
+          <a href="https://scholar.google.com/citations?user=iXfwdp4AAAAJ" target="_blank" rel="noopener noreferrer" class="hover:text-[var(--accent-color)] transition-colors">Google Scholar</a>
+          <a href="https://orcid.org/0000-0003-3068-5111" target="_blank" rel="noopener noreferrer" class="hover:text-[var(--accent-color)] transition-colors">ORCID</a>
+          <a href="https://github.com/mictiz" target="_blank" rel="noopener noreferrer" class="hover:text-[var(--accent-color)] transition-colors">GitHub</a>
+          <a href="https://www.linkedin.com/in/michele-tizzani" target="_blank" rel="noopener noreferrer" class="hover:text-[var(--accent-color)] transition-colors">LinkedIn</a>
+          <a href="/cv" class="hover:text-[var(--accent-color)] transition-colors">CV</a>
+        </div>
+      </section>
+
+      {/* About */}
+      <section id="about" class="prose dark:prose-invert max-w-none mb-16 text-[var(--text-color)] opacity-90 leading-relaxed">
+        <h2 class="text-3xl font-serif mb-6 text-[var(--heading-color)] flex items-center">
+          <span class="mr-4">About</span>
+          <div class="flex-grow h-px bg-[var(--border-color)]"></div>
+        </h2>
+        <p class="mb-4 text-justify">
+          I am a computational scientist with a PhD in Physics of Complex Systems and over six years of postdoctoral research spanning network science, computational epidemiology, computational social science, NLP, and population-scale register data. My work connects formal methods for temporal and higher-order networks to large-scale empirical analysis of human behaviour and health — from COVID-19 contact patterns and vaccine misinformation to Danish register-based studies of mobility and inequality.
+        </p>
+        <p class="mb-4 text-justify">
+          Trained in theoretical physics in Rome and Parma, I completed my PhD in 2019 on dynamical processes and memory effects on temporal networks. I then spent five years at the <strong class="text-[var(--heading-color)]">ISI Foundation</strong> in Turin, where I led analytical work packages within EU Horizon 2020 consortia (EpiPose, VERDI), built population-scale digital-trace pipelines across Twitter/X, Wikipedia, news and YouTube, and delivered evidence to public-health stakeholders including ECDC and WHO. Since 2025 I have been at <strong class="text-[var(--heading-color)]">DTU Compute</strong> in Copenhagen, in Prof. Sune Lehmann's Cognitive Systems group, working with Danish national administrative data through Statistics Denmark to study residential mobility, urban restructuring, and the structural determinants of health inequality.
+        </p>
+        <p class="text-justify">
+          I combine methodological depth with a consistent record of interdisciplinary collaboration, scientific evaluation, and policy-facing communication.
+        </p>
+      </section>
+
+      {/* Research */}
+      <section id="research" class="prose dark:prose-invert max-w-none mb-16 text-[var(--text-color)] opacity-90 leading-relaxed">
+        <h2 class="text-3xl font-serif mb-6 text-[var(--heading-color)] flex items-center">
+          <span class="mr-4">Research</span>
+          <div class="flex-grow h-px bg-[var(--border-color)]"></div>
+        </h2>
+        <p class="mb-4 text-justify">
+            <strong class="text-[var(--heading-color)]">Dynamics on complex networks.</strong><br/>
+            Foundations of network science and its applications, with a particular interest in the evolution of dynamical processes on temporal networks and diffusion on hypergraphs — including memory and ageing effects, phase transitions, and higher-order interactions.
+        </p>
+        <p class="mb-4 text-justify">
+            <strong class="text-[var(--heading-color)]">Computational social science.</strong><br/>
+            Data-driven modelling of human behaviour from non-conventional sources — social media (Twitter/X, Reddit, YouTube), news outlets, and Wikipedia. My work spans infectious disease and vaccine adoption, misinformation and its multilingual diffusion, climate discourse, policy acceptance, and online–offline behavioural coupling.
+        </p>
+        <p class="mb-4 text-justify">
+            <strong class="text-[var(--heading-color)]">Computational epidemiology.</strong><br/>
+            Data-driven and model-driven approaches meet in the assessment of epidemic outcomes. Using survey and contact-diary data alongside models, I studied social contact patterns during and after COVID-19 and the impact of non-pharmaceutical interventions and socioeconomic determinants in Italy.
+        </p>
+        <p class="mb-4 text-justify">
+            <strong class="text-[var(--heading-color)]">Register-based population science.</strong><br/>
+            At DTU I work with Danish national administrative data through Statistics Denmark to study residential mobility, urban restructuring, and the structural determinants of health inequality — combining causal inference with nation-scale network construction.
+        </p>
+        <p class="text-[var(--heading-color)] font-medium mt-6">
+            The through-line of my research: integrating data-driven approaches with model-driven exploration to understand human behaviour at scale.
+        </p>
+      </section>
+
+      {/* Selected Publications */}
+      <section class="mb-16">
+        <h2 class="text-3xl font-serif mb-8 text-[var(--heading-color)] flex items-center">
+            <span class="mr-4">Selected Publications</span>
+            <div class="flex-grow h-px bg-[var(--border-color)]"></div>
+        </h2>
+
+        <div class="space-y-10">
+          {selectedPapers.map((pub: any) => (
+            <div class="group bg-[var(--bg-color)] border-l-4 border-[var(--accent-color)] p-6 rounded shadow-sm hover:shadow-md transition-shadow">
+              <h3 class="text-xl font-medium text-[var(--heading-color)] group-hover:text-[var(--accent-color)] transition-colors leading-snug">
+                {pub.title}
+              </h3>
+              <p class="text-sm text-[var(--text-color)] opacity-90 mt-2 font-medium">
+                <em>{pub.author}</em>
+              </p>
+              <div class="text-sm text-[var(--text-color)] opacity-75 mt-1 italic">
+                {pub.journal && <span>{pub.journal}</span>}
+                {pub.volume && <span>, <strong>{pub.volume}</strong></span>}
+                {pub.year && <span> ({pub.year})</span>}
+                {pub.pages && <span>, pp. {pub.pages}</span>}
+              </div>
+              
+              {pub.abstract && (
+                <details class="mt-4 text-sm text-[var(--text-color)] opacity-80 cursor-pointer bg-[var(--bg-secondary)] p-3 rounded border border-[var(--border-color)]">
+                  <summary class="font-medium hover:text-[var(--accent-color)] transition-colors">Abstract</summary>
+                  <p class="mt-3 leading-relaxed border-t border-[var(--border-color)] pt-2">{pub.abstract}</p>
+                </details>
+              )}
+
+              {pub.url && (
+                <div class="mt-4">
+                  <a href={pub.url} target="_blank" rel="noopener noreferrer" class="inline-block px-4 py-2 border border-[var(--accent-color)] text-[var(--accent-color)] rounded hover:bg-[var(--accent-color)] hover:text-[var(--bg-color)] transition-colors text-sm font-medium">
+                    {pub.doi ? '📖 DOI Link' : '🔗 View Paper'}
+                  </a>
+                </div>
+              )}
+            </div>
+          ))}
+        </div>
+        <div class="mt-8">
+            <a href="/publications" class="inline-block text-sm font-medium hover:text-[var(--accent-color)] transition-colors">View all publications →</a>
+        </div>
+      </section>
+
+    </div>
+  </main>
+</Layout>
+
+<script>
+  import { isArtMode } from '../store/modeStore';
+
+  const heroTrigger = document.getElementById('hero-art-trigger');
+  const profPlane = document.getElementById('professional-plane');
+  const artCanvas = document.getElementById('artistic-canvas-container');
+  const exitBtn = document.getElementById('exit-art-mode');
+
+  if (heroTrigger) {
+    // The trace pulses (heartbeat) and holds on hover via CSS.
+    // Clicking the forest fades the surface, then opens the Art gallery.
+    const enterArt = () => {
+      isArtMode.set(true);
+      if (profPlane) {
+        profPlane.style.transition = 'opacity 0.5s ease';
+        profPlane.style.opacity = '0';
+        profPlane.style.pointerEvents = 'none';
+      }
+      // Expand the keyhole mask (handled in Layout via isArtMode), then navigate.
+      window.setTimeout(() => {
+        window.location.href = '/art';
+      }, 600);
+    };
+
+    heroTrigger.addEventListener('click', enterArt);
+  }
+</script>

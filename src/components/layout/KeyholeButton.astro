@@ -1,0 +1,57 @@
+---
+// KeyholeButton.astro
+---
+<button id="keyhole-trigger" class="p-2 group cursor-pointer relative z-50" aria-label="Enter Art Portfolio">
+  <svg class="w-6 h-6 text-[var(--text-color)] group-hover:text-[var(--accent-color)] transition-colors duration-300 transform group-hover:scale-110" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+    <path stroke-linecap="round" stroke-linejoin="round" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+  </svg>
+</button>
+
+<script>
+  import { isArtMode } from '../../store/modeStore';
+
+  const trigger = document.getElementById('keyhole-trigger');
+  const profPlane = document.getElementById('professional-plane');
+  const artCanvas = document.getElementById('artistic-canvas-container');
+  const exitBtn = document.getElementById('exit-art-mode');
+
+  if (trigger && profPlane && artCanvas && exitBtn) {
+    trigger.addEventListener('click', () => {
+      // Toggle store state
+      isArtMode.set(true);
+
+      // DOM updates
+      profPlane.style.opacity = '0';
+      profPlane.style.pointerEvents = 'none';
+
+      // Delay to let Framer Motion do the mask scaling effect before revealing canvas
+      setTimeout(() => {
+        artCanvas.classList.add('active');
+        exitBtn.style.opacity = '1';
+        exitBtn.style.pointerEvents = 'auto';
+      }, 800);
+
+      // Show content overlay
+      setTimeout(() => {
+        const overlay = document.getElementById('art-content-overlay');
+        if (overlay) overlay.style.opacity = '1';
+      }, 1000);
+    });
+
+    exitBtn.addEventListener('click', () => {
+      isArtMode.set(false);
+
+      const overlay = document.getElementById('art-content-overlay');
+      if (overlay) overlay.style.opacity = '0';
+
+      artCanvas.classList.remove('active');
+      exitBtn.style.opacity = '0';
+      exitBtn.style.pointerEvents = 'none';
+
+      setTimeout(() => {
+        profPlane.style.opacity = '1';
+        profPlane.style.pointerEvents = 'auto';
+      }, 500);
+    });
+  }
+</script>

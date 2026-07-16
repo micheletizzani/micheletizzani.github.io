@@ -1,0 +1,49 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import Header from '../../components/layout/Header.astro';
+import { getCollection } from 'astro:content';
+
+const thoughts = await getCollection('thoughts');
+const sortedThoughts = thoughts.sort((a, b) => {
+  const dateA = a.data.date ? new Date(a.data.date).getTime() : 0;
+  const dateB = b.data.date ? new Date(b.data.date).getTime() : 0;
+  return dateB - dateA;
+});
+---
+
+<Layout title="Thoughts | Michele Tizzani">
+  <Header />
+
+  <main class="max-w-4xl mx-auto px-6 py-16">
+    <div class="mb-16">
+      <h1 class="text-5xl font-serif mb-6 leading-tight border-b-2 border-[var(--border-color)] pb-4 inline-block">Thoughts</h1>
+      <p class="text-[var(--text-color)] opacity-80 text-lg">Notes, essays, and explorations on complex systems and digital gardening.</p>
+    </div>
+
+    <div class="space-y-8">
+      {sortedThoughts.map((thought) => (
+        <article class="p-8 bg-[var(--bg-secondary)] rounded-lg border border-[var(--border-color)] hover:border-[var(--accent-color)] transition-colors group">
+          <a href={`/thoughts/${thought.id}`} class="block">
+            <h2 class="text-2xl font-serif font-medium text-[var(--heading-color)] group-hover:text-[var(--accent-color)] transition-colors mb-2">
+              {thought.data.title}
+            </h2>
+            {thought.data.date && (
+              <time class="text-sm font-mono tracking-wider opacity-70 mb-4 block">
+                {new Date(thought.data.date).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}
+              </time>
+            )}
+            {thought.data.tags && thought.data.tags.length > 0 && (
+              <div class="flex space-x-2 mt-4">
+                {thought.data.tags.map((tag: string) => (
+                  <span class="text-xs px-2 py-1 bg-[var(--bg-color)] border border-[var(--border-color)] rounded-full text-[var(--text-color)] opacity-80">
+                    {tag}
+                  </span>
+                ))}
+              </div>
+            )}
+          </a>
+        </article>
+      ))}
+    </div>
+  </main>
+</Layout>
