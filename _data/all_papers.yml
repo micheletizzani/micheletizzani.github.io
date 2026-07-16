@@ -1,12 +1,12 @@
-- title: 'Engagement trends in online vaccine content: a longitudinal YouTube study'
+- title: "Engagement trends in online vaccine content: a longitudinal YouTube study"
   author: Tizzani, M.; Mejova, Y.
   journal: Journal of Medical Internet Research
-  year: '2026'
-  volume: '28'
+  year: "2026"
+  volume: "28"
   pages: e88519
   url: https://doi.org/10.2196/88519
   doi: 10.2196/88519
-  abstract: 'Background: YouTube is the primary global video platform, hosting both authoritative health
+  abstract: "Background: YouTube is the primary global video platform, hosting both authoritative health
     information and vaccine-skeptic viewpoints. However, engagement dynamics remain poorly understood.
     Objective: The aim of this study was to investigate the temporal and textual dynamics of engagement
     of the YouTube viewership with vaccination content, and specifically content that is in favor of or
@@ -26,15 +26,15 @@
     institutions, while vaccine-hesitant discourse is more likely to come from individual creators, even
     those self-identifying as medical doctors. Moderation, on the rare occasion when it occurs (about
     2% of the videos were taken down), comes after engagement saturation, limiting its effectiveness.
-    Conclusions: Our analysis suggests that vaccine-hesitant content can dominate YouTube''s engagement
+    Conclusions: Our analysis suggests that vaccine-hesitant content can dominate YouTube's engagement
     ecosystem through rapid early-stage amplification, which has direct implications for public health
-    intervention timing and platform governance policy.'
-- title: 'Taking the pulse of reform: what can a multi-channel analysis of media and parliamentary speeches
-    tell us about public acceptability?'
+    intervention timing and platform governance policy."
+- title: "Taking the pulse of reform: what can a multi-channel analysis of media and parliamentary speeches
+    tell us about public acceptability?"
   author: Parazzoli, S. M.; Tizzani, M.; Quaggiotto, M.; Murtin, F.; Martin, N.; Gozzi, N.; Gauvin, L.
   journal: Data & Policy
-  year: '2026'
-  volume: '8'
+  year: "2026"
+  volume: "8"
   pages: e29
   url: https://doi.org/10.1017/dap.2026.10077
   doi: 10.1017/dap.2026.10077
@@ -52,12 +52,12 @@
     Finally, we identify the main topics driving public discussion within each dimension, highlighting
     notable differences between media narratives and parliamentary discourse that offer further insight
     into the dynamics of public acceptability.
-- title: 'Socioeconomic determinants of protective behaviors and contact patterns in the post-COVID-19
-    pandemic era: a cross-sectional study in Italy'
+- title: "Socioeconomic determinants of protective behaviors and contact patterns in the post-COVID-19
+    pandemic era: a cross-sectional study in Italy"
   author: Tizzani, M.; Gauvin, L.
   journal: PLOS Computational Biology
-  year: '2025'
-  volume: '21'
+  year: "2025"
+  volume: "21"
   pages: e1013262
   url: https://doi.org/10.1371/journal.pcbi.1013262
   doi: 10.1371/journal.pcbi.1013262
@@ -81,67 +81,67 @@
 - title: The role of science in the climate change discussions on Reddit
   author: Cornale, P.; Tizzani, M.; Ciulla, F.; Kalimeri, K.; Omodei, E.; Paolotti, D.; Mejova, Y.
   journal: PLOS Climate
-  year: '2025'
-  volume: '4'
+  year: "2025"
+  volume: "4"
   pages: e0000541
   url: https://doi.org/10.1371/journal.pclm.0000541
   doi: 10.1371/journal.pclm.0000541
-  abstract: ''
+  abstract: ""
 - title: Language-agnostic modeling of source reliability on Wikipedia
   author: D'Ignazi, J.; Kaltenbrunner, A.; Mejova, Y.; Tizzani, M.; Kalimeri, K.; Beiró, M. G.; et al.
   journal: ACM Transactions on the Web
-  year: '2025'
-  volume: '20'
+  year: "2025"
+  volume: "20"
   pages: 1--29
   url: https://doi.org/10.1145/3777444
   doi: 10.1145/3777444
-  abstract: ''
-- title: 'Vaccine hesitancy on YouTube: a competition between health and politics'
+  abstract: ""
+- title: "Vaccine hesitancy on YouTube: a competition between health and politics"
   author: Mejova, Y.; Tizzani, M.
   journal: 10th International Digital Public Health Conference (DPH)
-  year: '2025'
-  volume: ''
-  pages: ''
+  year: "2025"
+  volume: ""
+  pages: ""
   url: https://doi.org/10.1109/DPH66411.2025.11198076
   doi: 10.1109/DPH66411.2025.11198076
-  abstract: ''
+  abstract: ""
 - title: Political context of the European vaccine debate on Twitter
   author: Paoletti, P.; Dall'Amico, L.; Kalimeri, K.; Lenti, J.; Mejova, Y.; Paolotti, D.; Starnini, M.;
     Tizzani, M.
   journal: Scientific Reports
-  year: '2024'
-  volume: '14'
-  pages: '4397'
+  year: "2024"
+  volume: "14"
+  pages: "4397"
   url: https://doi.org/10.1038/s41598-024-54863-7
   doi: 10.1038/s41598-024-54863-7
-  abstract: ''
-- title: 'Global misinformation spillovers in the vaccination debate before and during the COVID-19 pandemic:
-    multilingual Twitter study'
+  abstract: ""
+- title: "Global misinformation spillovers in the vaccination debate before and during the COVID-19 pandemic:
+    multilingual Twitter study"
   author: Lenti, J.; Mejova, Y.; Kalimeri, K.; Panisson, A.; Paolotti, D.; Tizzani, M.; Starnini, M.
   journal: JMIR Infodemiology
-  year: '2023'
-  volume: '3'
+  year: "2023"
+  volume: "3"
   pages: e44714
   url: https://doi.org/10.2196/44714
   doi: 10.2196/44714
-  abstract: ''
-- title: 'Social contact patterns during COVID-19 in 21 European countries: evidence from a two-year study'
+  abstract: ""
+- title: "Social contact patterns during COVID-19 in 21 European countries: evidence from a two-year study"
   author: CoMix Europe Working Group (incl. Tizzani, M.)
   journal: BMC Infectious Diseases
-  year: '2023'
-  volume: '23'
-  pages: '268'
+  year: "2023"
+  volume: "23"
+  pages: "268"
   url: https://doi.org/10.1186/s12879-023-08214-y
   doi: 10.1186/s12879-023-08214-y
-  abstract: ''
+  abstract: ""
 - title: Impact of tiered measures on social contact and mixing patterns in Italy during the second wave
     of COVID-19
   author: Tizzani, M.; De Gaetano, A.; Jarvis, C. I.; Gimma, A.; Wong, K.; Edmunds, W. J.; Beutels, P.;
     Hens, N.; Coletti, P.; Paolotti, D.
   journal: BMC Public Health
-  year: '2023'
-  volume: '23'
-  pages: '906'
+  year: "2023"
+  volume: "23"
+  pages: "906"
   url: https://doi.org/10.1186/s12889-023-15846-x
   doi: 10.1186/s12889-023-15846-x
   abstract: Most countries around the world enforced non-pharmaceutical interventions against COVID-19.
@@ -152,12 +152,12 @@
 - title: Impact of food-related conflicts on self-reported food insecurity
   author: Fiandrino, S.; Dowd, C.; Martini, G.; Mejova, Y.; Omodei, E.; Paolotti, D.; Tizzani, M.
   journal: Frontiers in Sustainable Food Systems
-  year: '2023'
-  volume: '7'
-  pages: '1239992'
+  year: "2023"
+  volume: "7"
+  pages: "1239992"
   url: https://doi.org/10.3389/fsufs.2023.1239992
   doi: 10.3389/fsufs.2023.1239992
-  abstract: 'Food security is recognized as an inherent human right, enshrined within the principles of
+  abstract: "Food security is recognized as an inherent human right, enshrined within the principles of
     the Agenda 2030. The Global Report of Food Crises 2022 points out 193 million people facing severe
     food insecurity across 53 countries, posing challenges to decision-makers and institutions. Among
     the many causes of food crises, violent conflict, economic shocks, and environmental pressures are
@@ -175,21 +175,21 @@
     of violence. The results demonstrate that this relationship is robust across a range of data collection
     windows and across discrete time periods of analysis. In summary, the research suggests that focusing
     on the use of food and food systems as tactics in conflict can be highly valuable for understanding
-    and addressing food insecurity.'
+    and addressing food insecurity."
 - title: Echo chambers of vaccination hesitancy discussion on social media during the COVID-19 pandemic
   author: Mejova, Y.; Crupi, G.; Lenti, J.; Tizzani, M.; Kalimeri, K.; Paolotti, D.; Panisson, A.
   journal: XX ISA World Congress of Sociology
-  year: '2023'
-  volume: ''
-  pages: ''
-  url: ''
-  doi: ''
-  abstract: ''
-- title: 'Echoes through time: evolution of the Italian COVID-19 vaccination debate'
+  year: "2023"
+  volume: ""
+  pages: ""
+  url: ""
+  doi: ""
+  abstract: ""
+- title: "Echoes through time: evolution of the Italian COVID-19 vaccination debate"
   author: Crupi, G.; Mejova, Y.; Tizzani, M.; Paolotti, D.; Panisson, A.
   journal: Proceedings of the International AAAI Conference on Web and Social Media (ICWSM)
-  year: '2022'
-  volume: '16'
+  year: "2022"
+  volume: "16"
   pages: 102--113
   url: https://doi.org/10.1609/icwsm.v16i1.19276
   doi: 10.1609/icwsm.v16i1.19276
@@ -217,9 +217,9 @@
 - title: Phase transitions and stability of dynamical processes on hypergraphs
   author: Ferraz de Arruda, G.; Tizzani, M.; Moreno, Y.
   journal: Communications Physics
-  year: '2021'
-  volume: '4'
-  pages: '24'
+  year: "2021"
+  volume: "4"
+  pages: "24"
   url: https://doi.org/10.1038/s42005-021-00525-3
   doi: 10.1038/s42005-021-00525-3
   abstract: Hypergraphs naturally represent higher-order interactions, which persistently appear in social
@@ -234,13 +234,13 @@
     interactions play a role in the stability of the absorbing state, while for the diffusion dynamics,
     the order of the interactions plays a differential role. Our work provides a general framework for
     further exploration of dynamical processes on hypergraphs.
-- title: 'Integrating digital and field surveillance as complementary efforts to manage epidemic diseases
-    of livestock: African swine fever as a case study'
+- title: "Integrating digital and field surveillance as complementary efforts to manage epidemic diseases
+    of livestock: African swine fever as a case study"
   author: Tizzani, M.; Muñoz-Gómez, V.; De Nardi, M.; Paolotti, D.; Muñoz, O.; Ceschi, P.; Viltrop, A.;
     Capua, I.
   journal: PLOS ONE
-  year: '2021'
-  volume: '16'
+  year: "2021"
+  volume: "16"
   pages: e0252972
   url: https://doi.org/10.1371/journal.pone.0252972
   doi: 10.1371/journal.pone.0252972
@@ -257,17 +257,17 @@
     to assess more in-depth preparedness and awareness among front-line actors. We conclude that these
     two tools should be used in combination to maximize the outcome of surveillance and prevention activities
     for selected transboundary animal diseases such as ASF.
-- title: 'Collective response to media coverage of the COVID-19 pandemic on Reddit and Wikipedia: mixed-methods
-    analysis'
+- title: "Collective response to media coverage of the COVID-19 pandemic on Reddit and Wikipedia: mixed-methods
+    analysis"
   author: Gozzi, N.; Tizzani, M.; Starnini, M.; Ciulla, F.; Paolotti, D.; Panisson, A.; Perra, N.
   journal: Journal of Medical Internet Research
-  year: '2020'
-  volume: '22'
+  year: "2020"
+  volume: "22"
   pages: e21597
   url: https://doi.org/10.2196/21597
   doi: 10.2196/21597
-  abstract: 'BACKGROUND: The exposure and consumption of information during epidemic outbreaks may alter
-    people''s risk perception and trigger behavioral changes, which can ultimately affect the evolution
+  abstract: "BACKGROUND: The exposure and consumption of information during epidemic outbreaks may alter
+    people's risk perception and trigger behavioral changes, which can ultimately affect the evolution
     of the disease. It is thus of utmost importance to map the dissemination of information by mainstream
     media outlets and the public response to this information. However, our understanding of this exposure-response
     dynamic during the COVID-19 pandemic is still limited. OBJECTIVE: The goal of this study is to characterize
@@ -276,7 +276,7 @@
     including 227,768 web-based news articles and 13,448 YouTube videos published by mainstream media
     outlets, 107,898 user posts and 3,829,309 comments on the social media platform Reddit, and 278,456,892
     views of COVID-19-related Wikipedia pages. To analyze the relationship between media coverage, epidemic
-    progression, and users'' collective web-based response, we considered a linear regression model that
+    progression, and users' collective web-based response, we considered a linear regression model that
     predicts the public response for each country given the amount of news exposure. We also applied topic
     modelling to the data set using nonnegative matrix factorization. RESULTS: Our results show that public
     attention, quantified as user activity on Reddit and active searches on Wikipedia pages, is mainly
@@ -285,14 +285,14 @@
     that while the levels of attention dedicated to different topics by media outlets and internet users
     are in good accordance, interesting deviations emerge in their temporal patterns. CONCLUSIONS: Overall,
     our findings offer an additional key to interpret public perception and response to the current global
-    health emergency and raise questions about the effects of attention saturation on people''s collective
-    awareness and risk perception and thus on their tendencies toward behavioral change.'
+    health emergency and raise questions about the effects of attention saturation on people's collective
+    awareness and risk perception and thus on their tendencies toward behavioral change."
 - title: Epidemic spreading and aging in temporal networks with memory
   author: Tizzani, M.; Lenti, S.; Ubaldi, E.; Vezzani, A.; Castellano, C.; Burioni, R.
   journal: Physical Review E
-  year: '2018'
-  volume: '98'
-  pages: '062315'
+  year: "2018"
+  volume: "98"
+  pages: "062315"
   url: https://doi.org/10.1103/PhysRevE.98.062315
   doi: 10.1103/PhysRevE.98.062315
   abstract: Time-varying network topologies can deeply influence dynamical processes mediated by them.

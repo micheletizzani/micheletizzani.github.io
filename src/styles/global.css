@@ -5,22 +5,22 @@
   /* Light mode — Japanese "aka" red on paper white and ink black.
      Stark editorial contrast, no generic AI colours (per Concept.md). */
   :root {
-    --bg-color: #fbfaf8;      /* warm paper white */
-    --text-color: #1a1a1a;    /* ink */
+    --bg-color: #fbfaf8; /* warm paper white */
+    --text-color: #1a1a1a; /* ink */
     --heading-color: #0d0d0d; /* near-black */
-    --accent-color: #b7282e;  /* aka / deep vermillion red */
-    --border-color: #e4e0da;  /* soft warm rule */
-    --bg-secondary: #f1eee9;  /* muted paper */
+    --accent-color: #b7282e; /* aka / deep vermillion red */
+    --border-color: #e4e0da; /* soft warm rule */
+    --bg-secondary: #f1eee9; /* muted paper */
   }
 
   /* Dark mode — mineral gray, black and white. */
   html.dark {
-    --bg-color: #141414;      /* near-black */
-    --text-color: #d8d8d8;    /* soft white */
+    --bg-color: #141414; /* near-black */
+    --text-color: #d8d8d8; /* soft white */
     --heading-color: #ffffff; /* white */
-    --accent-color:  #235573;  /* mineral gray */
-    --border-color: #2c2c2c;  /* graphite rule */
-    --bg-secondary: #1e1e1e;  /* raised surface */
+    --accent-color: #235573; /* mineral gray */
+    --border-color: #2c2c2c; /* graphite rule */
+    --bg-secondary: #1e1e1e; /* raised surface */
   }
 
   body {
@@ -106,12 +106,28 @@
 
 /* lub-dub heartbeat: two soft beats, then rest */
 @keyframes hero-heartbeat {
-  0%   { opacity: 0.05; transform: scale(1); }
-  7%   { opacity: 0.90; transform: scale(1.006); } /* lub */
-  15%  { opacity: 0.09; }
-  23%  { opacity: 0.95; }                          /* dub */
-  33%  { opacity: 0.05; transform: scale(1); }
-  100% { opacity: 0.05; transform: scale(1); }     /* rest */
+  0% {
+    opacity: 0.05;
+    transform: scale(1);
+  }
+  7% {
+    opacity: 0.9;
+    transform: scale(1.006);
+  } /* lub */
+  15% {
+    opacity: 0.09;
+  }
+  23% {
+    opacity: 0.95;
+  } /* dub */
+  33% {
+    opacity: 0.05;
+    transform: scale(1);
+  }
+  100% {
+    opacity: 0.05;
+    transform: scale(1);
+  } /* rest */
 }
 
 /* Reduced motion: no pulse, a faint steady trace (still holds on hover) */
