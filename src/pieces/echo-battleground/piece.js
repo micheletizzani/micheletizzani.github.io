@@ -1,10 +1,10 @@
-import * as THREE from 'three';
-import { createAudioEngine } from './audio-engine';
+import * as THREE from "three";
+import { createAudioEngine } from "./audio-engine";
 
 export function mount(canvas, opts) {
   // The payload is an array of { point: {...} } envelopes — unwrap defensively.
   const raw = opts.data || [];
-  const data = raw.map((d) => (d && d.point) ? d.point : d);
+  const data = raw.map((d) => (d && d.point ? d.point : d));
 
   // Seeded RNG (lab §6: no bare Math.random in a shipped piece)
   let _s = (opts.seed ?? 1) >>> 0;
@@ -16,27 +16,31 @@ export function mount(canvas, opts) {
   };
 
   // ---- Immersion / mapping knobs (tweak live in the browser) ----
-  const R0 = 1.2;          // inner radius — the low-engagement core around you
-  const RSPAN = 3.4;       // engagement pushes points outward by up to this
-  const JITTER = 0.5;      // radial thickness
-  const POINT_SCALE = 90;  // gl_PointSize multiplier
-  const DRIFT = 0.02;      // idle look-around speed (rad/s)
-  const FOV_MIN = 32, FOV_MAX = 100; // zoom range (degrees)
+  const R0 = 1.2; // inner radius — the low-engagement core around you
+  const RSPAN = 3.4; // engagement pushes points outward by up to this
+  const JITTER = 0.5; // radial thickness
+  const POINT_SCALE = 90; // gl_PointSize multiplier
+  const DRIFT = 0.02; // idle look-around speed (rad/s)
+  const FOV_MIN = 32,
+    FOV_MAX = 100; // zoom range (degrees)
 
   // Simulated dynamics from the paper (no per-point velocity in the data):
   //  frequency ~ saturation speed P90 (Fig 4); amplitude ~ contention (Fig 5A)
   const P90 = { SIF: 32, IF: 28, N: 24, A: 14, SA: 18 };
-  const rateMin = 1 / 32, rateMax = 1 / 14;
+  const rateMin = 1 / 32,
+    rateMax = 1 / 14;
   const velOf = (l) => Math.max(0, Math.min(1, (1 / (P90[l] || 24) - rateMin) / (rateMax - rateMin)));
-  const CONT = { SIF: 0.595, IF: 0.533, N: 0.50, A: 0.419, SA: 0.318 };
-  const tempOf = (l) => Math.max(0, Math.min(1, ((CONT[l] ?? 0.5) - 0.30) / (0.62 - 0.30)));
+  const CONT = { SIF: 0.595, IF: 0.533, N: 0.5, A: 0.419, SA: 0.318 };
+  const tempOf = (l) => Math.max(0, Math.min(1, ((CONT[l] ?? 0.5) - 0.3) / (0.62 - 0.3)));
 
   const scene = new THREE.Scene();
   scene.background = null;
 
   const camera = new THREE.PerspectiveCamera(70, window.innerWidth / window.innerHeight, 0.05, 100);
   camera.position.set(0, 0, 0); // at the center of the cloud
-  let yaw = 0, pitch = 0, targetFov = 70;
+  let yaw = 0,
+    pitch = 0,
+    targetFov = 70;
 
   const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true });
   renderer.setClearColor(0x000000, 0);
@@ -55,49 +59,55 @@ export function mount(canvas, opts) {
   const types = [];
   const agreements = [];
 
-  const colorA = new THREE.Color('#b7282e');
-  const colorB = new THREE.Color('#6b6f72');
-  const colorC = new THREE.Color('#3d7fa6');
+  const colorA = new THREE.Color("#b7282e");
+  const colorB = new THREE.Color("#6b6f72");
+  const colorC = new THREE.Color("#3d7fa6");
   const HALF_PI = Math.PI / 2;
 
   for (let i = 0; i < N; i++) {
     const d = data[i];
-    const stance = typeof d.stance === 'number' ? d.stance : (d.ex || 0);
-    const sent = typeof d.ey === 'number' ? d.ey / 0.6 : 0;
+    const stance = typeof d.stance === "number" ? d.stance : d.ex || 0;
+    const sent = typeof d.ey === "number" ? d.ey / 0.6 : 0;
     const eng = d.engagement || 0;
 
     const az = stance * Math.PI;
     const el = Math.max(-1, Math.min(1, sent)) * HALF_PI * 0.9;
     const r = R0 + eng * RSPAN + (rand() - 0.5) * JITTER;
-    positions[i * 3]     = r * Math.cos(el) * Math.sin(az);
+    positions[i * 3] = r * Math.cos(el) * Math.sin(az);
     positions[i * 3 + 1] = r * Math.sin(el);
     positions[i * 3 + 2] = r * Math.cos(el) * Math.cos(az);
 
     const c = new THREE.Color();
     if (stance < 0) c.lerpColors(colorB, colorA, -stance);
     else c.lerpColors(colorB, colorC, stance);
-    colors[i * 3] = c.r; colors[i * 3 + 1] = c.g; colors[i * 3 + 2] = c.b;
+    colors[i * 3] = c.r;
+    colors[i * 3 + 1] = c.g;
+    colors[i * 3 + 2] = c.b;
 
-    let tx = rand() * 2 - 1, ty = rand() * 2 - 1, tz = rand() * 2 - 1;
+    let tx = rand() * 2 - 1,
+      ty = rand() * 2 - 1,
+      tz = rand() * 2 - 1;
     const tl = Math.hypot(tx, ty, tz) || 1;
-    tangents[i * 3] = tx / tl; tangents[i * 3 + 1] = ty / tl; tangents[i * 3 + 2] = tz / tl;
+    tangents[i * 3] = tx / tl;
+    tangents[i * 3 + 1] = ty / tl;
+    tangents[i * 3 + 2] = tz / tl;
 
-    sizes[i] = d.kind === 'comment' ? 0.8 : 0.5 + eng * 4.0;
+    sizes[i] = d.kind === "comment" ? 0.8 : 0.5 + eng * 4.0;
     temps[i] = tempOf(d.stanceLabel);
     vels[i] = velOf(d.stanceLabel);
     phases[i] = rand() * Math.PI * 2;
 
-    types.push(d.kind === 'comment' ? 1 : 0);
-    agreements.push(d.agreement || '');
+    types.push(d.kind === "comment" ? 1 : 0);
+    agreements.push(d.agreement || "");
   }
 
-  geometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
-  geometry.setAttribute('color', new THREE.BufferAttribute(colors, 3));
-  geometry.setAttribute('aTan', new THREE.BufferAttribute(tangents, 3));
-  geometry.setAttribute('size', new THREE.BufferAttribute(sizes, 1));
-  geometry.setAttribute('aTemp', new THREE.BufferAttribute(temps, 1));
-  geometry.setAttribute('aVel', new THREE.BufferAttribute(vels, 1));
-  geometry.setAttribute('aPhase', new THREE.BufferAttribute(phases, 1));
+  geometry.setAttribute("position", new THREE.BufferAttribute(positions, 3));
+  geometry.setAttribute("color", new THREE.BufferAttribute(colors, 3));
+  geometry.setAttribute("aTan", new THREE.BufferAttribute(tangents, 3));
+  geometry.setAttribute("size", new THREE.BufferAttribute(sizes, 1));
+  geometry.setAttribute("aTemp", new THREE.BufferAttribute(temps, 1));
+  geometry.setAttribute("aVel", new THREE.BufferAttribute(vels, 1));
+  geometry.setAttribute("aPhase", new THREE.BufferAttribute(phases, 1));
 
   const material = new THREE.ShaderMaterial({
     uniforms: { uTime: { value: 0 }, uScale: { value: POINT_SCALE }, uMotion: { value: 1 } },
@@ -138,7 +148,7 @@ export function mount(canvas, opts) {
     `,
     transparent: true,
     depthWrite: false,
-    blending: THREE.AdditiveBlending
+    blending: THREE.AdditiveBlending,
   });
 
   const points = new THREE.Points(geometry, material);
@@ -153,27 +163,31 @@ export function mount(canvas, opts) {
   const sampleAudio = () => {
     raycaster.setFromCamera(center, camera);
     const hits = raycaster.intersectObject(points);
-    let aCount = 0, dCount = 0, total = 0;
+    let aCount = 0,
+      dCount = 0,
+      total = 0;
     const stanceMix = [0, 0, 0, 0, 0];
     for (let k = 0; k < hits.length; k++) {
       const i = hits[k].index;
       if (i == null) continue;
       total++;
-      const s = (typeof data[i].stance === 'number') ? data[i].stance : (data[i].ex || 0);
+      const s = typeof data[i].stance === "number" ? data[i].stance : data[i].ex || 0;
       if (s < -0.6) stanceMix[0]++;
       else if (s < -0.2) stanceMix[1]++;
       else if (s < 0.2) stanceMix[2]++;
       else if (s < 0.6) stanceMix[3]++;
       else stanceMix[4]++;
       if (types[i] === 1) {
-        if (agreements[i] === 'agree') aCount++;
-        else if (agreements[i] === 'disagree') dCount++;
+        if (agreements[i] === "agree") aCount++;
+        else if (agreements[i] === "disagree") dCount++;
       }
     }
     let controversy = 0;
     if (aCount > 0 || dCount > 0) {
-      const t = aCount + dCount, pA = aCount / t, pD = dCount / t;
-      const h = (p) => p > 0 ? -p * Math.log2(p) : 0;
+      const t = aCount + dCount,
+        pA = aCount / t,
+        pD = dCount / t;
+      const h = (p) => (p > 0 ? -p * Math.log2(p) : 0);
       controversy = h(pA) + h(pD);
     }
     if (total > 0) for (let j = 0; j < 5; j++) stanceMix[j] /= total;
@@ -182,34 +196,49 @@ export function mount(canvas, opts) {
   };
 
   // ---- Drag to look around (mouse + one-finger touch) ----
-  let dragging = false, lastX = 0, lastY = 0;
+  let dragging = false,
+    lastX = 0,
+    lastY = 0;
   const LOOK = 0.004;
-  const startDrag = (x, y) => { dragging = true; lastX = x; lastY = y; };
+  const startDrag = (x, y) => {
+    dragging = true;
+    lastX = x;
+    lastY = y;
+  };
   const moveDrag = (x, y) => {
     if (!dragging) return;
     yaw += (x - lastX) * LOOK;
     pitch = Math.max(-1.3, Math.min(1.3, pitch + (y - lastY) * LOOK));
-    lastX = x; lastY = y;
+    lastX = x;
+    lastY = y;
   };
-  const endDrag = () => { dragging = false; };
+  const endDrag = () => {
+    dragging = false;
+  };
 
   const onMouseDown = (e) => startDrag(e.clientX, e.clientY);
   const onMouseMove = (e) => moveDrag(e.clientX, e.clientY);
   const onMouseUp = () => endDrag();
-  canvas.addEventListener('mousedown', onMouseDown);
-  window.addEventListener('mousemove', onMouseMove);
-  window.addEventListener('mouseup', onMouseUp);
+  canvas.addEventListener("mousedown", onMouseDown);
+  window.addEventListener("mousemove", onMouseMove);
+  window.addEventListener("mouseup", onMouseUp);
 
   // ---- Zoom: wheel + pinch (FOV) ----
   const clampFov = (f) => Math.max(FOV_MIN, Math.min(FOV_MAX, f));
-  const onWheel = (e) => { e.preventDefault(); targetFov = clampFov(targetFov + e.deltaY * 0.03); };
-  canvas.addEventListener('wheel', onWheel, { passive: false });
+  const onWheel = (e) => {
+    e.preventDefault();
+    targetFov = clampFov(targetFov + e.deltaY * 0.03);
+  };
+  canvas.addEventListener("wheel", onWheel, { passive: false });
 
-  let pinchDist = 0, pinchFov = 0;
+  let pinchDist = 0,
+    pinchFov = 0;
   const tdist = (t) => Math.hypot(t[0].clientX - t[1].clientX, t[0].clientY - t[1].clientY);
   const onTouchStart = (e) => {
-    if (e.touches.length === 2) { pinchDist = tdist(e.touches); pinchFov = targetFov; }
-    else if (e.touches.length === 1) startDrag(e.touches[0].clientX, e.touches[0].clientY);
+    if (e.touches.length === 2) {
+      pinchDist = tdist(e.touches);
+      pinchFov = targetFov;
+    } else if (e.touches.length === 1) startDrag(e.touches[0].clientX, e.touches[0].clientY);
   };
   const onTouchMove = (e) => {
     if (e.touches.length === 2) {
@@ -222,9 +251,9 @@ export function mount(canvas, opts) {
     }
   };
   const onTouchEnd = () => endDrag();
-  canvas.addEventListener('touchstart', onTouchStart, { passive: true });
-  canvas.addEventListener('touchmove', onTouchMove, { passive: false });
-  canvas.addEventListener('touchend', onTouchEnd, { passive: true });
+  canvas.addEventListener("touchstart", onTouchStart, { passive: true });
+  canvas.addEventListener("touchmove", onTouchMove, { passive: false });
+  canvas.addEventListener("touchend", onTouchEnd, { passive: true });
 
   const resize = (width = window.innerWidth, height = window.innerHeight) => {
     camera.aspect = width / height;
@@ -232,14 +261,18 @@ export function mount(canvas, opts) {
     renderer.setSize(width, height);
   };
   const onWindowResize = () => resize();
-  window.addEventListener('resize', onWindowResize);
+  window.addEventListener("resize", onWindowResize);
 
-  let animationFrameId, frame = 0;
-  const isReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  let animationFrameId,
+    frame = 0;
+  const isReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
   material.uniforms.uMotion.value = isReducedMotion ? 0 : 1;
 
   const originalAudioStart = audio.start;
-  audio.start = () => { if (isReducedMotion) return; originalAudioStart(); };
+  audio.start = () => {
+    if (isReducedMotion) return;
+    originalAudioStart();
+  };
 
   const fwd = new THREE.Vector3();
   let last = performance.now();
@@ -269,14 +302,14 @@ export function mount(canvas, opts) {
 
   const dispose = async () => {
     cancelAnimationFrame(animationFrameId);
-    canvas.removeEventListener('mousedown', onMouseDown);
-    window.removeEventListener('mousemove', onMouseMove);
-    window.removeEventListener('mouseup', onMouseUp);
-    canvas.removeEventListener('wheel', onWheel);
-    canvas.removeEventListener('touchstart', onTouchStart);
-    canvas.removeEventListener('touchmove', onTouchMove);
-    canvas.removeEventListener('touchend', onTouchEnd);
-    window.removeEventListener('resize', onWindowResize);
+    canvas.removeEventListener("mousedown", onMouseDown);
+    window.removeEventListener("mousemove", onMouseMove);
+    window.removeEventListener("mouseup", onMouseUp);
+    canvas.removeEventListener("wheel", onWheel);
+    canvas.removeEventListener("touchstart", onTouchStart);
+    canvas.removeEventListener("touchmove", onTouchMove);
+    canvas.removeEventListener("touchend", onTouchEnd);
+    window.removeEventListener("resize", onWindowResize);
     geometry.dispose();
     material.dispose();
     renderer.dispose();

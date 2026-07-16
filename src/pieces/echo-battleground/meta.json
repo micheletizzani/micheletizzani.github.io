@@ -1,0 +1,14 @@
+{
+  "title": "Echo / Battleground",
+  "slug": "echo-battleground",
+  "binding": "model",
+  "interactionTier": 3,
+  "inputs": ["pointer", "audio-gesture"],
+  "science": "Real deidentified annotations (e88519). Position/color = stance & sentiment; motion/sound = agreement & local controversy. Echo vs battleground must emerge from measured agreement, not from geometry.",
+  "provenance": "Tizzani & Mejova, J Med Internet Res 2026;28:e88519. Deidentified: no text, no user/video IDs. See DATA.md.",
+  "seed": 88519,
+  "palette": ["#141414", "#b7282e", "#3d7fa6", "#6b6f72"],
+  "audio": "Cluster voices; roughness driven by local controversy (Plomp–Levelt). Designed sonification, not a measured result.",
+  "reducedMotion": "cloud static, audio muted, text description shown",
+  "status": "wip"
+}
