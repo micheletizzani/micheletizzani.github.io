@@ -2,244 +2,93 @@
   type: map
   contents:
     - name: Full Name
-      value: Michele Tizzani, PhD
-    - name: Role
-      value: Computational Social Scientist — Network Science, Computational Epidemiology
-    - name: Based in
-      value: Copenhagen, Denmark (DTU Compute)
-    - name: Citizenship
-      value: Italian (full EU work eligibility)
+      value: Michele Tizzani
     - name: Languages
-      value: Italian (native), English (professional)
-    - name: ORCID
-      value: 0000-0003-3068-5111
-
-- title: Research Interests
-  type: nested_list
-  contents:
-    - title: Complex systems & network science
-      items:
-        - Temporal networks
-        - Higher-order interactions & hypergraphs
-        - Dynamical processes, memory & ageing effects
-        - Phase transitions & critical phenomena
-    - title: Computational social science
-      items:
-        - Digital-trace analysis
-        - Misinformation & information diffusion
-        - Online–offline behavioural coupling
-        - Human–AI interaction at population scale
-    - title: Computational epidemiology
-      items:
-        - Social contact patterns & mixing matrices
-        - Non-pharmaceutical interventions
-        - Behavioural epidemiology
-        - Vaccine hesitancy & digital surveillance
-    - title: Register-based population science
-      items:
-        - Residential mobility & urban restructuring
-        - Socioeconomic determinants of health
-        - Health inequality
-        - Causal inference with administrative data
-    - title: Methods
-      items:
-        - Causal inference & natural experiments
-        - NLP & multilingual text analysis
-        - ML for behavioural sequences
-        - Geospatial analysis & survey design
+      value: English, Italian
 
 - title: Education
   type: time_table
   contents:
-    - title: PhD, Physics of Complex Systems
+    - title: PhD
       institution: University of Parma, Italy
       year: 2019
       description:
-        - "Thesis: Dynamical processes and memory effects on temporal networks."
-        - "Supervisor: Prof. Raffaella Burioni."
-    - title: MSc, Theoretical Physics
-      institution: University of Rome Tor Vergata, Italy
+        - Thesis. Dynamical processes and memory effects on temporal networks.
+
+    - title: Master Degree
+      institution: Theoretical Physics - Università degli Studi di Roma Tor Vergata, Italy
       year: 2015
       description:
-        - Grade 110/110.
-    - title: BSc, Physics
-      institution: University of Rome Tor Vergata, Italy
-      year: 2012
-      description: []
-    - title: Pedagogical Training Certificate (24 ECTS)
-      institution: Italy — qualification for secondary-level teaching
-      year: 2018
-      description: []
+        - Thesis. The kinetic equation for the Bose-Einstein condensate in the limit of dilute gases.
 
-- title: Research Positions
+- title: Experience
   type: time_table
   contents:
-    - title: Postdoctoral Researcher — DTU Compute
-      institution: Technical University of Denmark, Cognitive Systems group (Prof. Sune Lehmann)
-      year: 2025–present
-      description:
-        - Register-based computational social science on Danish national data via Statistics Denmark.
-        - Built pipelines processing 1.2M individual-level residential moves at H3-9 resolution; renormalisation-group spectral analysis of Copenhagen mobility networks; validated urban-trajectory typology.
-        - Villum Synergy project "Nation-Scale Social Networks" (DKK 19.7M).
-    - title: Postdoctoral Researcher / Research Scientist — ISI Foundation
-      institution: Turin, Italy
-      year: 2019–2024
-      description:
-        - Led work-package analyses in EU Horizon 2020 consortia (EpiPose, VERDI).
-        - Built and operated population-scale digital-trace pipelines across Twitter/X, Wikipedia, news and YouTube.
-        - Evidence delivered to public-health stakeholders including ECDC and WHO.
-    - title: Research Intern — LATP
-      institution: Aix-Marseille Université, France
+    - title: Postdoc researcher
+      institution: Technical University of Denmark (DTU)
+      year: 2025
+      description: []
+
+    - title: Postdoc researcher
+      institution: ISI Foundation
+      year: 2019
+      description: []
+
+    - title: Internship
+      institution: LAPD - Aix-Marseille Université, Marseille, France
       year: 2013
       description:
-        - Mathematical and theoretical methods.
+        - Description 1.
+        - Description 2.
 
-- title: Selected Projects & Consortia
+- title: Theaching
   type: time_table
   contents:
-    - title: VERDI — Horizon 2020 (EUR 3.0M), Work-package lead
-      institution: Multilingual analysis of vaccine misinformation across 21 languages and European social-media networks.
-      year: 2022–2025
-      description: []
-    - title: EpiPose — Horizon 2020 (EUR 3.0M), Work-package lead
-      institution: Italy-focused contact-matrix analysis of tiered COVID-19 restrictions (with LSHTM & CoMix Europe).
-      year: 2020–2022
-      description: []
-    - title: Nation-Scale Social Networks — Villum Synergy (DKK 19.7M), Team member
-      institution: Register-derived nation-scale temporal multiplex social network infrastructure (DTU, PI Prof. Sune Lehmann).
-      year: 2025–2026
-      description: []
-    - title: AccelNet-MultiNet Fellowship — NSF-supported exchange award
-      institution: International mobility award in multilayer network science (US–Europe network).
-      year: 2024
+    - title: Lecturer for Analysis and Visualization of Complex Network
+      institution: University of Turin, Turin, Italy
+      year: 2023-2024
       description: []
 
-- title: Supervision & Mentoring
-  type: time_table
-  contents:
-    - title: Postgraduate Research Scholars — Lagrange Fellowship (7 scholars)
-      institution: ISI Foundation, Turin — data science for social good
-      year: 2020–2023
-      description:
-        - Co-supervised seven scholars across climate communication, health equity, food security, vaccine hesitancy and misinformation.
-        - All scholars published in international peer-reviewed journals.
-    - title: MSc Thesis Co-Supervision — Vaccine Hesitancy in Italy
-      institution: University of Turin — published; student entered a research position
-      year: 2022
-      description: []
-    - title: MSc Thesis Co-Supervision — Digital Surveillance of ILI & COVID-19 with Twitter
-      institution: University of Turin — published; student entered a PhD programme
-      year: 2020
-      description: []
-
-- title: Supervision Capacity
-  type: nested_list
-  contents:
-    - title: Available to supervise PhD & MSc in
-      items:
-        - Network dynamics & behavioural cascades
-        - Computational social science
-        - Causal inference in complex systems
-        - Applied complexity in health, climate & social domains
-    - title: Track record
-      items:
-        - Nine researchers supervised or co-supervised to date
-        - All published their work
-        - Mentees progressed to PhD programmes, academic posts, the OECD and international NGOs
-
-- title: Collaborations
-  type: nested_list
-  contents:
-    - title: ISI Foundation / CENTAI, Turin
-      items:
-        - Computational epidemiology & social science
-        - Digital traces, misinformation, public-health behaviour
-    - title: BIFI, Universidad de Zaragoza
-      items:
-        - Prof. Yamir Moreno & Dr. Guilherme Ferraz de Arruda
-        - Higher-order network dynamics & hypergraphs
-    - title: LSHTM, London
-      items:
-        - Prof. W. J. Edmunds and colleagues
-        - Contact matrices & NPIs in Europe (CoMix)
-    - title: DTU Compute / SODAS, Copenhagen
-      items:
-        - Prof. Sune Lehmann
-        - Register-based Danish health & social research
-
-- title: Teaching
-  type: time_table
-  contents:
-    - title: Lecturer — Analysis and Visualization of Complex Networks (9 ECTS)
-      institution: MSc Computer Science, University of Turin — 25 graduate students, taught in English
-      year: 2023
-      description:
-        - Designed and delivered a full postgraduate module from scratch (~70% theory, ~30% labs & capstone).
-        - Python/NetworkX labs on real social-media and public network data.
-        - Several students went on to PhD programmes and research posts (incl. SODAS, University of Copenhagen).
-    - title: Teaching & Laboratory Assistant — Physics for Biotechnology
-      institution: University of Parma, Italy
-      year: 2017–2018
-      description: []
-    - title: Mathematics & Physics Teacher
-      institution: Convitto Maria Luigia, Parma, Italy
+    - title: High school teacher of mathematics and physics
+      institution: Convitto Maria Luigia, Parma, Parma, Italy
       year: 2018
-      description: []
 
-- title: Scientific Service
+    - title: Tutoring activity in physics for Biotechnology
+      institution: University of Parma, Parma, Italy
+      year: 2018
+
+    - title: Physics lab assistent
+      institution: University of Parma, Parma, Italy
+      year: 2018
+
+- title: Academic Interests
   type: nested_list
   contents:
-    - title: Editorial
+    - title: Complex systems.
       items:
-        - "Guest Editor — Data & Policy (Cambridge University Press), special collection (2023)"
-    - title: Peer review
+        - Hypergraphs.
+        - Temporal networks.
+        - Phase transitions.
+    - title: Computational Social Science.
       items:
-        - Nature Communications, Scientific Reports, PLOS ONE
-        - Journal of Medical Internet Research, EPJ Data Science
-        - Complexity, The Web Conference, NLP4IF
-    - title: Programme committees
+        - Information-seeking behavior.
+        - Infodemics.
+    - title: Epidemics.
       items:
-        - ICWSM 2026, NetSci 2025, NetSciX 2024
-        - Complex Networks 2023/2024, CCS, WWW WikiWorkshop 2023–2025
-        - CS2Italy 2026, CS2Nordics 2026, WebSci 2025, DPH 2025, WWW 2026
-    - title: Learned societies & chairing
-      items:
-        - Council Member — Complex Systems Society
-        - Session Chair — CCS 2025
+        - Contact Matrices.
+        - Agent Based Model.
+        - Statistical Modeling.
 
-- title: Invited Talks & Outreach
+- title: Other Interests
   type: nested_list
   contents:
-    - title: Invited talks & seminars
+    - title: Music.
       items:
-        - "CODE Project Final Workshop — CREF, Rome (2026)"
-        - "NERDS group seminar — IT University of Copenhagen (2026)"
-    - title: Selected presentations
+        - Music composition
+        - Jazz Guitar
+        - Ethnic Music
+    - title: Photography
       items:
-        - "Highlighted talk — CS2Italy 2026"
-        - "Speaker — IC2S2 2023, Copenhagen; NetSci 2018, Paris"
-    - title: Workshop organisation & outreach
-      items:
-        - "ECOSOCEPI (2024); D3A (2025) — Organiser"
-        - "Data Beers Copenhagen (2026) — Organising committee"
-        - "Researchers' Night, University of Parma"
-
-- title: Technical Skills
-  type: nested_list
-  contents:
-    - title: Programming
-      items:
-        - Python (primary), R, C++, Bash, Git
-        - pandas, NumPy, SciPy, scikit-learn, PySpark, geopandas
-        - NetworkX, igraph; custom temporal & higher-order network code
-    - title: Methods
-      items:
-        - Temporal, multilayer & higher-order networks; spectral & RG methods
-        - Epidemic models on networks (SIR/SEIR), diffusion & spreading
-        - Causal inference — DiD, event studies, IPW, sensitivity analysis
-        - NLP, representation learning, survey design (CAWI)
-    - title: Data infrastructure
-      items:
-        - Statistics Denmark secure environment (Forskerordningen); Danish registers (CPR, IDA, health)
-        - APIs — Twitter/X, YouTube, Wikipedia, GDELT, Google Trends
-        - HPC; GDPR & privacy-preserving design; reproducible pipelines
+        - Digital photography
+        - Film photography
+        - B&W
