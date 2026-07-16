@@ -2,23 +2,25 @@
 @plugin "@tailwindcss/typography";
 
 @layer base {
+  /* Light mode — Japanese "aka" red on paper white and ink black.
+     Stark editorial contrast, no generic AI colours (per Concept.md). */
   :root {
-    --bg-color: #f8f9fa;
-    --text-color: #212529;
-    --heading-color: #1a1a1a;
-    --accent-color: #6a0dad;
-    --border-color: #dee2e6;
-    --bg-secondary: #e9ecef;
+    --bg-color: #fbfaf8;      /* warm paper white */
+    --text-color: #1a1a1a;    /* ink */
+    --heading-color: #0d0d0d; /* near-black */
+    --accent-color: #b7282e;  /* aka / deep vermillion red */
+    --border-color: #e4e0da;  /* soft warm rule */
+    --bg-secondary: #f1eee9;  /* muted paper */
   }
 
-  /* Dark mode variables - based on the deep gray #121212 request */
+  /* Dark mode — mineral gray, black and white. */
   html.dark {
-    --bg-color: #121212;
-    --text-color: #e0e0e0;
-    --heading-color: #ffffff;
-    --accent-color: #bb86fc;
-    --border-color: #333333;
-    --bg-secondary: #1e1e1e;
+    --bg-color: #141414;      /* near-black */
+    --text-color: #d8d8d8;    /* soft white */
+    --heading-color: #ffffff; /* white */
+    --accent-color:  #235573;  /* mineral gray */
+    --border-color: #2c2c2c;  /* graphite rule */
+    --bg-secondary: #1e1e1e;  /* raised surface */
   }
 
   body {
@@ -64,5 +66,123 @@
   #artistic-canvas-container.active {
     pointer-events: auto;
     opacity: 1;
+  }
+}
+
+/* ------------------------------------------------------------------ */
+/*  Portal heroes — algorithmic edge-trace, heartbeat pulse            */
+/*  Used on both the Science homepage (forest → art) and the Art hub   */
+/*  (orb → surface). Each .portal sets --trace-src (and optional       */
+/*  --trace-pos) on its .hero-trace; the trace is filled with the      */
+/*  theme accent, so it tracks light/dark automatically.               */
+/* ------------------------------------------------------------------ */
+.portal {
+  -webkit-tap-highlight-color: transparent;
+}
+
+.hero-trace {
+  background-color: var(--accent-color);
+  -webkit-mask: var(--trace-src) var(--trace-pos, center) / cover no-repeat;
+  mask: var(--trace-src) var(--trace-pos, center) / cover no-repeat;
+  opacity: 1;
+  filter: drop-shadow(0 0 5px var(--accent-color));
+  will-change: opacity, transform;
+  /* soft heartbeat pulse at ~55 bpm (period 60/55 ≈ 1.09s) */
+  animation: hero-heartbeat 3.0909s ease-in-out infinite;
+}
+
+/* Pointer over the portal: hold the full trace, steady — no pulsing. */
+@media (hover: hover) {
+  .portal:hover .hero-trace {
+    animation: none;
+    opacity: 1;
+    transition: opacity 0.5s ease-out;
+  }
+  .portal:hover .hero-hint,
+  .portal:focus-visible .hero-hint {
+    opacity: 1;
+  }
+}
+
+/* lub-dub heartbeat: two soft beats, then rest */
+@keyframes hero-heartbeat {
+  0%   { opacity: 0.05; transform: scale(1); }
+  7%   { opacity: 0.90; transform: scale(1.006); } /* lub */
+  15%  { opacity: 0.09; }
+  23%  { opacity: 0.95; }                          /* dub */
+  33%  { opacity: 0.05; transform: scale(1); }
+  100% { opacity: 0.05; transform: scale(1); }     /* rest */
+}
+
+/* Reduced motion: no pulse, a faint steady trace (still holds on hover) */
+@media (prefers-reduced-motion: reduce) {
+  .hero-trace {
+    animation: none;
+    opacity: 0.12;
+  }
+  @media (hover: hover) {
+    .portal:hover .hero-trace {
+      opacity: 1;
+    }
+  }
+}
+
+/* ------------------------------------------------------------------ */
+/*  Print styles — clean, single-column, ink-on-paper CV               */
+/*  Triggered by the browser Print dialog / "Save as PDF".             */
+/* ------------------------------------------------------------------ */
+@media print {
+  /* Force light, high-contrast rendering regardless of theme */
+  html,
+  html.dark {
+    --bg-color: #ffffff;
+    --text-color: #000000;
+    --heading-color: #000000;
+    --accent-color: #b7282e;
+    --border-color: #999999;
+    --bg-secondary: #ffffff;
+  }
+
+  html.dark body,
+  body {
+    background: #ffffff !important;
+    color: #000000 !important;
+  }
+
+  /* Hide interactive chrome that has no place on paper */
+  header,
+  #theme-toggle,
+  .no-print,
+  #artistic-canvas-container,
+  #keyhole-transition-mask,
+  #hero-keyhole-trigger {
+    display: none !important;
+  }
+
+  /* Reclaim full width and drop shadows/backgrounds */
+  main {
+    max-width: 100% !important;
+    padding: 0 !important;
+    margin: 0 !important;
+  }
+
+  .cv-print-section {
+    break-inside: avoid;
+    page-break-inside: avoid;
+  }
+
+  a {
+    color: #000000 !important;
+    text-decoration: none !important;
+  }
+
+  @page {
+    margin: 1.6cm 1.8cm;
+  }
+
+  /* Slightly tighter type for print density */
+  body {
+    font-size: 10.5pt;
+    line-height: 1.35;
   }
 }
