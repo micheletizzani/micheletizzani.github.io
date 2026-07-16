@@ -1,0 +1,95 @@
+---
+import ArtLayout from '../../layouts/ArtLayout.astro';
+
+const sections = [
+	{
+		name: 'Photography',
+		href: '/art/photography',
+		blurb: 'Captured moments & environments, framed like a quiet gallery.',
+		status: '',
+	},
+	{
+		name: 'Digital Art',
+		href: '/art/digital',
+		blurb: 'Generative, code-driven experiments in motion.',
+		status: '',
+	},
+	{
+		name: 'Music',
+		href: '/art/music',
+		blurb: 'Composition, jazz guitar, and ethnic music.',
+		status: 'Coming soon',
+	},
+	{
+		name: 'Writing',
+		href: '/art/writing',
+		blurb: 'Notes, essays, and fragments from the margins.',
+		status: 'Coming soon',
+	},
+];
+---
+
+<ArtLayout title="The Gallery | Art World" maxW="max-w-[60%]">
+	{/* Portal back to the surface — mirrors the science hero (orb → surface) */}
+	<section class="relative w-full h-[340px] overflow-hidden mb-16">
+		<button
+			id="hero-surface-trigger"
+			type="button"
+			aria-label="Return to the surface"
+			class="portal absolute inset-0 w-full mx-auto h-full block cursor-pointer overflow-hidden group focus:outline-none"
+		>
+			{/* Luminous orb from the publications page */}
+			<div class="absolute inset-0 w-full h-full bg-cover bg-center bg-no-repeat brightness-[0.55]" style="background-image: url('/assets/img/publication-bg.jpg');"></div>
+
+			{/* Algorithmic edge-trace of the orb — heartbeat pulse, holds on hover */}
+			<div class="hero-trace absolute inset-0 w-full h-full pointer-events-none" style="--trace-src: url('/assets/img/publication-bg-trace.png'); --trace-pos: center;"></div>
+
+			<span class="hero-hint absolute bottom-4 left-1/2 -translate-x-1/2 text-[14px] uppercase tracking-[0.35em] text-white/70 opacity-10 transition-opacity duration-500 pointer-events-none">
+				Return to the Surface
+			</span>
+		</button>
+	</section>
+
+	<header class="mb-16 md:mb-24 text-center">
+		<h1 class="text-4xl md:text-6xl font-serif tracking-widest uppercase opacity-90 mb-4">The Gallery</h1>
+		<p class="text-sm md:text-base tracking-[0.2em] uppercase text-white/50">A quieter world beneath the surface</p>
+	</header>
+
+	<div class="grid grid-cols-1 md:grid-cols-2 gap-px bg-white/10 border border-white/10">
+		{sections.map((s) => (
+			<a
+				href={s.href}
+				class="group relative bg-black p-10 md:p-14 min-h-[220px] flex flex-col justify-between transition-colors duration-500 hover:bg-white/[0.03]"
+			>
+				<div class="flex items-start justify-between">
+					<h2 class="text-2xl md:text-3xl font-serif tracking-wider uppercase text-white/90 group-hover:text-white transition-colors">
+						{s.name}
+					</h2>
+					{s.status && (
+						<span class="text-[10px] tracking-[0.2em] uppercase text-white/40 border border-white/20 rounded-full px-3 py-1">
+							{s.status}
+						</span>
+					)}
+				</div>
+				<div class="mt-8">
+					<p class="text-sm text-white/50 font-light leading-relaxed max-w-sm">{s.blurb}</p>
+					<span class="mt-6 inline-block text-xs tracking-[0.25em] uppercase text-white/40 group-hover:text-white transition-all duration-500 group-hover:translate-x-1">
+						Enter →
+					</span>
+				</div>
+			</a>
+		))}
+	</div>
+
+	<script>
+		// Clicking the orb fades out, then returns to the science surface.
+		const surface = document.getElementById('hero-surface-trigger');
+		if (surface) {
+			surface.addEventListener('click', () => {
+				document.body.style.transition = 'opacity 0.5s ease';
+				document.body.style.opacity = '0';
+				window.setTimeout(() => { window.location.href = '/'; }, 480);
+			});
+		}
+	</script>
+</ArtLayout>

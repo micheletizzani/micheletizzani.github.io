@@ -23,7 +23,7 @@ function ParticleSwarm(props: any) {
       <Points ref={ref} positions={sphere as Float32Array} stride={3} frustumCulled={false} {...props}>
         <PointMaterial
           transparent
-          color="#bb86fc" // Accent color
+          color="#9fc2b2" // Mineral accent (dark-mode art world)
           size={0.005}
           sizeAttenuation={true}
           depthWrite={false}

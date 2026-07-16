@@ -1,0 +1,81 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Header from '../components/layout/Header.astro';
+---
+
+<Layout title="Contact | Michele Tizzani">
+  <Header />
+
+  <main class="max-w-4xl mx-auto px-6 py-16">
+    <div class="mb-16">
+      <h1 class="text-5xl font-serif mb-6 leading-tight border-b-2 border-[var(--border-color)] pb-4 inline-block">Contact & Connect</h1>
+      <p class="text-[var(--text-color)] opacity-80 text-lg max-w-2xl">
+        Whether you are interested in academic collaborations, data science consulting, or just want to discuss photography and complex networks, here is where you can find me.
+      </p>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-16">
+      {/* Science & Professional */}
+      <div>
+        <h2 class="text-2xl font-serif text-[var(--heading-color)] mb-6 flex items-center">
+          <span class="mr-4">Science & Professional</span>
+          <div class="flex-grow h-px bg-[var(--border-color)]"></div>
+        </h2>
+        <ul class="space-y-5 text-lg">
+          <li>
+            <a href="mailto:micti@dtu.dk" class="hover:text-[var(--accent-color)] transition-colors flex items-center group">
+              <span class="mr-4 opacity-50 group-hover:opacity-100 font-mono text-sm transition-opacity">01</span> 
+              Email (micti@dtu.dk)
+            </a>
+          </li>
+          <li>
+            <a href="https://www.linkedin.com/in/michele-tizzani" target="_blank" rel="noopener noreferrer" class="hover:text-[var(--accent-color)] transition-colors flex items-center group">
+              <span class="mr-4 opacity-50 group-hover:opacity-100 font-mono text-sm transition-opacity">02</span> 
+              LinkedIn
+            </a>
+          </li>
+          <li>
+            <a href="https://scholar.google.com/citations?user=iXfwdp4AAAAJ" target="_blank" rel="noopener noreferrer" class="hover:text-[var(--accent-color)] transition-colors flex items-center group">
+              <span class="mr-4 opacity-50 group-hover:opacity-100 font-mono text-sm transition-opacity">03</span> 
+              Google Scholar
+            </a>
+          </li>
+          <li>
+            <a href="https://orcid.org/0000-0003-3068-5111" target="_blank" rel="noopener noreferrer" class="hover:text-[var(--accent-color)] transition-colors flex items-center group">
+              <span class="mr-4 opacity-50 group-hover:opacity-100 font-mono text-sm transition-opacity">04</span> 
+              ORCID
+            </a>
+          </li>
+          <li>
+            <a href="https://github.com/mictiz" target="_blank" rel="noopener noreferrer" class="hover:text-[var(--accent-color)] transition-colors flex items-center group">
+              <span class="mr-4 opacity-50 group-hover:opacity-100 font-mono text-sm transition-opacity">05</span> 
+              GitHub
+            </a>
+          </li>
+        </ul>
+      </div>
+
+      {/* Art & Social */}
+      <div>
+        <h2 class="text-2xl font-serif text-[var(--heading-color)] mb-6 flex items-center">
+          <span class="mr-4">Art & Social</span>
+          <div class="flex-grow h-px bg-[var(--border-color)]"></div>
+        </h2>
+        <ul class="space-y-5 text-lg">
+          <li>
+            <a href="https://instagram.com/" target="_blank" rel="noopener noreferrer" class="hover:text-[var(--accent-color)] transition-colors flex items-center group">
+              <span class="mr-4 opacity-50 group-hover:opacity-100 font-mono text-sm transition-opacity">06</span> 
+              Instagram
+            </a>
+          </li>
+          <li>
+            <a href="https://twitter.com/" target="_blank" rel="noopener noreferrer" class="hover:text-[var(--accent-color)] transition-colors flex items-center group">
+              <span class="mr-4 opacity-50 group-hover:opacity-100 font-mono text-sm transition-opacity">07</span> 
+              Twitter / X
+            </a>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </main>
+</Layout>
