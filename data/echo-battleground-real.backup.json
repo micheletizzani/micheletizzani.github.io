@@ -1,0 +1,1528 @@
+[
+  {
+    "point": {
+      "kind": "comment",
+      "stance": 1.0,
+      "stanceLabel": "SIF",
+      "agreement": "agree",
+      "sentiment": "pos",
+      "topic": "politics",
+      "group": 911,
+      "ex": 0.761,
+      "ey": 0.494,
+      "engagement": 0.0
+    }
+  },
+  {
+    "point": {
+      "kind": "comment",
+      "stance": 0.0,
+      "stanceLabel": "N",
+      "agreement": "agree",
+      "sentiment": "neg",
+      "topic": "health",
+      "group": 580,
+      "ex": 0.272,
+      "ey": -0.201,
+      "engagement": 0.001
+    }
+  },
+  {
+    "point": {
+      "kind": "comment",
+      "stance": 0.3,
+      "stanceLabel": "IF",
+      "agreement": "agree",
+      "sentiment": "neg",
+      "topic": "society",
+      "group": 46,
+      "ex": 0.682,
+      "ey": 0.426,
+      "engagement": 0.0
+    }
+  },
+  {
+    "point": {
+      "kind": "comment",
+      "stance": 0.667,
+      "stanceLabel": "SIF",
+      "agreement": "neutral",
+      "sentiment": "neu",
+      "topic": "society",
+      "group": 709,
+      "ex": 1.275,
+      "ey": -0.344,
+      "engagement": 0.006
+    }
+  },
+  {
+    "point": {
+      "kind": "comment",
+      "stance": 0.0,
+      "stanceLabel": "N",
+      "agreement": "neutral",
+      "sentiment": "neu",
+      "topic": "health",
+      "group": 893,
+      "ex": 0.769,
+      "ey": 0.818,
+      "engagement": 0.001
+    }
+  },
+  {
+    "point": {
+      "kind": "comment",
+      "stance": -0.5,
+      "stanceLabel": "SA",
+      "agreement": "agree",
+      "sentiment": "neu",
+      "topic": "society",
+      "group": 696,
+      "ex": -0.501,
+      "ey": -0.129,
+      "engagement": 0.0
+    }
+  },
+  {
+    "point": {
+      "kind": "comment",
+      "stance": -0.167,
+      "stanceLabel": "A",
+      "agreement": "agree",
+      "sentiment": "neg",
+      "topic": "politics",
+      "group": 372,
+      "ex": 0.012,
+      "ey": 0.044,
+      "engagement": 0.001
+    }
+  },
+  {
+    "point": {
+      "kind": "comment",
+      "stance": -0.25,
+      "stanceLabel": "A",
+      "agreement": "agree",
+      "sentiment": "neg",
+      "topic": "health",
+      "group": 727,
+      "ex": -0.86,
+      "ey": -0.249,
+      "engagement": 0.003
+    }
+  },
+  {
+    "point": {
+      "kind": "comment",
+      "stance": 1.0,
+      "stanceLabel": "SIF",
+      "agreement": "neutral",
+      "sentiment": "neu",
+      "topic": "politics",
+      "group": 877,
+      "ex": 0.995,
+      "ey": -0.195,
+      "engagement": 0.0
+    }
+  },
+  {
+    "point": {
+      "kind": "comment",
+      "stance": -0.75,
+      "stanceLabel": "SA",
+      "agreement": "agree",
+      "sentiment": "neg",
+      "topic": "politics",
+      "group": 952,
+      "ex": -0.498,
+      "ey": -0.037,
+      "engagement": 0.001
+    }
+  },
+  {
+    "point": {
+      "kind": "comment",
+      "stance": 0.562,
+      "stanceLabel": "SIF",
+      "agreement": "neutral",
+      "sentiment": "neu",
+      "topic": "politics",
+      "group": 51,
+      "ex": 0.022,
+      "ey": 0.144,
+      "engagement": 0.0
+    }
+  },
+  {
+    "point": {
+      "kind": "comment",
+      "stance": 1.0,
+      "stanceLabel": "SIF",
+      "agreement": "agree",
+      "sentiment": "neu",
+      "topic": "society",
+      "group": 499,
+      "ex": 0.947,
+      "ey": 0.703,
+      "engagement": 0.0
+    }
+  },
+  {
+    "point": {
+      "kind": "comment",
+      "stance": 0.0,
+      "stanceLabel": "N",
+      "agreement": "agree",
+      "sentiment": "neu",
+      "topic": "politics",
+      "group": 516,
+      "ex": -0.074,
+      "ey": -0.078,
+      "engagement": 0.0
+    }
+  },
+  {
+    "point": {
+      "kind": "comment",
+      "stance": 0.667,
+      "stanceLabel": "SIF",
+      "agreement": "agree",
+      "sentiment": "neg",
+      "topic": "society",
+      "group": 394,
+      "ex": 0.029,
+      "ey": 0.013,
+      "engagement": 0.001
+    }
+  },
+  {
+    "point": {
+      "kind": "comment",
+      "stance": -0.25,
+      "stanceLabel": "A",
+      "agreement": "agree",
+      "sentiment": "neg",
+      "topic": "politics",
+      "group": 429,
+      "ex": -0.381,
+      "ey": -0.209,
+      "engagement": 0.0
+    }
+  },
+  {
+    "point": {
+      "kind": "comment",
+      "stance": 0.167,
+      "stanceLabel": "IF",
+      "agreement": "agree",
+      "sentiment": "neg",
+      "topic": "health",
+      "group": 959,
+      "ex": 0.052,
+      "ey": 0.186,
+      "engagement": 0.0
+    }
+  },
+  {
+    "point": {
+      "kind": "comment",
+      "stance": 0.333,
+      "stanceLabel": "IF",
+      "agreement": "agree",
+      "sentiment": "neg",
+      "topic": "society",
+      "group": 490,
+      "ex": 0.108,
+      "ey": -0.389,
+      "engagement": 0.0
+    }
+  },
+  {
+    "point": {
+      "kind": "comment",
+      "stance": -1.0,
+      "stanceLabel": "SA",
+      "agreement": "agree",
+      "sentiment": "neg",
+      "topic": "politics",
+      "group": 817,
+      "ex": -0.422,
+      "ey": -0.016,
+      "engagement": 0.0
+    }
+  },
+  {
+    "point": {
+      "kind": "comment",
+      "stance": 1.0,
+      "stanceLabel": "SIF",
+      "agreement": "agree",
+      "sentiment": "pos",
+      "topic": "health",
+      "group": 655,
+      "ex": 0.267,
+      "ey": -0.232,
+      "engagement": 0.0
+    }
+  },
+  {
+    "point": {
+      "kind": "comment",
+      "stance": 0.667,
+      "stanceLabel": "SIF",
+      "agreement": "agree",
+      "sentiment": "neu",
+      "topic": "politics",
+      "group": 77,
+      "ex": 0.59,
+      "ey": 0.908,
+      "engagement": 0.0
+    }
+  },
+  {
+    "point": {
+      "kind": "comment",
+      "stance": 0.667,
+      "stanceLabel": "SIF",
+      "agreement": "agree",
+      "sentiment": "pos",
+      "topic": "society",
+      "group": 39,
+      "ex": 0.733,
+      "ey": 0.35,
+      "engagement": 0.003
+    }
+  },
+  {
+    "point": {
+      "kind": "comment",
+      "stance": 0.3,
+      "stanceLabel": "IF",
+      "agreement": "agree",
+      "sentiment": "neg",
+      "topic": "society",
+      "group": 85,
+      "ex": 0.149,
+      "ey": 0.336,
+      "engagement": 0.0
+    }
+  },
+  {
+    "point": {
+      "kind": "comment",
+      "stance": 1.0,
+      "stanceLabel": "SIF",
+      "agreement": "neutral",
+      "sentiment": "neu",
+      "topic": "health",
+      "group": 537,
+      "ex": 0.942,
+      "ey": -0.158,
+      "engagement": 0.0
+    }
+  },
+  {
+    "point": {
+      "kind": "comment",
+      "stance": 0.667,
+      "stanceLabel": "SIF",
+      "agreement": "agree",
+      "sentiment": "neg",
+      "topic": "society",
+      "group": 814,
+      "ex": 0.438,
+      "ey": -0.923,
+      "engagement": 0.001
+    }
+  },
+  {
+    "point": {
+      "kind": "comment",
+      "stance": 0.45,
+      "stanceLabel": "IF",
+      "agreement": "neutral",
+      "sentiment": "pos",
+      "topic": "society",
+      "group": 955,
+      "ex": 0.607,
+      "ey": 0.492,
+      "engagement": 0.0
+    }
+  },
+  {
+    "point": {
+      "kind": "comment",
+      "stance": -0.2,
+      "stanceLabel": "A",
+      "agreement": "neutral",
+      "sentiment": "neg",
+      "topic": "politics",
+      "group": 186,
+      "ex": 1.282,
+      "ey": -0.458,
+      "engagement": 0.0
+    }
+  },
+  {
+    "point": {
+      "kind": "comment",
+      "stance": 0.25,
+      "stanceLabel": "IF",
+      "agreement": "agree",
+      "sentiment": "neg",
+      "topic": "society",
+      "group": 895,
+      "ex": 0.112,
+      "ey": -0.584,
+      "engagement": 0.0
+    }
+  },
+  {
+    "point": {
+      "kind": "comment",
+      "stance": 0.7,
+      "stanceLabel": "SIF",
+      "agreement": "agree",
+      "sentiment": "neu",
+      "topic": "health",
+      "group": 340,
+      "ex": 1.385,
+      "ey": 0.2,
+      "engagement": 0.0
+    }
+  },
+  {
+    "point": {
+      "kind": "comment",
+      "stance": 1.0,
+      "stanceLabel": "SIF",
+      "agreement": "neutral",
+      "sentiment": "pos",
+      "topic": "politics",
+      "group": 371,
+      "ex": 0.067,
+      "ey": 0.491,
+      "engagement": 0.0
+    }
+  },
+  {
+    "point": {
+      "kind": "comment",
+      "stance": 0.8,
+      "stanceLabel": "SIF",
+      "agreement": "agree",
+      "sentiment": "neg",
+      "topic": "health",
+      "group": 51,
+      "ex": -0.296,
+      "ey": -0.53,
+      "engagement": 0.001
+    }
+  },
+  {
+    "point": {
+      "kind": "comment",
+      "stance": 0.222,
+      "stanceLabel": "IF",
+      "agreement": "neutral",
+      "sentiment": "pos",
+      "topic": "society",
+      "group": 596,
+      "ex": 0.977,
+      "ey": 0.122,
+      "engagement": 0.0
+    }
+  },
+  {
+    "point": {
+      "kind": "comment",
+      "stance": 0.0,
+      "stanceLabel": "N",
+      "agreement": "agree",
+      "sentiment": "neg",
+      "topic": "politics",
+      "group": 469,
+      "ex": 1.145,
+      "ey": 0.294,
+      "engagement": 0.0
+    }
+  },
+  {
+    "point": {
+      "kind": "comment",
+      "stance": 0.1,
+      "stanceLabel": "IF",
+      "agreement": "neutral",
+      "sentiment": "pos",
+      "topic": "society",
+      "group": 345,
+      "ex": 1.268,
+      "ey": -0.07,
+      "engagement": 0.0
+    }
+  },
+  {
+    "point": {
+      "kind": "comment",
+      "stance": -0.667,
+      "stanceLabel": "SA",
+      "agreement": "agree",
+      "sentiment": "neg",
+      "topic": "health",
+      "group": 921,
+      "ex": -0.474,
+      "ey": -0.129,
+      "engagement": 0.012
+    }
+  },
+  {
+    "point": {
+      "kind": "comment",
+      "stance": 0.15,
+      "stanceLabel": "IF",
+      "agreement": "neutral",
+      "sentiment": "neu",
+      "topic": "society",
+      "group": 951,
+      "ex": 0.561,
+      "ey": 0.88,
+      "engagement": 0.0
+    }
+  },
+  {
+    "point": {
+      "kind": "comment",
+      "stance": 0.438,
+      "stanceLabel": "IF",
+      "agreement": "agree",
+      "sentiment": "pos",
+      "topic": "society",
+      "group": 683,
+      "ex": 1.185,
+      "ey": 0.24,
+      "engagement": 0.0
+    }
+  },
+  {
+    "point": {
+      "kind": "comment",
+      "stance": 0.05,
+      "stanceLabel": "IF",
+      "agreement": "agree",
+      "sentiment": "neg",
+      "topic": "society",
+      "group": 190,
+      "ex": 0.619,
+      "ey": 0.426,
+      "engagement": 0.0
+    }
+  },
+  {
+    "point": {
+      "kind": "comment",
+      "stance": 0.0,
+      "stanceLabel": "N",
+      "agreement": "neutral",
+      "sentiment": "neu",
+      "topic": "health",
+      "group": 489,
+      "ex": 0.498,
+      "ey": 0.332,
+      "engagement": 0.0
+    }
+  },
+  {
+    "point": {
+      "kind": "comment",
+      "stance": -1.0,
+      "stanceLabel": "SA",
+      "agreement": "agree",
+      "sentiment": "neu",
+      "topic": "health",
+      "group": 587,
+      "ex": -0.322,
+      "ey": -0.067,
+      "engagement": 0.011
+    }
+  },
+  {
+    "point": {
+      "kind": "comment",
+      "stance": 0.15,
+      "stanceLabel": "IF",
+      "agreement": "agree",
+      "sentiment": "neu",
+      "topic": "health",
+      "group": 19,
+      "ex": 0.703,
+      "ey": -0.694,
+      "engagement": 0.0
+    }
+  },
+  {
+    "point": {
+      "kind": "comment",
+      "stance": 0.0,
+      "stanceLabel": "N",
+      "agreement": "agree",
+      "sentiment": "neu",
+      "topic": "society",
+      "group": 249,
+      "ex": 0.246,
+      "ey": 0.24,
+      "engagement": 0.0
+    }
+  },
+  {
+    "point": {
+      "kind": "comment",
+      "stance": 0.0,
+      "stanceLabel": "N",
+      "agreement": "agree",
+      "sentiment": "neg",
+      "topic": "society",
+      "group": 427,
+      "ex": -0.227,
+      "ey": 0.261,
+      "engagement": 0.0
+    }
+  },
+  {
+    "point": {
+      "kind": "comment",
+      "stance": 0.0,
+      "stanceLabel": "N",
+      "agreement": "agree",
+      "sentiment": "neu",
+      "topic": "society",
+      "group": 909,
+      "ex": 1.193,
+      "ey": 0.151,
+      "engagement": 0.0
+    }
+  },
+  {
+    "point": {
+      "kind": "comment",
+      "stance": 0.053,
+      "stanceLabel": "IF",
+      "agreement": "agree",
+      "sentiment": "neg",
+      "topic": "politics",
+      "group": 160,
+      "ex": 1.206,
+      "ey": 0.327,
+      "engagement": 0.003
+    }
+  },
+  {
+    "point": {
+      "kind": "comment",
+      "stance": 1.0,
+      "stanceLabel": "SIF",
+      "agreement": "agree",
+      "sentiment": "neg",
+      "topic": "politics",
+      "group": 823,
+      "ex": -0.442,
+      "ey": 0.245,
+      "engagement": 0.0
+    }
+  },
+  {
+    "point": {
+      "kind": "comment",
+      "stance": 0.5,
+      "stanceLabel": "SIF",
+      "agreement": "neutral",
+      "sentiment": "neu",
+      "topic": "society",
+      "group": 128,
+      "ex": 0.329,
+      "ey": 0.677,
+      "engagement": 0.0
+    }
+  },
+  {
+    "point": {
+      "kind": "comment",
+      "stance": 0.167,
+      "stanceLabel": "IF",
+      "agreement": "neutral",
+      "sentiment": "neu",
+      "topic": "politics",
+      "group": 575,
+      "ex": 0.777,
+      "ey": 0.162,
+      "engagement": 0.01
+    }
+  },
+  {
+    "point": {
+      "kind": "comment",
+      "stance": 0.0,
+      "stanceLabel": "N",
+      "agreement": "agree",
+      "sentiment": "pos",
+      "topic": "society",
+      "group": 224,
+      "ex": -0.095,
+      "ey": -0.789,
+      "engagement": 0.0
+    }
+  },
+  {
+    "point": {
+      "kind": "comment",
+      "stance": 0.0,
+      "stanceLabel": "N",
+      "agreement": "agree",
+      "sentiment": "neg",
+      "topic": "politics",
+      "group": 402,
+      "ex": -0.149,
+      "ey": 0.041,
+      "engagement": 0.011
+    }
+  },
+  {
+    "point": {
+      "kind": "comment",
+      "stance": 0.5,
+      "stanceLabel": "SIF",
+      "agreement": "agree",
+      "sentiment": "neg",
+      "topic": "society",
+      "group": 167,
+      "ex": 0.756,
+      "ey": 0.157,
+      "engagement": 0.001
+    }
+  },
+  {
+    "point": {
+      "kind": "comment",
+      "stance": 0.667,
+      "stanceLabel": "SIF",
+      "agreement": "neutral",
+      "sentiment": "neg",
+      "topic": "society",
+      "group": 155,
+      "ex": 0.549,
+      "ey": -0.956,
+      "engagement": 0.0
+    }
+  },
+  {
+    "point": {
+      "kind": "comment",
+      "stance": 0.667,
+      "stanceLabel": "SIF",
+      "agreement": "agree",
+      "sentiment": "neg",
+      "topic": "health",
+      "group": 576,
+      "ex": 0.75,
+      "ey": -0.208,
+      "engagement": 0.0
+    }
+  },
+  {
+    "point": {
+      "kind": "comment",
+      "stance": -0.75,
+      "stanceLabel": "SA",
+      "agreement": "agree",
+      "sentiment": "neg",
+      "topic": "society",
+      "group": 818,
+      "ex": -0.442,
+      "ey": -0.052,
+      "engagement": 0.0
+    }
+  },
+  {
+    "point": {
+      "kind": "comment",
+      "stance": -0.833,
+      "stanceLabel": "SA",
+      "agreement": "agree",
+      "sentiment": "neg",
+      "topic": "health",
+      "group": 429,
+      "ex": -0.703,
+      "ey": 0.109,
+      "engagement": 0.0
+    }
+  },
+  {
+    "point": {
+      "kind": "comment",
+      "stance": 1.0,
+      "stanceLabel": "SIF",
+      "agreement": "neutral",
+      "sentiment": "neu",
+      "topic": "society",
+      "group": 893,
+      "ex": 0.421,
+      "ey": 0.873,
+      "engagement": 0.0
+    }
+  },
+  {
+    "point": {
+      "kind": "comment",
+      "stance": -0.583,
+      "stanceLabel": "SA",
+      "agreement": "agree",
+      "sentiment": "pos",
+      "topic": "society",
+      "group": 252,
+      "ex": -0.567,
+      "ey": 0.113,
+      "engagement": 0.0
+    }
+  },
+  {
+    "point": {
+      "kind": "comment",
+      "stance": 0.667,
+      "stanceLabel": "SIF",
+      "agreement": "agree",
+      "sentiment": "neg",
+      "topic": "health",
+      "group": 854,
+      "ex": 0.139,
+      "ey": -0.739,
+      "engagement": 0.0
+    }
+  },
+  {
+    "point": {
+      "kind": "comment",
+      "stance": 0.5,
+      "stanceLabel": "SIF",
+      "agreement": "neutral",
+      "sentiment": "pos",
+      "topic": "health",
+      "group": 734,
+      "ex": 1.008,
+      "ey": 0.33,
+      "engagement": 0.0
+    }
+  },
+  {
+    "point": {
+      "kind": "comment",
+      "stance": 1.0,
+      "stanceLabel": "SIF",
+      "agreement": "agree",
+      "sentiment": "pos",
+      "topic": "politics",
+      "group": 227,
+      "ex": 0.585,
+      "ey": 0.399,
+      "engagement": 0.0
+    }
+  },
+  {
+    "point": {
+      "kind": "comment",
+      "stance": 0.0,
+      "stanceLabel": "N",
+      "agreement": "agree",
+      "sentiment": "neg",
+      "topic": "politics",
+      "group": 695,
+      "ex": 1.032,
+      "ey": 0.007,
+      "engagement": 0.0
+    }
+  },
+  {
+    "point": {
+      "kind": "comment",
+      "stance": -1.0,
+      "stanceLabel": "SA",
+      "agreement": "agree",
+      "sentiment": "neu",
+      "topic": "society",
+      "group": 188,
+      "ex": -0.514,
+      "ey": -0.04,
+      "engagement": 0.0
+    }
+  },
+  {
+    "point": {
+      "kind": "comment",
+      "stance": 0.0,
+      "stanceLabel": "N",
+      "agreement": "agree",
+      "sentiment": "neg",
+      "topic": "society",
+      "group": 918,
+      "ex": 1.185,
+      "ey": -0.375,
+      "engagement": 0.0
+    }
+  },
+  {
+    "point": {
+      "kind": "comment",
+      "stance": 0.0,
+      "stanceLabel": "N",
+      "agreement": "agree",
+      "sentiment": "neg",
+      "topic": "society",
+      "group": 534,
+      "ex": 0.247,
+      "ey": -0.554,
+      "engagement": 0.001
+    }
+  },
+  {
+    "point": {
+      "kind": "comment",
+      "stance": 0.0,
+      "stanceLabel": "N",
+      "agreement": "agree",
+      "sentiment": "neu",
+      "topic": "politics",
+      "group": 109,
+      "ex": 0.491,
+      "ey": -0.765,
+      "engagement": 0.002
+    }
+  },
+  {
+    "point": {
+      "kind": "comment",
+      "stance": 0.5,
+      "stanceLabel": "SIF",
+      "agreement": "agree",
+      "sentiment": "neg",
+      "topic": "society",
+      "group": 89,
+      "ex": 0.22,
+      "ey": 0.869,
+      "engagement": 0.0
+    }
+  },
+  {
+    "point": {
+      "kind": "comment",
+      "stance": 0.0,
+      "stanceLabel": "N",
+      "agreement": "neutral",
+      "sentiment": "neu",
+      "topic": "politics",
+      "group": 640,
+      "ex": 1.136,
+      "ey": 0.073,
+      "engagement": 0.0
+    }
+  },
+  {
+    "point": {
+      "kind": "comment",
+      "stance": -0.333,
+      "stanceLabel": "A",
+      "agreement": "agree",
+      "sentiment": "neg",
+      "topic": "politics",
+      "group": 236,
+      "ex": -0.386,
+      "ey": -0.149,
+      "engagement": 0.001
+    }
+  },
+  {
+    "point": {
+      "kind": "comment",
+      "stance": 0.0,
+      "stanceLabel": "N",
+      "agreement": "agree",
+      "sentiment": "pos",
+      "topic": "politics",
+      "group": 923,
+      "ex": 0.518,
+      "ey": 0.363,
+      "engagement": 0.002
+    }
+  },
+  {
+    "point": {
+      "kind": "comment",
+      "stance": 0.0,
+      "stanceLabel": "N",
+      "agreement": "agree",
+      "sentiment": "pos",
+      "topic": "society",
+      "group": 694,
+      "ex": 0.47,
+      "ey": 0.304,
+      "engagement": 0.0
+    }
+  },
+  {
+    "point": {
+      "kind": "comment",
+      "stance": 0.9,
+      "stanceLabel": "SIF",
+      "agreement": "neutral",
+      "sentiment": "neg",
+      "topic": "politics",
+      "group": 450,
+      "ex": -0.233,
+      "ey": -0.483,
+      "engagement": 0.0
+    }
+  },
+  {
+    "point": {
+      "kind": "comment",
+      "stance": 1.0,
+      "stanceLabel": "SIF",
+      "agreement": "agree",
+      "sentiment": "neu",
+      "topic": "politics",
+      "group": 919,
+      "ex": 0.578,
+      "ey": -0.77,
+      "engagement": 0.001
+    }
+  },
+  {
+    "point": {
+      "kind": "comment",
+      "stance": 0.5,
+      "stanceLabel": "SIF",
+      "agreement": "agree",
+      "sentiment": "neg",
+      "topic": "society",
+      "group": 436,
+      "ex": 1.15,
+      "ey": 0.191,
+      "engagement": 0.0
+    }
+  },
+  {
+    "point": {
+      "kind": "comment",
+      "stance": 0.0,
+      "stanceLabel": "N",
+      "agreement": "agree",
+      "sentiment": "neg",
+      "topic": "health",
+      "group": 393,
+      "ex": 0.19,
+      "ey": -0.017,
+      "engagement": 0.0
+    }
+  },
+  {
+    "point": {
+      "kind": "comment",
+      "stance": -1.0,
+      "stanceLabel": "SA",
+      "agreement": "neutral",
+      "sentiment": "neu",
+      "topic": "society",
+      "group": 17,
+      "ex": -0.492,
+      "ey": -0.033,
+      "engagement": 0.0
+    }
+  },
+  {
+    "point": {
+      "kind": "comment",
+      "stance": 0.0,
+      "stanceLabel": "N",
+      "agreement": "agree",
+      "sentiment": "neu",
+      "topic": "society",
+      "group": 946,
+      "ex": 0.72,
+      "ey": -0.266,
+      "engagement": 0.0
+    }
+  },
+  {
+    "point": {
+      "kind": "comment",
+      "stance": -0.6,
+      "stanceLabel": "SA",
+      "agreement": "agree",
+      "sentiment": "pos",
+      "topic": "politics",
+      "group": 325,
+      "ex": -0.637,
+      "ey": -0.018,
+      "engagement": 0.0
+    }
+  },
+  {
+    "point": {
+      "kind": "comment",
+      "stance": 0.083,
+      "stanceLabel": "IF",
+      "agreement": "agree",
+      "sentiment": "neg",
+      "topic": "society",
+      "group": 10,
+      "ex": 0.194,
+      "ey": 0.15,
+      "engagement": 0.0
+    }
+  },
+  {
+    "point": {
+      "kind": "comment",
+      "stance": 1.0,
+      "stanceLabel": "SIF",
+      "agreement": "agree",
+      "sentiment": "neg",
+      "topic": "politics",
+      "group": 583,
+      "ex": 0.29,
+      "ey": 0.236,
+      "engagement": 0.0
+    }
+  },
+  {
+    "point": {
+      "kind": "comment",
+      "stance": 1.0,
+      "stanceLabel": "SIF",
+      "agreement": "agree",
+      "sentiment": "neg",
+      "topic": "health",
+      "group": 703,
+      "ex": 0.099,
+      "ey": 0.105,
+      "engagement": 0.0
+    }
+  },
+  {
+    "point": {
+      "kind": "comment",
+      "stance": -0.357,
+      "stanceLabel": "A",
+      "agreement": "agree",
+      "sentiment": "neg",
+      "topic": "health",
+      "group": 591,
+      "ex": -0.568,
+      "ey": -0.093,
+      "engagement": 0.005
+    }
+  },
+  {
+    "point": {
+      "kind": "comment",
+      "stance": -1.0,
+      "stanceLabel": "SA",
+      "agreement": "agree",
+      "sentiment": "neg",
+      "topic": "health",
+      "group": 555,
+      "ex": -0.598,
+      "ey": 0.034,
+      "engagement": 0.009
+    }
+  },
+  {
+    "point": {
+      "kind": "comment",
+      "stance": 0.0,
+      "stanceLabel": "N",
+      "agreement": "agree",
+      "sentiment": "neg",
+      "topic": "politics",
+      "group": 384,
+      "ex": -0.319,
+      "ey": -0.231,
+      "engagement": 0.0
+    }
+  },
+  {
+    "point": {
+      "kind": "comment",
+      "stance": 1.0,
+      "stanceLabel": "SIF",
+      "agreement": "agree",
+      "sentiment": "neu",
+      "topic": "politics",
+      "group": 167,
+      "ex": 0.981,
+      "ey": -0.478,
+      "engagement": 0.0
+    }
+  },
+  {
+    "point": {
+      "kind": "comment",
+      "stance": -0.571,
+      "stanceLabel": "SA",
+      "agreement": "agree",
+      "sentiment": "neu",
+      "topic": "politics",
+      "group": 513,
+      "ex": -0.332,
+      "ey": 0.002,
+      "engagement": 0.046
+    }
+  },
+  {
+    "point": {
+      "kind": "comment",
+      "stance": 0.0,
+      "stanceLabel": "N",
+      "agreement": "neutral",
+      "sentiment": "neu",
+      "topic": "society",
+      "group": 560,
+      "ex": 1.406,
+      "ey": -0.333,
+      "engagement": 0.0
+    }
+  },
+  {
+    "point": {
+      "kind": "comment",
+      "stance": -0.714,
+      "stanceLabel": "SA",
+      "agreement": "neutral",
+      "sentiment": "neu",
+      "topic": "health",
+      "group": 576,
+      "ex": -0.53,
+      "ey": -0.134,
+      "engagement": 0.0
+    }
+  },
+  {
+    "point": {
+      "kind": "comment",
+      "stance": 0.167,
+      "stanceLabel": "IF",
+      "agreement": "agree",
+      "sentiment": "neg",
+      "topic": "health",
+      "group": 608,
+      "ex": -0.302,
+      "ey": 0.071,
+      "engagement": 0.001
+    }
+  },
+  {
+    "point": {
+      "kind": "comment",
+      "stance": 0.333,
+      "stanceLabel": "IF",
+      "agreement": "agree",
+      "sentiment": "neg",
+      "topic": "health",
+      "group": 22,
+      "ex": 1.121,
+      "ey": -0.137,
+      "engagement": 0.0
+    }
+  },
+  {
+    "point": {
+      "kind": "comment",
+      "stance": 0.85,
+      "stanceLabel": "SIF",
+      "agreement": "agree",
+      "sentiment": "neg",
+      "topic": "health",
+      "group": 479,
+      "ex": 0.754,
+      "ey": 0.82,
+      "engagement": 0.0
+    }
+  },
+  {
+    "point": {
+      "kind": "comment",
+      "stance": 0.75,
+      "stanceLabel": "SIF",
+      "agreement": "agree",
+      "sentiment": "neg",
+      "topic": "health",
+      "group": 79,
+      "ex": 0.053,
+      "ey": -0.292,
+      "engagement": 0.0
+    }
+  },
+  {
+    "point": {
+      "kind": "comment",
+      "stance": 0.0,
+      "stanceLabel": "N",
+      "agreement": "agree",
+      "sentiment": "neu",
+      "topic": "politics",
+      "group": 536,
+      "ex": 0.783,
+      "ey": 0.728,
+      "engagement": 0.0
+    }
+  },
+  {
+    "point": {
+      "kind": "comment",
+      "stance": -0.667,
+      "stanceLabel": "SA",
+      "agreement": "agree",
+      "sentiment": "neu",
+      "topic": "politics",
+      "group": 471,
+      "ex": -0.66,
+      "ey": 0.065,
+      "engagement": 0.0
+    }
+  },
+  {
+    "point": {
+      "kind": "comment",
+      "stance": -0.2,
+      "stanceLabel": "A",
+      "agreement": "agree",
+      "sentiment": "neg",
+      "topic": "health",
+      "group": 154,
+      "ex": -0.486,
+      "ey": -0.121,
+      "engagement": 0.0
+    }
+  },
+  {
+    "point": {
+      "kind": "comment",
+      "stance": 1.0,
+      "stanceLabel": "SIF",
+      "agreement": "agree",
+      "sentiment": "neg",
+      "topic": "health",
+      "group": 882,
+      "ex": 1.451,
+      "ey": 0.178,
+      "engagement": 0.0
+    }
+  },
+  {
+    "point": {
+      "kind": "comment",
+      "stance": 0.0,
+      "stanceLabel": "N",
+      "agreement": "agree",
+      "sentiment": "neg",
+      "topic": "society",
+      "group": 579,
+      "ex": 0.68,
+      "ey": 0.882,
+      "engagement": 0.0
+    }
+  },
+  {
+    "point": {
+      "kind": "comment",
+      "stance": 0.333,
+      "stanceLabel": "IF",
+      "agreement": "agree",
+      "sentiment": "neg",
+      "topic": "health",
+      "group": 192,
+      "ex": 0.123,
+      "ey": 0.163,
+      "engagement": 0.0
+    }
+  },
+  {
+    "point": {
+      "kind": "comment",
+      "stance": 1.0,
+      "stanceLabel": "SIF",
+      "agreement": "agree",
+      "sentiment": "pos",
+      "topic": "society",
+      "group": 477,
+      "ex": 0.947,
+      "ey": 0.479,
+      "engagement": 0.0
+    }
+  },
+  {
+    "point": {
+      "kind": "comment",
+      "stance": 0.0,
+      "stanceLabel": "N",
+      "agreement": "neutral",
+      "sentiment": "pos",
+      "topic": "politics",
+      "group": 471,
+      "ex": 0.866,
+      "ey": 0.689,
+      "engagement": 0.001
+    }
+  },
+  {
+    "point": {
+      "kind": "comment",
+      "stance": 1.0,
+      "stanceLabel": "SIF",
+      "agreement": "neutral",
+      "sentiment": "neu",
+      "topic": "politics",
+      "group": 378,
+      "ex": 0.737,
+      "ey": 0.242,
+      "engagement": 0.0
+    }
+  },
+  {
+    "point": {
+      "kind": "comment",
+      "stance": -1.0,
+      "stanceLabel": "SA",
+      "agreement": "neutral",
+      "sentiment": "pos",
+      "topic": "health",
+      "group": 923,
+      "ex": -0.852,
+      "ey": -0.068,
+      "engagement": 0.0
+    }
+  },
+  {
+    "point": {
+      "kind": "comment",
+      "stance": 0.667,
+      "stanceLabel": "SIF",
+      "agreement": "neutral",
+      "sentiment": "neu",
+      "topic": "society",
+      "group": 124,
+      "ex": 0.33,
+      "ey": 0.827,
+      "engagement": 0.0
+    }
+  },
+  {
+    "point": {
+      "kind": "comment",
+      "stance": -0.1,
+      "stanceLabel": "A",
+      "agreement": "neutral",
+      "sentiment": "neu",
+      "topic": "politics",
+      "group": 657,
+      "ex": 0.153,
+      "ey": -0.389,
+      "engagement": 0.0
+    }
+  },
+  {
+    "point": {
+      "kind": "comment",
+      "stance": 0.0,
+      "stanceLabel": "N",
+      "agreement": "neutral",
+      "sentiment": "pos",
+      "topic": "society",
+      "group": 579,
+      "ex": 0.568,
+      "ey": -0.582,
+      "engagement": 0.0
+    }
+  },
+  {
+    "point": {
+      "kind": "comment",
+      "stance": -0.125,
+      "stanceLabel": "A",
+      "agreement": "neutral",
+      "sentiment": "neu",
+      "topic": "health",
+      "group": 975,
+      "ex": 1.104,
+      "ey": -0.518,
+      "engagement": 0.001
+    }
+  },
+  {
+    "point": {
+      "kind": "comment",
+      "stance": 0.5,
+      "stanceLabel": "SIF",
+      "agreement": "agree",
+      "sentiment": "neu",
+      "topic": "society",
+      "group": 621,
+      "ex": 1.45,
+      "ey": -0.182,
+      "engagement": 0.0
+    }
+  },
+  {
+    "point": {
+      "kind": "comment",
+      "stance": 0.091,
+      "stanceLabel": "IF",
+      "agreement": "agree",
+      "sentiment": "neg",
+      "topic": "politics",
+      "group": 247,
+      "ex": 0.715,
+      "ey": 0.432,
+      "engagement": 0.001
+    }
+  },
+  {
+    "point": {
+      "kind": "comment",
+      "stance": 0.0,
+      "stanceLabel": "N",
+      "agreement": "agree",
+      "sentiment": "pos",
+      "topic": "health",
+      "group": 78,
+      "ex": -0.194,
+      "ey": 0.184,
+      "engagement": 0.0
+    }
+  },
+  {
+    "point": {
+      "kind": "comment",
+      "stance": -1.0,
+      "stanceLabel": "SA",
+      "agreement": "agree",
+      "sentiment": "neg",
+      "topic": "society",
+      "group": 286,
+      "ex": -0.493,
+      "ey": 0.031,
+      "engagement": 0.0
+    }
+  },
+  {
+    "point": {
+      "kind": "comment",
+      "stance": 0.0,
+      "stanceLabel": "N",
+      "agreement": "agree",
+      "sentiment": "neg",
+      "topic": "society",
+      "group": 534,
+      "ex": 0.682,
+      "ey": -0.689,
+      "engagement": 0.001
+    }
+  }
+]
