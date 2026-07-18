@@ -37,7 +37,7 @@ jobs:
       - name: Purge unused CSS 🧹
         run: |
           npm install -g purgecss
-          purgecss -c purgecss.config.js
+          purgecss -c purgecss.config.cjs
       - name: Link Checker 🔗
         uses: lycheeverse/lychee-action@v1.9.0
         with:

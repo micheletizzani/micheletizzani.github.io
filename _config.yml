@@ -223,7 +223,7 @@ exclude:
   #- LICENSE
   - package.json
   - package-lock.json
-  - purgecss.config.js
+  - purgecss.config.cjs
   - README.md
   - vendor
   - src
