@@ -64,13 +64,26 @@ export default function PieceCanvas() {
       >
         <button
           onClick={() => setShowInfo(false)}
-          className="absolute top-8 right-6 text-white/40 hover:text-white transition-colors"
+          className="mb-6 flex items-center gap-2 text-white/40 hover:text-white transition-colors text-[11px] uppercase tracking-[0.2em]"
           aria-label="Hide info"
         >
-          ✕
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="16"
+            height="16"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          >
+            <path d="m6 9 6 6 6-6" />
+          </svg>
+          Menu
         </button>
 
-        <h1 className="font-serif text-2xl tracking-wide text-white/95 pr-6">Echo / Battleground</h1>
+        <h1 className="font-serif text-2xl tracking-wide text-white/95">Echo / Battleground</h1>
         <p className="mt-1 text-[11px] uppercase tracking-[0.25em] text-white/40">Tizzani &amp; Mejova · J. Med. Internet Res. 2026 · e88519</p>
 
         <p className="mt-5 text-sm leading-relaxed">
@@ -130,9 +143,22 @@ export default function PieceCanvas() {
       {!showInfo && (
         <button
           onClick={() => setShowInfo(true)}
-          className="absolute bottom-8 left-8 z-20 flex items-center gap-2 rounded-full border border-white/25 px-4 py-1.5 text-xs uppercase tracking-[0.2em] text-white/85 transition-colors hover:bg-white/10"
+          className="absolute bottom-8 left-8 z-20 flex items-center gap-2 rounded-full border border-white/25 px-4 py-1.5 text-[11px] uppercase tracking-[0.2em] text-white/85 transition-colors hover:bg-white/10"
         >
-          Info
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="16"
+            height="16"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          >
+            <path d="m18 15-6-6-6 6" />
+          </svg>
+          Menu
         </button>
       )}
 
