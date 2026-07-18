@@ -62,7 +62,7 @@ export default function PieceCanvas() {
         }`}
         style={{ background: "linear-gradient(to right, rgba(0,0,0,0.74) 0%, rgba(0,0,0,0.45) 62%, rgba(0,0,0,0) 100%)" }}
       >
-        <button 
+        <button
           onClick={() => setShowInfo(false)}
           className="absolute top-8 right-6 text-white/40 hover:text-white transition-colors"
           aria-label="Hide info"
