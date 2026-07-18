@@ -40,8 +40,8 @@
     "three": "^0.184.0"
   },
   "devDependencies": {
-    "@shopify/prettier-plugin-liquid": "^1.10.3",
-    "prettier": "^3.9.5",
+    "@shopify/prettier-plugin-liquid": "1.11.0",
+    "prettier": "3.9.5",
     "prettier-plugin-astro": "^0.14.1"
   }
 }
