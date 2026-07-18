@@ -26,30 +26,8 @@ jobs:
     steps:
       - name: Checkout 🛎️
         uses: actions/checkout@v4
-      - name: Setup Ruby
-        uses: ruby/setup-ruby@v1
         with:
-          ruby-version: "3.2.2"
-          bundler-cache: true
-      - name: Update _config.yml ⚙️
-        uses: fjogeleit/yaml-update-action@main
-        with:
-          commitChange: false
-          valueFile: "_config.yml"
-          changes: |
-            {
-              "giscus.repo": "${{ github.repository }}",
-              "baseurl": ""
-            }
-      - name: Install and Build 🔧
-        run: |
-          pip3 install --upgrade jupyter
-          export JEKYLL_ENV=production
-          bundle exec jekyll build --lsi
-      - name: Purge unused CSS 🧹
-        run: |
-          npm install -g purgecss
-          purgecss -c purgecss.config.cjs
+          ref: gh-pages
       - name: Get Chromium version 🌐
         # https://github.com/GoogleChromeLabs/chrome-for-testing?tab=readme-ov-file#other-api-endpoints
         run: |
@@ -69,5 +47,5 @@ jobs:
         run: |
           npm install -g @axe-core/cli
           npm install -g http-server
-          http-server _site/ &
+          http-server ./ &
           axe --chromedriver-path $(npm root -g)/chromedriver/bin/chromedriver http://localhost:8080/${{ github.event.inputs.url || env.URL }} --load-delay=1500 --exit
