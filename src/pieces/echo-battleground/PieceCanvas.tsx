@@ -7,6 +7,7 @@ export default function PieceCanvas() {
   const [piece, setPiece] = useState<any>(null);
   const [audioEnabled, setAudioEnabled] = useState(false);
   const [loading, setLoading] = useState(true);
+  const [showInfo, setShowInfo] = useState(true);
 
   useEffect(() => {
     let inst: any;
@@ -56,10 +57,20 @@ export default function PieceCanvas() {
 
       {/* Fixed explanatory layer — blends into the art on the left edge */}
       <aside
-        className="absolute inset-y-0 left-0 z-10 w-full max-w-[340px] overflow-y-auto px-6 py-8 md:px-8 text-white/75"
+        className={`absolute inset-y-0 left-0 z-10 w-full max-w-[340px] overflow-y-auto px-6 py-8 md:px-8 text-white/75 transition-transform duration-500 ease-in-out ${
+          showInfo ? "translate-x-0" : "-translate-x-full"
+        }`}
         style={{ background: "linear-gradient(to right, rgba(0,0,0,0.74) 0%, rgba(0,0,0,0.45) 62%, rgba(0,0,0,0) 100%)" }}
       >
-        <h1 className="font-serif text-2xl tracking-wide text-white/95">Echo / Battleground</h1>
+        <button 
+          onClick={() => setShowInfo(false)}
+          className="absolute top-8 right-6 text-white/40 hover:text-white transition-colors"
+          aria-label="Hide info"
+        >
+          ✕
+        </button>
+
+        <h1 className="font-serif text-2xl tracking-wide text-white/95 pr-6">Echo / Battleground</h1>
         <p className="mt-1 text-[11px] uppercase tracking-[0.25em] text-white/40">Tizzani &amp; Mejova · J. Med. Internet Res. 2026 · e88519</p>
 
         <p className="mt-5 text-sm leading-relaxed">
@@ -114,6 +125,16 @@ export default function PieceCanvas() {
           No comment text or identifiers are shown.
         </p>
       </aside>
+
+      {/* Show Info button when hidden */}
+      {!showInfo && (
+        <button
+          onClick={() => setShowInfo(true)}
+          className="absolute bottom-8 left-8 z-20 flex items-center gap-2 rounded-full border border-white/25 px-4 py-1.5 text-xs uppercase tracking-[0.2em] text-white/85 transition-colors hover:bg-white/10"
+        >
+          Info
+        </button>
+      )}
 
       {loading && <div className="absolute inset-0 flex items-center justify-center text-white/50 font-mono text-sm">Loading…</div>}
     </div>
