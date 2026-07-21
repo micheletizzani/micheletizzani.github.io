@@ -783,7 +783,7 @@ export default function App() {
   >("normal");
   const [isGlobalSimulationActive, setIsGlobalSimulationActive] = useState<boolean>(false);
   const [selectedPlotType, setSelectedPlotType] = useState<string>("scatter");
-  const [plotBg, setPlotBg] = useState<"white" | "dark" | "neutral">("neutral");
+  const [plotBg, setPlotBg] = useState<"white" | "dark" | "neutral">("dark");
 
   // Interactive Vision Lab and Split-screen states
   const [splitRatio, setSplitRatio] = useState<number>(50);
@@ -1854,6 +1854,26 @@ fig.show()`;
     setLightShift(0);
   };
 
+  const handleApplyTunedHsl = () => {
+    if (hueShift === 0 && satShift === 0 && lightShift === 0) return;
+    pushToUndo();
+    const tunedName = `${selectedPalette.name}_tuned_${Date.now().toString().slice(-4)}`;
+    const newTunedPalette: Palette = {
+      name: tunedName,
+      colors: [...adjustedColors],
+      dataType: selectedPalette.dataType,
+      isBuiltIn: false,
+      description: `HSL Tuned (${hueShift > 0 ? "+" : ""}${hueShift}° Hue, ${satShift > 0 ? "+" : ""}${satShift}% Sat, ${lightShift > 0 ? "+" : ""}${lightShift}% Light)`,
+      tags: [...(selectedPalette.tags || []), "tuned"],
+    };
+
+    setCustomPalettes((prev) => [newTunedPalette, ...prev]);
+    setSelectedPalette(newTunedPalette);
+    handleResetHslShifts();
+    setFavFeedback("Applied HSL Tunings as Active Palette!");
+    setTimeout(() => setFavFeedback(null), 1800);
+  };
+
   // Parse R script for color vectors
   const parseRCodeForPalettes = (code: string): Palette[] => {
     const foundPalettes: Palette[] = [];
@@ -2323,17 +2343,17 @@ fig.show()`;
         </div>
 
         {/* Colorblindness Simulator Fast-Bar */}
-        <div className="flex flex-wrap items-center gap-2 bg-stone-150/40 dark:bg-stone-900/30 p-1.5 rounded-xl border border-stone-200/50 dark:border-stone-800 self-start lg:self-auto shadow-sm">
-          <span className="text-[11px] text-stone-500 dark:text-stone-400 px-2 font-mono flex items-center gap-1.5">
-            <Eye className="w-3.5 h-3.5 text-stone-600" /> Vision Mode:
+        <div className="flex flex-wrap items-center gap-2 bg-[var(--bg-secondary)] p-1.5 rounded-xl border border-[var(--border-color)] self-start lg:self-auto shadow-sm">
+          <span className="text-[11px] text-[var(--text-color)] font-semibold px-2 font-mono flex items-center gap-1.5">
+            <Eye className="w-3.5 h-3.5 text-[var(--accent-color)]" /> Vision Mode:
           </span>
           <select
             value={colorblindSim}
             onChange={(e) => setColorblindSim(e.target.value as any)}
-            className="bg-white dark:bg-stone-900 text-xs font-mono font-bold border border-stone-300 dark:border-stone-800 text-stone-750 dark:text-stone-200 rounded-lg px-2.5 py-1 focus:outline-none focus:border-stone-500 focus:ring-1 focus:ring-stone-500/20 cursor-pointer shadow-xs"
+            className="bg-[var(--bg-color)] text-[var(--heading-color)] text-xs font-mono font-bold border border-[var(--border-color)] rounded-lg px-2.5 py-1 focus:outline-none focus:border-[var(--accent-color)] cursor-pointer shadow-xs"
           >
             {Object.entries(DEFICIENCY_DETAILS).map(([key, details]) => (
-              <option key={key} value={key}>
+              <option key={key} value={key} className="bg-[var(--bg-color)] text-[var(--text-color)] font-sans">
                 {details.name} ({details.type})
               </option>
             ))}
@@ -2344,10 +2364,10 @@ fig.show()`;
               setActiveCenterTab("simulator");
               setIsLabOpen((prev) => !prev);
             }}
-            className={`text-xs px-2.5 py-1 rounded-lg font-medium transition-all font-mono cursor-pointer flex items-center gap-1.5 ${
+            className={`text-xs px-2.5 py-1 rounded-lg font-semibold transition-all font-mono cursor-pointer flex items-center gap-1.5 ${
               isLabOpen && activeCenterTab === "simulator"
-                ? "bg-stone-800 text-white shadow-sm"
-                : "text-stone-600 dark:text-stone-350 hover:text-stone-900 dark:hover:text-white hover:bg-stone-200/60 dark:hover:bg-stone-800"
+                ? "bg-[var(--accent-color)] text-white shadow-sm"
+                : "text-[var(--text-color)] hover:text-[var(--heading-color)] hover:bg-[var(--bg-color)] border border-[var(--border-color)]"
             }`}
           >
             <SlidersHorizontal className="w-3 h-3" />
@@ -2846,10 +2866,10 @@ fig.show()`;
                           const found = filteredPalettes.find((p) => p.name === e.target.value);
                           if (found) setSelectedPalette(found);
                         }}
-                        className="bg-white dark:bg-stone-900 text-sm font-semibold border border-stone-250 dark:border-stone-800 text-stone-800 dark:text-stone-100 rounded-lg px-3 py-1.5 focus:outline-none cursor-pointer max-w-[200px]"
+                        className="bg-[var(--bg-color)] text-[var(--heading-color)] text-sm font-semibold border border-[var(--border-color)] rounded-lg px-3 py-1.5 focus:outline-none cursor-pointer max-w-[200px]"
                       >
                         {filteredPalettes.map((p) => (
-                          <option key={p.name} value={p.name}>
+                          <option key={p.name} value={p.name} className="bg-[var(--bg-color)] text-[var(--text-color)]">
                             {p.name}
                           </option>
                         ))}
@@ -2864,12 +2884,12 @@ fig.show()`;
                             setSelectedPalette(filteredPalettes[0]);
                           }
                         }}
-                        className="p-1.5 rounded-lg border border-stone-200 dark:border-stone-800 bg-white dark:bg-stone-900 text-stone-700 dark:text-stone-300 hover:bg-stone-50 cursor-pointer"
+                        className="p-1.5 rounded-lg border border-[var(--border-color)] bg-[var(--bg-color)] text-[var(--heading-color)] hover:bg-[var(--bg-secondary)] cursor-pointer"
                         title="Next palette"
                       >
                         ▶
                       </button>
-                      <h3 className="text-sm font-bold font-mono tracking-tight text-stone-800 dark:text-stone-200 capitalize ml-2">
+                      <h3 className="text-sm font-bold font-serif tracking-tight text-[var(--heading-color)] capitalize ml-2">
                         "{selectedPalette.name.replace("lisa_", "").replace("r_", "")}"
                       </h3>
                     </div>
@@ -2880,8 +2900,8 @@ fig.show()`;
                       onClick={() => toggleFavoritePalette(selectedPalette)}
                       className={`px-3 py-2 rounded-xl border text-xs font-bold font-mono transition-all flex items-center gap-1.5 cursor-pointer ${
                         isPaletteFavorite(selectedPalette.name)
-                          ? "bg-red-50 dark:bg-red-950 border-red-200 text-red-600 dark:text-red-400"
-                          : "bg-white dark:bg-stone-900 border-stone-200 text-stone-600 dark:text-stone-400 hover:bg-stone-50"
+                          ? "bg-[var(--accent-color)] border-[var(--accent-color)] text-white"
+                          : "bg-[var(--bg-color)] border-[var(--border-color)] text-[var(--text-color)] hover:bg-[var(--bg-secondary)]"
                       }`}
                     >
                       <Heart className="w-3.5 h-3.5" fill={isPaletteFavorite(selectedPalette.name) ? "currentColor" : "none"} />
@@ -2891,13 +2911,13 @@ fig.show()`;
                 </div>
 
                 {/* Subtitle / Description */}
-                <p className="text-[11.5px] text-stone-500 dark:text-stone-400 leading-relaxed font-mono">
+                <p className="text-xs text-[var(--text-color)] opacity-90 leading-relaxed font-sans">
                   {selectedPalette.description || "A beautiful, custom-curated data visualization palette."}
                 </p>
 
                 {/* Live Palette Swatches List with Copy Indicator */}
                 <div className="flex flex-col gap-2">
-                  <span className="text-[10px] uppercase font-bold tracking-wider text-stone-400 font-mono">
+                  <span className="text-[10px] uppercase font-bold tracking-wider text-[var(--text-color)] opacity-75 font-mono">
                     Swatch Color Hex Array (Click to copy):
                   </span>
                   <div className="flex flex-wrap gap-2">
@@ -2919,7 +2939,7 @@ fig.show()`;
                           title={`Click to copy: ${color}`}
                         >
                           <div className="flex justify-between items-start">
-                            <span className={`text-[8px] font-bold font-mono ${textClass} opacity-60`}>#{idx + 1}</span>
+                            <span className={`text-[8px] font-bold font-mono ${textClass} opacity-80`}>#{idx + 1}</span>
                             {isClashing && <span className="w-1.5 h-1.5 rounded-full bg-red-600 animate-pulse" title="Colorblind Clashing" />}
                           </div>
                           <div className={`text-[10px] font-bold font-mono tracking-wide ${textClass} mt-1.5`}>{color.toUpperCase()}</div>
@@ -2930,21 +2950,21 @@ fig.show()`;
                 </div>
 
                 {/* QUICK CONTROLS: CVD SELECTOR & SLIDERS */}
-                <div className="grid grid-cols-1 md:grid-cols-12 gap-4 pt-3 border-t border-stone-200/50 dark:border-stone-800">
+                <div className="grid grid-cols-1 md:grid-cols-12 gap-4 pt-3 border-t border-[var(--border-color)]">
                   {/* CVD Dropdown Selector */}
                   <div className="md:col-span-5 flex flex-col gap-1.5">
-                    <span className="text-[10px] uppercase font-bold tracking-wider text-stone-400 font-mono flex items-center gap-1">
-                      <Eye className="w-3.5 h-3.5 text-stone-500" />
+                    <span className="text-[10px] uppercase font-bold tracking-wider text-[var(--text-color)] opacity-75 font-mono flex items-center gap-1">
+                      <Eye className="w-3.5 h-3.5 text-[var(--accent-color)]" />
                       Vision Deficiency Simulation
                     </span>
                     <div className="grid grid-cols-2 gap-2">
                       <select
                         value={colorblindSim}
                         onChange={(e) => setColorblindSim(e.target.value as any)}
-                        className="bg-white dark:bg-stone-900 text-xs font-bold border border-stone-200 dark:border-stone-800 text-stone-850 dark:text-stone-100 rounded-lg px-2.5 py-2 cursor-pointer w-full focus:outline-none"
+                        className="bg-[var(--bg-color)] text-[var(--heading-color)] text-xs font-bold border border-[var(--border-color)] rounded-lg px-2.5 py-2 cursor-pointer w-full focus:outline-none"
                       >
                         {Object.entries(DEFICIENCY_DETAILS).map(([key, details]) => (
-                          <option key={key} value={key}>
+                          <option key={key} value={key} className="bg-[var(--bg-color)] text-[var(--text-color)] font-sans">
                             {details.name}
                           </option>
                         ))}
@@ -3275,34 +3295,37 @@ fig.show()`;
           )}
 
           {activeCenterTab === "toolkit" && (
-            <div className="bg-white border border-stone-200 rounded-2xl p-6 flex flex-col gap-6 shadow-sm">
-              <div className="flex items-center justify-between border-b border-stone-150 pb-3">
+            <div className="bg-[var(--bg-color)] border border-[var(--border-color)] text-[var(--text-color)] rounded-2xl p-6 flex flex-col gap-6 shadow-sm">
+              <div className="flex items-center justify-between border-b border-[var(--border-color)] pb-3">
                 <div className="flex items-center gap-2">
-                  <Sliders className="w-4 h-4 text-stone-600" />
-                  <h2 className="text-sm font-semibold tracking-wide text-stone-800 uppercase font-mono">Interactive Palette Toolkit</h2>
+                  <Sliders className="w-4 h-4 text-[var(--accent-color)]" />
+                  <h2 className="text-sm font-semibold tracking-wide text-[var(--heading-color)] uppercase font-mono">Interactive Palette Toolkit</h2>
                 </div>
-                <span className="text-[10px] bg-stone-100 text-stone-600 border border-stone-200 px-2 py-0.5 rounded font-mono font-bold">
+                <span className="text-[10px] bg-[var(--bg-secondary)] text-[var(--text-color)] border border-[var(--border-color)] px-2 py-0.5 rounded font-mono font-bold">
                   Active Editor
                 </span>
               </div>
 
               {/* SECTION A: INDIVIDUAL SWATCH EDITOR */}
               <div className="flex flex-col gap-3">
-                <div className="flex justify-between items-center text-xs text-stone-500 font-semibold font-mono">
+                <div className="flex justify-between items-center text-xs text-[var(--text-color)] font-semibold font-mono">
                   <span>A. Custom Swatch Editor (Click swatch to edit):</span>
                   {adjustedColors.length < 12 && (
                     <button
                       onClick={addColorToPalette}
-                      className="text-stone-700 hover:text-stone-955 text-[10px] font-bold border border-stone-300 px-2.5 py-1 rounded-xl bg-stone-50 hover:bg-stone-100 cursor-pointer shadow-sm animate-pulse"
+                      className="text-[var(--text-color)] hover:text-[var(--heading-color)] text-[10px] font-bold border border-[var(--border-color)] px-2.5 py-1 rounded-xl bg-[var(--bg-secondary)] hover:bg-[var(--bg-color)] cursor-pointer shadow-sm"
                     >
                       + Add Swatch Color
                     </button>
                   )}
                 </div>
 
-                <div className="grid grid-cols-4 sm:grid-cols-6 gap-3.5 p-4 bg-[#fafaf8] rounded-xl border border-stone-200">
+                <div className="grid grid-cols-4 sm:grid-cols-6 gap-3.5 p-4 bg-[var(--bg-secondary)] rounded-xl border border-[var(--border-color)]">
                   {adjustedColors.map((color, idx) => (
-                    <div key={idx} className="flex flex-col items-center gap-1.5 bg-white border border-stone-200 rounded-xl p-2 shadow-sm">
+                    <div
+                      key={idx}
+                      className="flex flex-col items-center gap-1.5 bg-[var(--bg-color)] border border-[var(--border-color)] rounded-xl p-2 shadow-sm"
+                    >
                       <button
                         onClick={() => setEditingColorIdx(editingColorIdx === idx ? null : idx)}
                         style={{ backgroundColor: color }}
@@ -3670,66 +3693,77 @@ fig.show()`;
                   })()}
               </div>
 
-              {/* SECTION B: HARMONY BLEND MIXER */}
+              {/* SECTION B: MULTI-STOP INTERPOLATED SEQUENTIAL SCALE GENERATOR */}
               <div className="flex flex-col gap-3">
-                <span className="text-xs text-stone-500 font-semibold font-mono">B. Gradient Harmony Mixer:</span>
-                <div className="grid grid-cols-2 gap-4 p-4 bg-[#fafaf8] rounded-xl border border-stone-200">
-                  <div className="flex flex-col gap-1">
-                    <label className="text-[10px] text-stone-500 font-mono">Anchor Color A</label>
-                    <div className="flex gap-2 items-center">
-                      <input
-                        type="color"
-                        value={customMixColorA}
-                        onChange={(e) => setCustomMixColorA(e.target.value)}
-                        className="w-8 h-8 rounded border border-stone-200 cursor-pointer shrink-0"
-                      />
-                      <input
-                        type="text"
-                        value={customMixColorA}
-                        onChange={(e) => setCustomMixColorA(e.target.value)}
-                        maxLength={7}
-                        className="text-xs font-mono px-2 py-1 bg-white border border-stone-200 rounded w-full"
-                      />
-                    </div>
+                <div className="flex items-center justify-between">
+                  <span className="text-xs text-[var(--heading-color)] font-semibold font-mono">B. Multi-Stop Interpolated Sequential Scale:</span>
+                  <button
+                    type="button"
+                    onClick={() => handleAddContinuousPoint(newPointColor || "#38bdf8")}
+                    className="text-[10px] font-bold text-[var(--accent-color)] hover:underline font-mono cursor-pointer"
+                  >
+                    + Add Stop Color
+                  </button>
+                </div>
+
+                <div className="flex flex-col gap-4 p-4 bg-[var(--bg-secondary)] rounded-xl border border-[var(--border-color)]">
+                  {/* List of Stop Colors */}
+                  <div className="flex flex-wrap gap-2.5">
+                    {continuousColorPoints.map((color, idx) => (
+                      <div key={idx} className="flex items-center gap-1.5 bg-[var(--bg-color)] p-1.5 rounded-lg border border-[var(--border-color)]">
+                        <input
+                          type="color"
+                          value={color}
+                          onChange={(e) => {
+                            const newStops = [...continuousColorPoints];
+                            newStops[idx] = e.target.value;
+                            setContinuousColorPoints(newStops);
+                          }}
+                          className="w-6 h-6 rounded cursor-pointer border-0 p-0 bg-transparent shrink-0"
+                        />
+                        <input
+                          type="text"
+                          value={color}
+                          onChange={(e) => {
+                            const newStops = [...continuousColorPoints];
+                            newStops[idx] = e.target.value;
+                            setContinuousColorPoints(newStops);
+                          }}
+                          maxLength={7}
+                          className="text-[11px] font-mono px-1.5 py-0.5 bg-transparent text-[var(--text-color)] w-20 focus:outline-none"
+                        />
+                        {continuousColorPoints.length > 2 && (
+                          <button
+                            type="button"
+                            onClick={() => handleRemoveContinuousPoint(idx)}
+                            className="text-[10px] text-stone-400 hover:text-red-500 font-mono px-1"
+                            title="Remove Stop"
+                          >
+                            ×
+                          </button>
+                        )}
+                      </div>
+                    ))}
                   </div>
 
-                  <div className="flex flex-col gap-1">
-                    <label className="text-[10px] text-stone-500 font-mono">Anchor Color B</label>
-                    <div className="flex gap-2 items-center">
-                      <input
-                        type="color"
-                        value={customMixColorB}
-                        onChange={(e) => setCustomMixColorB(e.target.value)}
-                        className="w-8 h-8 rounded border border-stone-200 cursor-pointer shrink-0"
-                      />
-                      <input
-                        type="text"
-                        value={customMixColorB}
-                        onChange={(e) => setCustomMixColorB(e.target.value)}
-                        maxLength={7}
-                        className="text-xs font-mono px-2 py-1 bg-white border border-stone-200 rounded w-full"
-                      />
-                    </div>
-                  </div>
-
-                  <div className="col-span-2 flex flex-col gap-2 border-t border-stone-200 pt-3">
-                    <div className="flex justify-between text-[10px] text-stone-500 font-mono">
-                      <span>Blend Steps (N):</span>
-                      <span className="font-bold text-stone-800">{customMixSteps}</span>
+                  <div className="flex flex-col gap-2 border-t border-[var(--border-color)] pt-3">
+                    <div className="flex justify-between text-xs text-[var(--text-color)] opacity-85 font-mono">
+                      <span>Interpolated Steps (N):</span>
+                      <span className="font-bold text-[var(--heading-color)]">{continuousSteps}</span>
                     </div>
                     <input
                       type="range"
                       min="3"
-                      max="12"
-                      value={customMixSteps}
-                      onChange={(e) => setCustomMixSteps(parseInt(e.target.value))}
-                      className="w-full h-1 bg-stone-200 rounded-lg appearance-none cursor-pointer accent-stone-800"
+                      max="15"
+                      value={continuousSteps}
+                      onChange={(e) => setContinuousSteps(parseInt(e.target.value))}
+                      className="w-full h-1 bg-stone-700 rounded-lg appearance-none cursor-pointer accent-[var(--accent-color)]"
                     />
                     <button
-                      onClick={handleMixPalettes}
-                      className="mt-2 w-full bg-stone-800 hover:bg-stone-700 text-white text-[10.5px] font-mono font-bold py-2 rounded-xl transition-all shadow-sm cursor-pointer"
+                      onClick={() => handleGenerateContinuousPalette("custom")}
+                      className="mt-2 w-full bg-[var(--accent-color)] text-white text-xs font-mono font-bold py-2.5 rounded-xl transition-all shadow-sm cursor-pointer hover:opacity-90"
                     >
-                      Generate Interpolated Sequential Scale
+                      Generate Multi-Stop Sequential Scale ({continuousSteps} Colors)
                     </button>
                   </div>
                 </div>
@@ -3738,22 +3772,22 @@ fig.show()`;
               {/* SECTION C: GLOBAL SHIFTS */}
               <div className="flex flex-col gap-3">
                 <div className="flex justify-between items-center">
-                  <span className="text-xs text-stone-500 font-semibold font-mono">C. Global Palette Tuner:</span>
+                  <span className="text-xs text-[var(--heading-color)] font-semibold font-mono">C. Global Palette Tuner (HSL):</span>
                   {(hueShift !== 0 || satShift !== 0 || lightShift !== 0) && (
                     <button
                       onClick={handleResetHslShifts}
-                      className="text-[9px] font-bold text-stone-500 hover:text-stone-800 font-mono cursor-pointer"
+                      className="text-[10px] font-bold text-[var(--accent-color)] hover:underline font-mono cursor-pointer"
                     >
-                      Reset Tunings ↺
+                      Reset Shifts ↺
                     </button>
                   )}
                 </div>
-                <div className="flex flex-col gap-3 p-4 bg-[#fafaf8] rounded-xl border border-stone-200 text-xs font-mono">
+                <div className="flex flex-col gap-3.5 p-4 bg-[var(--bg-secondary)] rounded-xl border border-[var(--border-color)] text-xs font-mono">
                   {/* Hue shift */}
                   <div className="flex flex-col gap-1">
-                    <div className="flex justify-between text-[10px] text-stone-500">
+                    <div className="flex justify-between text-xs text-[var(--text-color)]">
                       <span>Hue Rotation:</span>
-                      <span className="font-bold text-stone-800">{hueShift > 0 ? `+${hueShift}` : hueShift}°</span>
+                      <span className="font-bold text-[var(--heading-color)]">{hueShift > 0 ? `+${hueShift}` : hueShift}°</span>
                     </div>
                     <input
                       type="range"
@@ -3763,15 +3797,15 @@ fig.show()`;
                       onMouseDown={() => pushToUndo()}
                       onTouchStart={() => pushToUndo()}
                       onChange={(e) => setHueShift(parseInt(e.target.value))}
-                      className="w-full h-1 bg-stone-200 rounded-lg appearance-none cursor-pointer accent-stone-800"
+                      className="w-full h-1 bg-stone-700 rounded-lg appearance-none cursor-pointer accent-[var(--accent-color)]"
                     />
                   </div>
 
                   {/* Saturation Shift */}
                   <div className="flex flex-col gap-1">
-                    <div className="flex justify-between text-[10px] text-stone-500">
+                    <div className="flex justify-between text-xs text-[var(--text-color)]">
                       <span>Saturation Tuning:</span>
-                      <span className="font-bold text-stone-800">{satShift > 0 ? `+${satShift}` : satShift}%</span>
+                      <span className="font-bold text-[var(--heading-color)]">{satShift > 0 ? `+${satShift}` : satShift}%</span>
                     </div>
                     <input
                       type="range"
@@ -3781,15 +3815,15 @@ fig.show()`;
                       onMouseDown={() => pushToUndo()}
                       onTouchStart={() => pushToUndo()}
                       onChange={(e) => setSatShift(parseInt(e.target.value))}
-                      className="w-full h-1 bg-stone-200 rounded-lg appearance-none cursor-pointer accent-stone-800"
+                      className="w-full h-1 bg-stone-700 rounded-lg appearance-none cursor-pointer accent-[var(--accent-color)]"
                     />
                   </div>
 
                   {/* Lightness Shift */}
                   <div className="flex flex-col gap-1">
-                    <div className="flex justify-between text-[10px] text-stone-500">
+                    <div className="flex justify-between text-xs text-[var(--text-color)]">
                       <span>Lightness Adjust:</span>
-                      <span className="font-bold text-stone-800">{lightShift > 0 ? `+${lightShift}` : lightShift}%</span>
+                      <span className="font-bold text-[var(--heading-color)]">{lightShift > 0 ? `+${lightShift}` : lightShift}%</span>
                     </div>
                     <input
                       type="range"
@@ -3799,9 +3833,19 @@ fig.show()`;
                       onMouseDown={() => pushToUndo()}
                       onTouchStart={() => pushToUndo()}
                       onChange={(e) => setLightShift(parseInt(e.target.value))}
-                      className="w-full h-1 bg-stone-200 rounded-lg appearance-none cursor-pointer accent-stone-800"
+                      className="w-full h-1 bg-stone-700 rounded-lg appearance-none cursor-pointer accent-[var(--accent-color)]"
                     />
                   </div>
+
+                  {/* Commit Tuned HSL */}
+                  {(hueShift !== 0 || satShift !== 0 || lightShift !== 0) && (
+                    <button
+                      onClick={handleApplyTunedHsl}
+                      className="mt-2 w-full bg-[var(--accent-color)] text-white text-xs font-mono font-bold py-2 rounded-xl transition-all shadow-sm cursor-pointer hover:opacity-90"
+                    >
+                      Apply Tuned HSL to Active Palette
+                    </button>
+                  )}
                 </div>
               </div>
 
