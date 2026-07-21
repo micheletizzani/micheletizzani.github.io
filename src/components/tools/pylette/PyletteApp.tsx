@@ -2357,13 +2357,13 @@ fig.show()`;
       </header>
 
       {/* WORKSPACE CONTAINER */}
-      <main className="flex-1 grid grid-cols-1 xl:grid-cols-12 gap-6 p-6 overflow-hidden">
+      <main className="flex-1 grid grid-cols-1 xl:grid-cols-12 gap-6 p-6 overflow-visible pb-24">
         {/* LEFT COLUMN: FILTERS, PALETTE EXPLORER & AI GENERATOR (3 Cols) */}
         <div className="xl:col-span-4 flex flex-col gap-6">
           {/* Data Categorization Selectors */}
           <div className={`transition-colors duration-300 rounded-2xl p-5 flex flex-col gap-4 ${theme.cardClass}`}>
             <div className="flex items-center gap-2">
-              <Sliders className="w-4 h-4 text-stone-600 dark:text-stone-300" />
+              <Sliders className="w-4 h-4 text-stone-700 dark:text-stone-200" />
               <h2 className="text-sm font-semibold tracking-wide uppercase font-mono">1. Data Archetype</h2>
             </div>
 
@@ -2380,11 +2380,11 @@ fig.show()`;
                     className={`flex flex-col items-center justify-center p-3 rounded-xl border transition-all text-center gap-1.5 relative cursor-pointer ${
                       active
                         ? theme.buttonPrimary + " shadow-sm"
-                        : "bg-stone-100/50 dark:bg-stone-900/40 border-stone-200/55 dark:border-stone-800 text-stone-600 dark:text-stone-300 hover:bg-stone-200/40 dark:hover:bg-stone-800"
+                        : "bg-stone-100/70 dark:bg-stone-900/60 border-stone-300 dark:border-stone-700 text-stone-800 dark:text-stone-200 hover:bg-stone-200/60 dark:hover:bg-stone-800"
                     }`}
                   >
                     <span className="text-xs font-semibold capitalize font-mono">{type}</span>
-                    <span className="text-[9px] block leading-tight opacity-80">
+                    <span className="text-[9px] block leading-tight opacity-90 font-medium">
                       {type === "sequential" && "Numeric ranges"}
                       {type === "diverging" && "Deviations +/-"}
                       {type === "qualitative" && "Categories"}
@@ -2396,8 +2396,8 @@ fig.show()`;
 
             {/* Parameter adjusters */}
             <div className={`pt-3 border-t flex flex-col gap-3 ${theme.accentBorder}`}>
-              <div className="flex items-center justify-between text-xs">
-                <span className="text-stone-600 dark:text-stone-450 flex items-center gap-1">
+              <div className="flex items-center justify-between text-xs font-medium">
+                <span className="text-stone-800 dark:text-stone-200 flex items-center gap-1">
                   <SlidersHorizontal className="w-3.5 h-3.5" /> Colors count (N):
                 </span>
                 <span className={`font-mono px-2 py-0.5 rounded border font-bold ${theme.tagClass}`}>{numColors}</span>
@@ -2410,11 +2410,11 @@ fig.show()`;
                 onMouseDown={() => pushToUndo()}
                 onTouchStart={() => pushToUndo()}
                 onChange={(e) => setNumColors(parseInt(e.target.value))}
-                className="w-full h-1 bg-stone-200 dark:bg-stone-800 rounded-lg appearance-none cursor-pointer accent-stone-800 dark:accent-amber-600"
+                className="w-full h-1 bg-stone-300 dark:bg-stone-700 rounded-lg appearance-none cursor-pointer accent-stone-800 dark:accent-amber-600"
               />
 
               <div className="flex items-center justify-between pt-1">
-                <label className="text-xs text-stone-600 dark:text-stone-400 cursor-pointer flex items-center gap-2">
+                <label className="text-xs text-stone-800 dark:text-stone-200 cursor-pointer flex items-center gap-2 font-medium">
                   <input
                     type="checkbox"
                     checked={isReversed}
@@ -2431,9 +2431,7 @@ fig.show()`;
           </div>
 
           {/* PALETTE EXPLORER CARD */}
-          <div
-            className={`transition-colors duration-300 rounded-2xl p-5 flex flex-col gap-4 flex-1 max-h-[350px] xl:max-h-[420px] overflow-hidden ${theme.cardClass}`}
-          >
+          <div className={`transition-colors duration-300 rounded-2xl p-5 flex flex-col gap-4 flex-1 min-h-[420px] ${theme.cardClass}`}>
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2">
                 <FileText className="w-4 h-4 text-stone-600 dark:text-stone-350" />
