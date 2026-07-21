@@ -2317,10 +2317,10 @@ fig.show()`;
 
         {/* Suggestion Selector & Theme Customizer */}
         <div className="flex flex-col gap-1.5 self-start lg:self-auto">
-          <span className="text-[10px] uppercase font-bold tracking-wider text-stone-500 dark:text-stone-400 font-mono">
+          <span className="text-[10px] uppercase font-bold tracking-wider text-[var(--text-color)] opacity-80 font-mono">
             Suggested Visual Themes:
           </span>
-          <div className="flex items-center gap-1 p-1 bg-stone-150/50 dark:bg-stone-900/40 rounded-xl border border-stone-200/50 dark:border-stone-800">
+          <div className="flex items-center gap-1 p-1 bg-[var(--bg-secondary)] rounded-xl border border-[var(--border-color)]">
             {(Object.keys(UI_THEMES) as Array<keyof typeof UI_THEMES>).map((styleName) => {
               const active = uiStyle === styleName;
               const t = UI_THEMES[styleName];
@@ -2330,8 +2330,8 @@ fig.show()`;
                   onClick={() => setUiStyle(styleName)}
                   className={`text-xs px-2.5 py-1 rounded-lg font-bold font-mono transition-all flex items-center cursor-pointer ${
                     active
-                      ? "bg-stone-900 text-white dark:bg-stone-100 dark:text-stone-950 shadow-sm scale-105"
-                      : "text-stone-500 hover:text-stone-900 dark:hover:text-stone-100 hover:bg-stone-200/50"
+                      ? "bg-[var(--accent-color)] text-white shadow-sm scale-105"
+                      : "text-[var(--text-color)] hover:text-[var(--heading-color)] hover:bg-[var(--bg-color)]"
                   }`}
                   title={`Switch to ${t.title}`}
                 >
@@ -2383,8 +2383,8 @@ fig.show()`;
           {/* Data Categorization Selectors */}
           <div className={`transition-colors duration-300 rounded-2xl p-5 flex flex-col gap-4 ${theme.cardClass}`}>
             <div className="flex items-center gap-2">
-              <Sliders className="w-4 h-4 text-stone-700 dark:text-stone-200" />
-              <h2 className="text-sm font-semibold tracking-wide uppercase font-mono">1. Data Archetype</h2>
+              <Sliders className="w-4 h-4 text-[var(--accent-color)]" />
+              <h2 className="text-sm font-semibold tracking-wide uppercase font-mono text-[var(--heading-color)]">1. Data Archetype</h2>
             </div>
 
             <div className="grid grid-cols-3 gap-2">
@@ -2399,8 +2399,8 @@ fig.show()`;
                     }}
                     className={`flex flex-col items-center justify-center p-3 rounded-xl border transition-all text-center gap-1.5 relative cursor-pointer ${
                       active
-                        ? theme.buttonPrimary + " shadow-sm"
-                        : "bg-stone-100/70 dark:bg-stone-900/60 border-stone-300 dark:border-stone-700 text-stone-800 dark:text-stone-200 hover:bg-stone-200/60 dark:hover:bg-stone-800"
+                        ? "bg-[var(--accent-color)] border-[var(--accent-color)] text-white shadow-sm"
+                        : "bg-[var(--bg-color)] border-[var(--border-color)] text-[var(--text-color)] hover:bg-[var(--bg-secondary)] hover:text-[var(--heading-color)]"
                     }`}
                   >
                     <span className="text-xs font-semibold capitalize font-mono">{type}</span>
@@ -2417,10 +2417,12 @@ fig.show()`;
             {/* Parameter adjusters */}
             <div className={`pt-3 border-t flex flex-col gap-3 ${theme.accentBorder}`}>
               <div className="flex items-center justify-between text-xs font-medium">
-                <span className="text-stone-800 dark:text-stone-200 flex items-center gap-1">
-                  <SlidersHorizontal className="w-3.5 h-3.5" /> Colors count (N):
+                <span className="text-[var(--heading-color)] flex items-center gap-1 font-semibold font-mono">
+                  <SlidersHorizontal className="w-3.5 h-3.5 text-[var(--accent-color)]" /> Colors count (N):
                 </span>
-                <span className={`font-mono px-2 py-0.5 rounded border font-bold ${theme.tagClass}`}>{numColors}</span>
+                <span className="font-mono px-2 py-0.5 rounded border border-[var(--border-color)] bg-[var(--bg-secondary)] text-[var(--heading-color)] font-bold">
+                  {numColors}
+                </span>
               </div>
               <input
                 type="range"
@@ -2430,11 +2432,11 @@ fig.show()`;
                 onMouseDown={() => pushToUndo()}
                 onTouchStart={() => pushToUndo()}
                 onChange={(e) => setNumColors(parseInt(e.target.value))}
-                className="w-full h-1 bg-stone-300 dark:bg-stone-700 rounded-lg appearance-none cursor-pointer accent-stone-800 dark:accent-amber-600"
+                className="w-full h-1 bg-stone-700 rounded-lg appearance-none cursor-pointer accent-[var(--accent-color)]"
               />
 
               <div className="flex items-center justify-between pt-1">
-                <label className="text-xs text-stone-800 dark:text-stone-200 cursor-pointer flex items-center gap-2 font-medium">
+                <label className="text-xs text-[var(--text-color)] cursor-pointer flex items-center gap-2 font-medium">
                   <input
                     type="checkbox"
                     checked={isReversed}
@@ -2442,7 +2444,7 @@ fig.show()`;
                       pushToUndo();
                       setIsReversed(e.target.checked);
                     }}
-                    className="rounded border-stone-300 bg-white dark:bg-stone-900 text-stone-800 dark:text-stone-200 focus:ring-0 cursor-pointer"
+                    className="rounded border-[var(--border-color)] bg-[var(--bg-color)] text-[var(--accent-color)] focus:ring-0 cursor-pointer"
                   />
                   Reverse order (<code>_r</code>)
                 </label>
@@ -2454,20 +2456,22 @@ fig.show()`;
           <div className={`transition-colors duration-300 rounded-2xl p-5 flex flex-col gap-4 flex-1 min-h-[420px] ${theme.cardClass}`}>
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2">
-                <FileText className="w-4 h-4 text-stone-600 dark:text-stone-350" />
-                <h2 className="text-sm font-semibold tracking-wide uppercase font-mono">2. Select Base Palette</h2>
+                <FileText className="w-4 h-4 text-[var(--accent-color)]" />
+                <h2 className="text-sm font-semibold tracking-wide uppercase font-mono text-[var(--heading-color)]">2. Select Base Palette</h2>
               </div>
-              <span className={`text-[10px] px-2 py-0.5 rounded font-mono font-bold border ${theme.tagClass}`}>{filteredPalettes.length} found</span>
+              <span className="text-[10px] px-2 py-0.5 rounded font-mono font-bold border border-[var(--border-color)] bg-[var(--bg-secondary)] text-[var(--text-color)]">
+                {filteredPalettes.length} found
+              </span>
             </div>
 
             {/* Tabs for Explorer: All vs Favorites */}
-            <div className="flex gap-1 bg-stone-100/50 dark:bg-stone-900/60 p-1 rounded-xl border border-stone-200/50 dark:border-stone-800">
+            <div className="flex gap-1 bg-[var(--bg-secondary)] p-1 rounded-xl border border-[var(--border-color)]">
               <button
                 onClick={() => setPaletteTab("all")}
                 className={`flex-1 text-[11px] font-bold font-mono py-1 rounded-lg transition-all cursor-pointer text-center ${
                   paletteTab === "all"
-                    ? "bg-white dark:bg-stone-800 text-stone-900 dark:text-stone-100 shadow-xs border border-stone-200/30"
-                    : "text-stone-500 hover:text-stone-800 dark:hover:text-stone-300"
+                    ? "bg-[var(--bg-color)] text-[var(--heading-color)] shadow-xs border border-[var(--border-color)]"
+                    : "text-[var(--text-color)] opacity-80 hover:opacity-100"
                 }`}
               >
                 Built-in & Custom
@@ -2476,8 +2480,8 @@ fig.show()`;
                 onClick={() => setPaletteTab("favorites")}
                 className={`flex-1 text-[11px] font-bold font-mono py-1 rounded-lg transition-all cursor-pointer text-center flex items-center justify-center gap-1 ${
                   paletteTab === "favorites"
-                    ? "bg-white dark:bg-stone-800 text-stone-900 dark:text-stone-100 shadow-xs border border-stone-200/30"
-                    : "text-stone-500 hover:text-stone-800 dark:hover:text-stone-300"
+                    ? "bg-[var(--bg-color)] text-[var(--heading-color)] shadow-xs border border-[var(--border-color)]"
+                    : "text-[var(--text-color)] opacity-80 hover:opacity-100"
                 }`}
               >
                 Saved Favorites ({favoritePalettes.length})
@@ -2491,14 +2495,14 @@ fig.show()`;
                 placeholder="Search palettes by name or tag (e.g. diverging, warm)..."
                 value={paletteSearchQuery}
                 onChange={(e) => setPaletteSearchQuery(e.target.value)}
-                className={`w-full text-xs pl-8 pr-8 py-2 rounded-xl focus:outline-none focus:ring-1 focus:ring-stone-500/20 border ${theme.inputClass}`}
+                className={`w-full text-xs pl-8 pr-8 py-2 rounded-xl focus:outline-none focus:ring-1 focus:ring-[var(--accent-color)] border ${theme.inputClass}`}
               />
-              <Search className="w-3.5 h-3.5 absolute left-2.5 top-1/2 -translate-y-1/2 text-stone-400" />
+              <Search className="w-3.5 h-3.5 absolute left-2.5 top-1/2 -translate-y-1/2 text-[var(--text-color)] opacity-70" />
               {paletteSearchQuery && (
                 <button
                   type="button"
                   onClick={() => setPaletteSearchQuery("")}
-                  className="absolute right-2.5 top-1/2 -translate-y-1/2 text-stone-400 hover:text-stone-600 dark:hover:text-stone-200 cursor-pointer"
+                  className="absolute right-2.5 top-1/2 -translate-y-1/2 text-[var(--text-color)] hover:text-[var(--heading-color)] cursor-pointer"
                 >
                   <X className="w-3.5 h-3.5" />
                 </button>
@@ -2511,18 +2515,18 @@ fig.show()`;
                 onClick={() => setFilterColorblindSafe(!filterColorblindSafe)}
                 className={`text-[10px] px-2 py-1 rounded border font-medium transition-all flex items-center gap-1 cursor-pointer ${
                   filterColorblindSafe
-                    ? "bg-stone-800 border-stone-800 dark:bg-amber-600 dark:border-amber-600 text-white"
-                    : "bg-stone-100/30 dark:bg-stone-900/40 border-stone-200/50 dark:border-stone-800 text-stone-600 dark:text-stone-400 hover:text-stone-900 dark:hover:text-stone-200"
+                    ? "bg-[var(--accent-color)] border-[var(--accent-color)] text-white font-bold"
+                    : "bg-[var(--bg-color)] border-[var(--border-color)] text-[var(--text-color)] hover:bg-[var(--bg-secondary)]"
                 }`}
               >
-                <ShieldCheck className="w-3 h-3" /> Colorblind-Safe
+                <ShieldCheck className="w-3 h-3 text-[var(--accent-color)]" /> Colorblind-Safe
               </button>
               <button
                 onClick={() => setFilterGrayscale(!filterGrayscale)}
                 className={`text-[10px] px-2 py-1 rounded border font-medium transition-all flex items-center gap-1 cursor-pointer ${
                   filterGrayscale
-                    ? "bg-stone-800 border-stone-800 dark:bg-amber-600 dark:border-amber-600 text-white"
-                    : "bg-stone-100/30 dark:bg-stone-900/40 border-stone-200/50 dark:border-stone-800 text-stone-600 dark:text-stone-400 hover:text-stone-900 dark:hover:text-stone-200"
+                    ? "bg-[var(--accent-color)] border-[var(--accent-color)] text-white font-bold"
+                    : "bg-[var(--bg-color)] border-[var(--border-color)] text-[var(--text-color)] hover:bg-[var(--bg-secondary)]"
                 }`}
               >
                 Grayscale Printable
@@ -2533,7 +2537,7 @@ fig.show()`;
             <div className="flex-1 overflow-y-auto space-y-2 pr-1 custom-scrollbar">
               {paletteTab === "favorites" && favoritePalettes.length === 0 ? (
                 <div
-                  className={`py-6 px-4 text-center text-xs border border-dashed rounded-xl bg-stone-50/20 dark:bg-stone-900/20 ${theme.accentBorder} text-stone-400`}
+                  className={`py-6 px-4 text-center text-xs border border-dashed rounded-xl bg-[var(--bg-secondary)] ${theme.accentBorder} text-[var(--text-color)] opacity-80`}
                 >
                   <p className="font-semibold mb-1">No saved favorites yet.</p>
                   <p className="text-[10px] leading-relaxed">Save custom palettes below or click the heart icon on any built-in palette card!</p>
@@ -2552,15 +2556,15 @@ fig.show()`;
                       }}
                       className={`w-full text-left p-2.5 rounded-xl border transition-all flex flex-col gap-1.5 cursor-pointer relative group/palette ${
                         isActive
-                          ? "bg-stone-100/80 dark:bg-stone-800/80 border-stone-400 dark:border-stone-600 ring-1 ring-stone-400/20"
-                          : "bg-white dark:bg-stone-900 border-stone-200 dark:border-stone-800 hover:bg-stone-50 dark:hover:bg-stone-800/40 hover:border-stone-300 dark:hover:border-stone-700"
+                          ? "bg-[var(--bg-secondary)] border-[var(--accent-color)] ring-1 ring-[var(--accent-color)]"
+                          : "bg-[var(--bg-color)] border-[var(--border-color)] hover:bg-[var(--bg-secondary)]"
                       }`}
                     >
                       <div className="flex items-center justify-between">
-                        <span className="text-xs font-semibold font-mono text-stone-800 dark:text-stone-200">
+                        <span className="text-xs font-bold font-mono text-[var(--heading-color)]">
                           {palette.name}
                           {!palette.isBuiltIn && (
-                            <span className="ml-1.5 text-[8px] bg-stone-100 dark:bg-stone-800 text-stone-600 dark:text-stone-400 border border-stone-300 dark:border-stone-700 px-1.5 py-0.2 rounded uppercase font-mono">
+                            <span className="ml-1.5 text-[8px] bg-[var(--bg-secondary)] text-[var(--text-color)] border border-[var(--border-color)] px-1.5 py-0.2 rounded uppercase font-mono">
                               Custom
                             </span>
                           )}
@@ -2658,17 +2662,17 @@ fig.show()`;
           {/* COLOR THEORY PALETTE GENERATOR BOX */}
           <div className={`transition-colors duration-300 rounded-2xl p-5 relative overflow-hidden ${theme.cardClass}`}>
             <div className="flex items-center gap-2">
-              <SlidersHorizontal className="w-4 h-4 text-stone-600 dark:text-stone-350" />
-              <h2 className="text-sm font-semibold tracking-wide uppercase font-mono">Color Theory Generator</h2>
+              <SlidersHorizontal className="w-4 h-4 text-[var(--accent-color)]" />
+              <h2 className="text-sm font-bold tracking-wide uppercase font-mono text-[var(--heading-color)]">Color Theory Generator</h2>
             </div>
-            <p className="text-[11px] text-stone-500 dark:text-stone-400 mb-3">
+            <p className="text-xs text-[var(--text-color)] opacity-85 mb-3">
               Formulate highly professional palettes mathematically using HSL wheel relations tuned for your specific field of work.
             </p>
 
             <form onSubmit={handleGenerateTheoryPalette} className="flex flex-col gap-3.5 relative z-10">
               {/* Starting Color Pickers */}
               <div className="flex flex-col gap-1.5">
-                <label className="text-[10px] font-bold text-stone-500 dark:text-stone-400 font-mono uppercase">Starting Color</label>
+                <label className="text-[10px] font-bold text-[var(--text-color)] opacity-80 font-mono uppercase">Starting Color</label>
                 <div className="flex gap-2">
                   <div className="relative flex-1">
                     <input
@@ -2676,7 +2680,7 @@ fig.show()`;
                       placeholder="#3B82F6"
                       value={theoryBaseColor}
                       onChange={(e) => setTheoryBaseColor(e.target.value)}
-                      className={`w-full text-xs pl-9 pr-3 py-2 rounded-xl focus:outline-none focus:ring-1 focus:ring-stone-500/20 border ${theme.inputClass}`}
+                      className={`w-full text-xs pl-9 pr-3 py-2 rounded-xl focus:outline-none focus:ring-1 focus:ring-[var(--accent-color)] border ${theme.inputClass}`}
                     />
                     <div className="absolute left-2.5 top-1/2 -translate-y-1/2 flex items-center">
                       <input
@@ -2690,9 +2694,9 @@ fig.show()`;
                   <button
                     type="button"
                     onClick={handleRandomizeTheoryColor}
-                    className="px-3 py-2 bg-stone-100 hover:bg-stone-200 dark:bg-stone-900 dark:hover:bg-stone-850 text-stone-700 dark:text-stone-300 border border-stone-200/50 dark:border-stone-800 text-xs font-mono font-bold rounded-xl transition-all shadow-sm flex items-center gap-1 cursor-pointer"
+                    className="px-3 py-2 bg-[var(--bg-secondary)] text-[var(--text-color)] border border-[var(--border-color)] hover:bg-[var(--bg-color)] text-xs font-mono font-bold rounded-xl transition-all shadow-sm flex items-center gap-1 cursor-pointer"
                   >
-                    <RefreshCw className="w-3.5 h-3.5" />
+                    <RefreshCw className="w-3.5 h-3.5 text-[var(--accent-color)]" />
                     Random
                   </button>
                 </div>
@@ -2700,7 +2704,7 @@ fig.show()`;
 
               {/* Scope/Domain Selector */}
               <div className="flex flex-col gap-1.5">
-                <label className="text-[10px] font-bold text-stone-500 dark:text-stone-400 font-mono uppercase">Application Scope</label>
+                <label className="text-[10px] font-bold text-[var(--text-color)] opacity-80 font-mono uppercase">Application Scope</label>
                 <div className="grid grid-cols-2 gap-1.5">
                   {(["scientific", "art", "architecture", "fabric"] as const).map((sc) => {
                     const label = {
@@ -2717,8 +2721,8 @@ fig.show()`;
                         onClick={() => setTheoryScope(sc)}
                         className={`py-1.5 px-2.5 text-center text-xs font-mono font-bold rounded-xl border transition-all cursor-pointer ${
                           active
-                            ? "bg-stone-900 dark:bg-stone-100 border-stone-900 dark:border-stone-100 text-white dark:text-stone-900 shadow-sm"
-                            : "bg-stone-50/50 dark:bg-stone-950/20 border-stone-200/50 dark:border-stone-850 text-stone-500 hover:text-stone-800 dark:hover:text-stone-300 hover:bg-stone-100/40"
+                            ? "bg-[var(--accent-color)] border-[var(--accent-color)] text-white shadow-sm"
+                            : "bg-[var(--bg-color)] border border-[var(--border-color)] text-[var(--text-color)] hover:bg-[var(--bg-secondary)]"
                         }`}
                       >
                         {label}
@@ -2731,8 +2735,8 @@ fig.show()`;
               {/* Number of Colors */}
               <div className="flex flex-col gap-1.5">
                 <div className="flex justify-between items-center">
-                  <label className="text-[10px] font-bold text-stone-500 dark:text-stone-400 font-mono uppercase">Steps (N-Colors)</label>
-                  <span className="text-xs font-bold font-mono px-1.5 py-0.5 bg-stone-100 dark:bg-stone-900 border border-stone-200 dark:border-stone-800 rounded animate-none">
+                  <label className="text-[10px] font-bold text-[var(--text-color)] opacity-80 font-mono uppercase">Steps (N-Colors)</label>
+                  <span className="text-xs font-bold font-mono px-1.5 py-0.5 bg-[var(--bg-secondary)] border border-[var(--border-color)] text-[var(--heading-color)] rounded">
                     {theoryNumColors}
                   </span>
                 </div>
@@ -2743,14 +2747,14 @@ fig.show()`;
                     max={10}
                     value={theoryNumColors}
                     onChange={(e) => setTheoryNumColors(parseInt(e.target.value))}
-                    className="flex-1 h-1 bg-stone-200 dark:bg-stone-700 rounded-lg appearance-none cursor-pointer accent-stone-750"
+                    className="flex-1 h-1 bg-stone-700 rounded-lg appearance-none cursor-pointer accent-[var(--accent-color)]"
                   />
                 </div>
               </div>
 
               <button
                 type="submit"
-                className={`w-full text-xs font-semibold py-2.5 rounded-xl transition-all shadow-sm flex items-center justify-center gap-1.5 cursor-pointer font-mono ${theme.buttonPrimary}`}
+                className="w-full text-xs font-bold py-2.5 rounded-xl transition-all shadow-sm flex items-center justify-center gap-1.5 cursor-pointer font-mono bg-[var(--accent-color)] text-white hover:opacity-90"
               >
                 <SlidersHorizontal className="w-3.5 h-3.5" />
                 Formulate Theory Palette
@@ -2763,9 +2767,9 @@ fig.show()`;
                   initial={{ opacity: 0, y: 5 }}
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0 }}
-                  className="mt-3 p-2.5 rounded-xl bg-red-50 border border-red-200 text-[10px] text-red-700 flex gap-2 font-mono"
+                  className="mt-3 p-2.5 rounded-xl bg-red-950/40 border border-red-800 text-[10px] text-red-200 flex gap-2 font-mono"
                 >
-                  <AlertCircle className="w-3.5 h-3.5 shrink-0 text-red-500" />
+                  <AlertCircle className="w-3.5 h-3.5 shrink-0 text-red-400" />
                   <div>{theoryError}</div>
                 </motion.div>
               )}
@@ -2774,9 +2778,9 @@ fig.show()`;
                   initial={{ opacity: 0, y: 5 }}
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0 }}
-                  className="mt-3 p-2.5 rounded-xl bg-green-50/50 border border-green-200 text-[10px] text-green-700 flex gap-2 font-mono"
+                  className="mt-3 p-2.5 rounded-xl bg-emerald-950/40 border border-emerald-800 text-[10px] text-emerald-200 flex gap-2 font-mono"
                 >
-                  <ShieldCheck className="w-3.5 h-3.5 shrink-0 text-green-600" />
+                  <ShieldCheck className="w-3.5 h-3.5 shrink-0 text-emerald-400" />
                   <div>{theorySuccessMessage}</div>
                 </motion.div>
               )}
@@ -2787,13 +2791,13 @@ fig.show()`;
         {/* CENTER COLUMN: LIVE PLOT SIMULATOR & INTERACTIVE PLAYGROUND (5 Cols) */}
         <div className="xl:col-span-5 flex flex-col gap-6">
           {/* Main Module Tabs Switcher */}
-          <div className="flex flex-wrap sm:flex-nowrap bg-stone-100/50 dark:bg-stone-900/60 border border-stone-200/50 dark:border-stone-800 p-1.5 rounded-2xl shadow-sm gap-1.5">
+          <div className="flex flex-wrap sm:flex-nowrap bg-[var(--bg-secondary)] border border-[var(--border-color)] p-1.5 rounded-2xl shadow-sm gap-1.5">
             <button
               onClick={() => setActiveCenterTab("simulator")}
               className={`flex-1 flex items-center justify-center gap-2 py-2 px-3 rounded-xl text-xs font-mono font-bold transition-all cursor-pointer ${
                 activeCenterTab === "simulator"
-                  ? theme.buttonPrimary + " shadow-sm"
-                  : "text-stone-600 dark:text-stone-400 hover:text-stone-900 dark:hover:text-stone-200 hover:bg-stone-200/40"
+                  ? "bg-[var(--accent-color)] text-white shadow-sm"
+                  : "text-[var(--text-color)] opacity-80 hover:opacity-100 hover:bg-[var(--bg-color)]"
               }`}
             >
               <TrendingUp className="w-4 h-4" />
@@ -2803,8 +2807,8 @@ fig.show()`;
               onClick={() => setActiveCenterTab("toolkit")}
               className={`flex-1 flex items-center justify-center gap-2 py-2 px-3 rounded-xl text-xs font-mono font-bold transition-all cursor-pointer ${
                 activeCenterTab === "toolkit"
-                  ? theme.buttonPrimary + " shadow-sm"
-                  : "text-stone-600 dark:text-stone-400 hover:text-stone-900 dark:hover:text-stone-200 hover:bg-stone-200/40"
+                  ? "bg-[var(--accent-color)] text-white shadow-sm"
+                  : "text-[var(--text-color)] opacity-80 hover:opacity-100 hover:bg-[var(--bg-color)]"
               }`}
             >
               <Sliders className="w-4 h-4" />
@@ -2814,8 +2818,8 @@ fig.show()`;
               onClick={() => setActiveCenterTab("r-extractor")}
               className={`flex-1 flex items-center justify-center gap-2 py-2 px-3 rounded-xl text-xs font-mono font-bold transition-all cursor-pointer ${
                 activeCenterTab === "r-extractor"
-                  ? theme.buttonPrimary + " shadow-sm"
-                  : "text-stone-600 dark:text-stone-400 hover:text-stone-900 dark:hover:text-stone-200 hover:bg-stone-200/40"
+                  ? "bg-[var(--accent-color)] text-white shadow-sm"
+                  : "text-[var(--text-color)] opacity-80 hover:opacity-100 hover:bg-[var(--bg-color)]"
               }`}
             >
               <Code className="w-4 h-4" />R Repo Extractor
@@ -2824,8 +2828,8 @@ fig.show()`;
               onClick={() => setActiveCenterTab("image-extractor")}
               className={`flex-1 flex items-center justify-center gap-2 py-2 px-3 rounded-xl text-xs font-mono font-bold transition-all cursor-pointer ${
                 activeCenterTab === "image-extractor"
-                  ? theme.buttonPrimary + " shadow-sm"
-                  : "text-stone-600 dark:text-stone-400 hover:text-stone-900 dark:hover:text-stone-200 hover:bg-stone-200/40"
+                  ? "bg-[var(--accent-color)] text-white shadow-sm"
+                  : "text-[var(--text-color)] opacity-80 hover:opacity-100 hover:bg-[var(--bg-color)]"
               }`}
             >
               <ImageIcon className="w-4 h-4" />
@@ -2974,7 +2978,7 @@ fig.show()`;
                         <button
                           onClick={() => setColorblindSim("normal")}
                           disabled={colorblindSim === "normal"}
-                          className="flex-1 text-[10px] font-mono font-bold border border-stone-200 dark:border-stone-800 rounded-lg bg-white dark:bg-stone-900 hover:bg-stone-50 disabled:opacity-40 cursor-pointer"
+                          className="flex-1 text-[10px] font-mono font-bold border border-[var(--border-color)] rounded-lg bg-[var(--bg-color)] text-[var(--text-color)] hover:bg-[var(--bg-secondary)] disabled:opacity-40 cursor-pointer"
                         >
                           Clear CVD
                         </button>
@@ -2984,9 +2988,9 @@ fig.show()`;
 
                   {/* Brightness Adjust (HSL Lightness shift) */}
                   <div className="md:col-span-4 flex flex-col gap-1.5 justify-center">
-                    <div className="flex justify-between items-center text-[10px] uppercase font-bold tracking-wider text-stone-400 font-mono">
+                    <div className="flex justify-between items-center text-[10px] uppercase font-bold tracking-wider text-[var(--text-color)] opacity-75 font-mono">
                       <span>Brightness (HSL Shift):</span>
-                      <span className="text-stone-800 dark:text-stone-200 font-bold">{lightShift > 0 ? `+${lightShift}` : lightShift}%</span>
+                      <span className="text-[var(--heading-color)] font-bold">{lightShift > 0 ? `+${lightShift}` : lightShift}%</span>
                     </div>
                     <input
                       type="range"
@@ -2994,14 +2998,16 @@ fig.show()`;
                       max="40"
                       value={lightShift}
                       onChange={(e) => setLightShift(parseInt(e.target.value))}
-                      className="w-full h-1 bg-stone-200 dark:bg-stone-800 rounded-lg appearance-none cursor-pointer accent-stone-800 dark:accent-amber-600"
+                      className="w-full h-1 bg-stone-700 rounded-lg appearance-none cursor-pointer accent-[var(--accent-color)]"
                     />
                   </div>
 
                   {/* Contrast BG Test */}
                   <div className="md:col-span-3 flex flex-col gap-1.5 justify-center">
-                    <span className="text-[10px] uppercase font-bold tracking-wider text-stone-400 font-mono">Contrast Test BG</span>
-                    <div className="grid grid-cols-3 gap-1 bg-stone-100 dark:bg-stone-900 p-1 rounded-lg border border-stone-200/50 dark:border-stone-800">
+                    <span className="text-[10px] uppercase font-bold tracking-wider text-[var(--text-color)] opacity-75 font-mono">
+                      Contrast Test BG
+                    </span>
+                    <div className="grid grid-cols-3 gap-1 bg-[var(--bg-secondary)] p-1 rounded-lg border border-[var(--border-color)]">
                       {[
                         { mode: "white", label: "WHT" },
                         { mode: "neutral", label: "NEU" },
@@ -3013,9 +3019,7 @@ fig.show()`;
                             key={bg.mode}
                             onClick={() => setPlotBg(bg.mode as any)}
                             className={`text-[9px] font-mono font-extrabold py-1 rounded transition-all cursor-pointer ${
-                              active
-                                ? "bg-stone-850 text-white dark:bg-stone-100 dark:text-stone-900 shadow-xs"
-                                : "text-stone-500 hover:text-stone-800"
+                              active ? "bg-[var(--accent-color)] text-white shadow-xs" : "text-[var(--text-color)] opacity-80 hover:opacity-100"
                             }`}
                           >
                             {bg.label}
@@ -3027,7 +3031,7 @@ fig.show()`;
                 </div>
 
                 {favFeedback && (
-                  <div className="text-[10px] text-amber-800 dark:text-amber-200 bg-amber-50 dark:bg-amber-950/40 p-2 rounded-xl border border-amber-200/30 text-center font-mono">
+                  <div className="text-[10px] text-amber-200 bg-amber-950/60 p-2 rounded-xl border border-amber-800 text-center font-mono font-bold">
                     {favFeedback}
                   </div>
                 )}
@@ -3851,32 +3855,37 @@ fig.show()`;
 
               {/* SECTION D: WCAG CONTRAST CHECKER */}
               <div className="flex flex-col gap-3">
-                <span className="text-xs text-stone-500 font-semibold font-mono">D. Text Overlay WCAG 2.1 Contrast Ratios:</span>
-                <div className="overflow-x-auto border border-stone-200 rounded-xl">
+                <span className="text-xs text-[var(--heading-color)] font-bold font-mono">D. Text Overlay WCAG 2.1 Contrast Ratios:</span>
+                <div className="overflow-x-auto border border-[var(--border-color)] rounded-xl">
                   <table className="w-full text-left border-collapse text-[11px] font-mono">
                     <thead>
-                      <tr className="bg-stone-50 text-stone-500 border-b border-stone-200">
-                        <th className="p-2.5 font-semibold">Swatch</th>
-                        <th className="p-2.5 font-semibold">White Text</th>
-                        <th className="p-2.5 font-semibold">Dark Text</th>
+                      <tr className="bg-[var(--bg-secondary)] text-[var(--text-color)] border-b border-[var(--border-color)] font-bold">
+                        <th className="p-2.5 font-bold">Swatch</th>
+                        <th className="p-2.5 font-bold">White Text</th>
+                        <th className="p-2.5 font-bold">Dark Text</th>
                       </tr>
                     </thead>
-                    <tbody className="divide-y divide-stone-150 bg-white">
+                    <tbody className="divide-y divide-[var(--border-color)] bg-[var(--bg-color)] text-[var(--text-color)]">
                       {adjustedColors.map((color, idx) => {
                         const lum = getLuminance(color);
                         const whitePass = lum < 120;
                         const darkPass = lum > 130;
 
                         return (
-                          <tr key={idx} className="hover:bg-stone-50/50">
+                          <tr key={idx} className="hover:bg-[var(--bg-secondary)]">
                             <td className="p-2.5 flex items-center gap-2">
-                              <span style={{ backgroundColor: color }} className="w-4 h-4 rounded-full border border-stone-200 shrink-0" />
-                              <span className="font-bold">{color}</span>
+                              <span
+                                style={{ backgroundColor: color }}
+                                className="w-4 h-4 rounded-full border border-[var(--border-color)] shrink-0"
+                              />
+                              <span className="font-bold text-[var(--heading-color)]">{color}</span>
                             </td>
                             <td className="p-2.5">
                               <span
                                 className={`px-2 py-0.5 rounded font-bold ${
-                                  whitePass ? "bg-green-50 text-green-700 border border-green-200" : "bg-red-50 text-red-600"
+                                  whitePass
+                                    ? "bg-emerald-950/60 text-emerald-300 border border-emerald-700"
+                                    : "bg-red-950/60 text-red-300 border border-red-800"
                                 }`}
                               >
                                 {whitePass ? "AA Pass" : "Low Contrast"}
@@ -3885,7 +3894,9 @@ fig.show()`;
                             <td className="p-2.5">
                               <span
                                 className={`px-2 py-0.5 rounded font-bold ${
-                                  darkPass ? "bg-green-50 text-green-700 border border-green-200" : "bg-red-50 text-red-600"
+                                  darkPass
+                                    ? "bg-emerald-950/60 text-emerald-300 border border-emerald-700"
+                                    : "bg-red-950/60 text-red-300 border border-red-800"
                                 }`}
                               >
                                 {darkPass ? "AA Pass" : "Low Contrast"}
@@ -3900,32 +3911,39 @@ fig.show()`;
               </div>
 
               {/* SECTION E: HARMONY ASSISTANT */}
-              <div className="flex flex-col gap-3 border-t border-stone-150 pt-5">
+              <div className="flex flex-col gap-3 border-t border-[var(--border-color)] pt-5">
                 <div className="flex items-center">
-                  <span className="text-xs text-stone-500 font-semibold font-mono">E. Harmony Assistant (Color Theory Suggestions):</span>
+                  <span className="text-xs text-[var(--heading-color)] font-bold font-mono">E. Harmony Assistant (Color Theory Suggestions):</span>
                 </div>
 
-                <div className="flex flex-col gap-4 p-4 bg-[#fcfcf9] dark:bg-stone-900/10 rounded-xl border border-stone-200">
+                <div className="flex flex-col gap-4 p-4 bg-[var(--bg-secondary)] rounded-xl border border-[var(--border-color)]">
                   {/* Base Color Information */}
-                  <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-white dark:bg-stone-900/30 p-3 rounded-lg border border-stone-150 text-xs font-mono">
+                  <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-[var(--bg-color)] p-3 rounded-lg border border-[var(--border-color)] text-xs font-mono">
                     <div className="flex items-center gap-2.5">
-                      <span className="text-[10px] text-stone-400 font-bold uppercase">Base Swatch:</span>
-                      <div style={{ backgroundColor: baseColorHex }} className="w-7 h-7 rounded-lg border border-stone-300 shadow-sm shrink-0" />
+                      <span className="text-[10px] text-[var(--text-color)] opacity-75 font-bold uppercase">Base Swatch:</span>
+                      <div
+                        style={{ backgroundColor: baseColorHex }}
+                        className="w-7 h-7 rounded-lg border border-[var(--border-color)] shadow-sm shrink-0"
+                      />
                       <div>
-                        <span className="font-bold text-stone-800 dark:text-stone-100">Swatch #{baseColorIdx + 1}</span>
-                        <span className="text-[10px] text-stone-500 block">{baseColorHex}</span>
+                        <span className="font-bold text-[var(--heading-color)]">Swatch #{baseColorIdx + 1}</span>
+                        <span className="text-[10px] text-[var(--text-color)] opacity-85 block font-bold">{baseColorHex}</span>
                       </div>
                     </div>
-                    <span className="text-[10px] text-stone-400 text-right italic">Click any swatch in Section A to change the base color.</span>
+                    <span className="text-[10px] text-[var(--text-color)] opacity-70 text-right italic">
+                      Click any swatch in Section A to change the base color.
+                    </span>
                   </div>
 
                   {/* Harmony Options Grid */}
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     {/* Complementary (1 color) */}
-                    <div className="bg-white dark:bg-stone-900/20 p-3 rounded-lg border border-stone-150 flex flex-col gap-2">
-                      <div className="flex justify-between items-center border-b border-stone-100 pb-1.5">
-                        <span className="text-[11px] font-bold text-stone-600 font-mono">Complementary (180° opposite)</span>
-                        <span className="text-[9px] bg-indigo-50 text-indigo-700 px-1.5 py-0.5 rounded font-bold font-mono">Opposite Contrast</span>
+                    <div className="bg-[var(--bg-color)] p-3 rounded-lg border border-[var(--border-color)] flex flex-col gap-2">
+                      <div className="flex justify-between items-center border-b border-[var(--border-color)] pb-1.5">
+                        <span className="text-[11px] font-bold text-[var(--heading-color)] font-mono">Complementary (180° opposite)</span>
+                        <span className="text-[9px] bg-[var(--bg-secondary)] text-[var(--accent-color)] border border-[var(--border-color)] px-1.5 py-0.5 rounded font-bold font-mono">
+                          Opposite Contrast
+                        </span>
                       </div>
                       <div className="flex flex-col gap-2">
                         {harmonies.complementary.map((color, i) => (
@@ -4542,40 +4560,40 @@ fig.show()`;
         <div className="xl:col-span-3 flex flex-col gap-6">
           {/* ACCESSIBILITY & DESIGN SCORECARD */}
           <div className={`transition-colors duration-300 rounded-2xl p-5 flex flex-col gap-4 ${theme.cardClass}`}>
-            <div className="flex items-center gap-2 border-b border-stone-150 pb-3">
-              <Award className="w-4 h-4 text-stone-600 dark:text-stone-350" />
-              <h2 className="text-sm font-semibold tracking-wide uppercase font-mono">Design Scorecard</h2>
+            <div className="flex items-center gap-2 border-b border-[var(--border-color)] pb-3">
+              <Award className="w-4 h-4 text-[var(--accent-color)]" />
+              <h2 className="text-sm font-bold tracking-wide uppercase font-mono text-[var(--heading-color)]">Design Scorecard</h2>
             </div>
 
             {/* Score circle */}
-            <div className="flex items-center gap-4 bg-stone-100/50 dark:bg-stone-900/60 p-3 rounded-xl border border-stone-200/60 dark:border-stone-800">
+            <div className="flex items-center gap-4 bg-[var(--bg-secondary)] p-3 rounded-xl border border-[var(--border-color)]">
               <div className="relative flex items-center justify-center w-14 h-14">
                 <svg className="w-full h-full transform -rotate-90">
-                  <circle cx="28" cy="28" r="24" stroke="#e5e5df" strokeWidth="4" fill="transparent" />
+                  <circle cx="28" cy="28" r="24" stroke="var(--border-color)" strokeWidth="4" fill="transparent" />
                   <circle
                     cx="28"
                     cy="28"
                     r="24"
-                    stroke={evaluation.score >= 80 ? "#15803d" : evaluation.score >= 60 ? "#1d4ed8" : "#b45309"}
+                    stroke={evaluation.score >= 80 ? "#16a34a" : evaluation.score >= 60 ? "#2563eb" : "#d97706"}
                     strokeWidth="4"
                     fill="transparent"
                     strokeDasharray={`${2 * Math.PI * 24}`}
                     strokeDashoffset={`${2 * Math.PI * 24 * (1 - evaluation.score / 100)}`}
                   />
                 </svg>
-                <span className="absolute text-sm font-bold font-mono text-stone-800 dark:text-stone-100">{evaluation.score}</span>
+                <span className="absolute text-sm font-bold font-mono text-[var(--heading-color)]">{evaluation.score}</span>
               </div>
               <div>
-                <div className="text-xs text-stone-500 dark:text-stone-400 font-mono">Principle Score</div>
-                <div className="text-base font-bold flex items-center gap-1.5 font-mono">
+                <div className="text-xs text-[var(--text-color)] opacity-80 font-mono">Principle Score</div>
+                <div className="text-base font-bold flex items-center gap-1.5 font-mono text-[var(--heading-color)]">
                   {evaluation.rating}
                   <span
-                    className={`text-[10px] px-1.5 py-0.2 rounded font-semibold font-mono ${
+                    className={`text-[10px] px-1.5 py-0.2 rounded font-bold font-mono ${
                       evaluation.rating === "Excellent"
-                        ? "bg-green-50 dark:bg-green-950 text-green-700 dark:text-green-400 border border-green-200 dark:border-green-800"
+                        ? "bg-emerald-950/60 text-emerald-300 border border-emerald-700"
                         : evaluation.rating === "Good"
-                          ? "bg-stone-100 dark:bg-stone-800 text-stone-700 dark:text-stone-300 border border-stone-200"
-                          : "bg-amber-50 dark:bg-amber-950 text-amber-700 dark:text-amber-400 border border-amber-200"
+                          ? "bg-[var(--bg-color)] text-[var(--text-color)] border border-[var(--border-color)]"
+                          : "bg-amber-950/60 text-amber-300 border border-amber-800"
                     }`}
                   >
                     {evaluation.rating}
@@ -4586,14 +4604,14 @@ fig.show()`;
 
             {/* Specific checks */}
             <div className="space-y-2.5 text-xs font-mono">
-              <div className="flex items-center justify-between border-b border-stone-100 dark:border-stone-800 pb-1.5">
-                <span className="text-stone-500 dark:text-stone-400">Colorblind-Safe:</span>
-                <span className="text-stone-800 dark:text-stone-200 flex gap-2">
+              <div className="flex items-center justify-between border-b border-[var(--border-color)] pb-1.5">
+                <span className="text-[var(--text-color)] opacity-85">Colorblind-Safe:</span>
+                <span className="text-[var(--heading-color)] flex gap-2 font-bold">
                   <span
                     className={
                       evaluation.colorblindFriendly.protanopia
-                        ? "text-green-700 font-bold bg-green-50 dark:bg-green-950/40 px-1 rounded border border-green-100"
-                        : "text-red-700 font-bold bg-red-50 dark:bg-red-950/40 px-1 rounded border border-red-100"
+                        ? "text-emerald-300 font-bold bg-emerald-950/60 px-1 rounded border border-emerald-700"
+                        : "text-red-300 font-bold bg-red-950/60 px-1 rounded border border-red-800"
                     }
                   >
                     Protan {evaluation.colorblindFriendly.protanopia ? "✓" : "✗"}
@@ -4601,8 +4619,8 @@ fig.show()`;
                   <span
                     className={
                       evaluation.colorblindFriendly.deuteranopia
-                        ? "text-green-700 font-bold bg-green-50 dark:bg-green-950/40 px-1 rounded border border-green-100"
-                        : "text-red-700 font-bold bg-red-50 dark:bg-red-950/40 px-1 rounded border border-red-100"
+                        ? "text-emerald-300 font-bold bg-emerald-950/60 px-1 rounded border border-emerald-700"
+                        : "text-red-300 font-bold bg-red-950/60 px-1 rounded border border-red-800"
                     }
                   >
                     Deut {evaluation.colorblindFriendly.deuteranopia ? "✓" : "✗"}
@@ -4610,31 +4628,29 @@ fig.show()`;
                 </span>
               </div>
 
-              <div className="flex items-center justify-between border-b border-stone-100 dark:border-stone-800 pb-1.5">
-                <span className="text-stone-500 dark:text-stone-400">Grayscale Contrast:</span>
-                <span
-                  className={`font-semibold ${evaluation.grayscalePrintable ? "text-green-700 dark:text-green-400" : "text-amber-700 dark:text-amber-450"}`}
-                >
+              <div className="flex items-center justify-between border-b border-[var(--border-color)] pb-1.5">
+                <span className="text-[var(--text-color)] opacity-85">Grayscale Contrast:</span>
+                <span className={`font-bold ${evaluation.grayscalePrintable ? "text-emerald-400" : "text-amber-400"}`}>
                   {evaluation.grayscalePrintable ? "Pass (Excellent)" : "Caution (Low)"}
                 </span>
               </div>
 
-              <div className="flex flex-col gap-1 border-b border-stone-100 dark:border-stone-800 pb-1.5">
+              <div className="flex flex-col gap-1 border-b border-[var(--border-color)] pb-1.5">
                 <div className="flex items-center justify-between">
-                  <span className="text-stone-500 dark:text-stone-400">Cognitive Load:</span>
+                  <span className="text-[var(--text-color)] opacity-85">Cognitive Load:</span>
                   <span
-                    className={`font-semibold capitalize ${
+                    className={`font-bold capitalize ${
                       evaluation.cognitiveLoadRating.status === "low"
-                        ? "text-green-700 dark:text-green-400"
+                        ? "text-emerald-400"
                         : evaluation.cognitiveLoadRating.status === "medium"
-                          ? "text-amber-700 dark:text-amber-400"
-                          : "text-red-700"
+                          ? "text-amber-400"
+                          : "text-red-400"
                     }`}
                   >
                     {evaluation.cognitiveLoadRating.status}
                   </span>
                 </div>
-                <p className="text-[10px] text-stone-500 dark:text-stone-450 italic leading-tight">{evaluation.cognitiveLoadRating.reason}</p>
+                <p className="text-[10px] text-[var(--text-color)] opacity-80 italic leading-tight">{evaluation.cognitiveLoadRating.reason}</p>
               </div>
             </div>
 
@@ -4644,12 +4660,12 @@ fig.show()`;
                 <motion.div
                   initial={{ opacity: 0, height: 0 }}
                   animate={{ opacity: 1, height: "auto" }}
-                  className="p-3 bg-stone-50 dark:bg-stone-900 border border-stone-200 dark:border-stone-800 rounded-xl flex flex-col gap-1.5 text-[11px]"
+                  className="p-3 bg-[var(--bg-secondary)] border border-[var(--border-color)] rounded-xl flex flex-col gap-1.5 text-[11px]"
                 >
-                  <span className="font-semibold text-amber-850 dark:text-amber-400 flex items-center gap-1 font-mono">
-                    <AlertCircle className="w-3.5 h-3.5" /> Design Review Items:
+                  <span className="font-bold text-amber-300 flex items-center gap-1 font-mono">
+                    <AlertCircle className="w-3.5 h-3.5 text-amber-400" /> Design Review Items:
                   </span>
-                  <ul className="list-disc list-inside space-y-1 text-stone-600 dark:text-stone-400 pl-0.5 leading-relaxed font-mono text-[10px]">
+                  <ul className="list-disc list-inside space-y-1 text-[var(--text-color)] pl-0.5 leading-relaxed font-mono text-[10px]">
                     {evaluation.critiques.map((crit, i) => (
                       <li key={i}>{crit}</li>
                     ))}
@@ -4659,42 +4675,42 @@ fig.show()`;
             </AnimatePresence>
 
             {/* Suggest Improvement Button / Panel */}
-            <div className="pt-3 border-t border-stone-200/50 dark:border-stone-800 flex flex-col gap-3">
+            <div className="pt-3 border-t border-[var(--border-color)] flex flex-col gap-3">
               {!activeImprovement ? (
                 <button
                   onClick={handleSuggestImprovement}
-                  className="w-full py-2.5 px-4 rounded-xl text-xs font-mono font-bold bg-amber-600 hover:bg-amber-550 text-white transition-all cursor-pointer flex items-center justify-center gap-2 shadow-xs"
+                  className="w-full py-2.5 px-4 rounded-xl text-xs font-mono font-bold bg-[var(--accent-color)] text-white hover:opacity-90 transition-all cursor-pointer flex items-center justify-center gap-2 shadow-xs"
                 >
                   <Sparkles className="w-3.5 h-3.5 animate-pulse" />
                   Suggest Accessibility Improvement
                 </button>
               ) : (
-                <div className="p-3 bg-amber-500/5 dark:bg-amber-550/10 border border-amber-500/30 rounded-xl flex flex-col gap-2.5 text-[11px] font-mono">
+                <div className="p-3 bg-[var(--bg-secondary)] border border-amber-500/30 rounded-xl flex flex-col gap-2.5 text-[11px] font-mono">
                   <div className="flex justify-between items-center border-b border-amber-500/20 pb-1.5">
-                    <span className="font-bold text-amber-800 dark:text-amber-400 flex items-center gap-1">
+                    <span className="font-bold text-amber-400 flex items-center gap-1">
                       <Sparkles className="w-3.5 h-3.5" /> Optimal Improvement Plan
                     </span>
                     <button
                       onClick={() => setActiveImprovement(null)}
-                      className="text-stone-400 hover:text-stone-600 dark:hover:text-stone-200 cursor-pointer"
+                      className="text-[var(--text-color)] hover:text-[var(--heading-color)] cursor-pointer"
                     >
                       <X className="w-3 h-3" />
                     </button>
                   </div>
 
-                  <p className="text-stone-700 dark:text-stone-300 text-[10.5px] leading-relaxed">{activeImprovement.explanation}</p>
+                  <p className="text-[var(--text-color)] text-[10.5px] leading-relaxed">{activeImprovement.explanation}</p>
 
-                  <div className="flex items-center justify-between bg-white dark:bg-stone-900/40 p-2 rounded-lg border border-amber-500/20">
+                  <div className="flex items-center justify-between bg-[var(--bg-color)] p-2 rounded-lg border border-[var(--border-color)]">
                     <div>
-                      <span className="text-[9px] text-stone-400 block font-bold uppercase">Predicted Score</span>
-                      <span className="text-xs font-bold text-green-700 dark:text-green-400">
+                      <span className="text-[9px] text-[var(--text-color)] opacity-75 block font-bold uppercase">Predicted Score</span>
+                      <span className="text-xs font-bold text-emerald-400">
                         {activeImprovement.currentScore} → {activeImprovement.targetScore}
                       </span>
                     </div>
 
                     <button
                       onClick={handleApplyImprovement}
-                      className="bg-amber-600 hover:bg-amber-550 text-white text-[10px] font-bold px-3 py-1.5 rounded-lg transition-all shadow-xs cursor-pointer flex items-center gap-1"
+                      className="bg-[var(--accent-color)] text-white text-[10px] font-bold px-3 py-1.5 rounded-lg transition-all shadow-xs cursor-pointer flex items-center gap-1 hover:opacity-90"
                     >
                       Apply Adjustment
                     </button>
@@ -4704,13 +4720,13 @@ fig.show()`;
             </div>
 
             {/* Toggle Python Code Exporter button */}
-            <div className="pt-3 border-t border-stone-200/50 dark:border-stone-800">
+            <div className="pt-3 border-t border-[var(--border-color)]">
               <button
                 onClick={() => setIsExporterOpen(!isExporterOpen)}
                 className={`w-full py-2 px-4 rounded-xl text-xs font-mono font-bold border transition-all cursor-pointer flex items-center justify-center gap-2 ${
                   isExporterOpen
-                    ? "bg-stone-800 text-white dark:bg-stone-100 dark:text-stone-900 border-transparent shadow-sm"
-                    : "bg-stone-50 dark:bg-stone-900/40 text-stone-700 dark:text-stone-300 border-stone-200 hover:bg-stone-100"
+                    ? "bg-[var(--accent-color)] text-white border-transparent shadow-sm"
+                    : "bg-[var(--bg-color)] text-[var(--text-color)] border-[var(--border-color)] hover:bg-[var(--bg-secondary)]"
                 }`}
               >
                 <Code className="w-3.5 h-3.5" />
@@ -4722,14 +4738,14 @@ fig.show()`;
           {/* PYTHON EXPORTER CODE BLOCK */}
           {isExporterOpen && (
             <div className={`transition-colors duration-300 rounded-2xl p-5 flex flex-col gap-4 ${theme.cardClass}`}>
-              <div className="flex items-center justify-between border-b border-stone-150 pb-3">
+              <div className="flex items-center justify-between border-b border-[var(--border-color)] pb-3">
                 <div className="flex items-center gap-2">
-                  <Code className="w-4 h-4 text-stone-600 dark:text-stone-350" />
-                  <h2 className="text-sm font-semibold tracking-wide uppercase font-mono">Python Code Exporter</h2>
+                  <Code className="w-4 h-4 text-[var(--accent-color)]" />
+                  <h2 className="text-sm font-bold tracking-wide uppercase font-mono text-[var(--heading-color)]">Python Code Exporter</h2>
                 </div>
                 <button
                   onClick={handleCopyCode}
-                  className={`text-[10px] px-3 py-1.5 rounded-lg flex items-center gap-1 font-semibold cursor-pointer font-mono shadow-sm ${theme.buttonPrimary}`}
+                  className="text-[10px] px-3 py-1.5 rounded-lg flex items-center gap-1 font-bold cursor-pointer font-mono shadow-sm bg-[var(--accent-color)] text-white hover:opacity-90"
                 >
                   {copiedCode ? <Check className="w-3 h-3" /> : <Copy className="w-3 h-3" />}
                   {copiedCode ? "Copied" : "Copy"}
@@ -4737,13 +4753,13 @@ fig.show()`;
               </div>
 
               {/* Switchable code tabs */}
-              <div className="flex gap-1 bg-stone-100/50 dark:bg-stone-900/60 p-1 rounded-xl border border-stone-200/50 dark:border-stone-800">
+              <div className="flex gap-1 bg-[var(--bg-secondary)] p-1 rounded-xl border border-[var(--border-color)]">
                 <button
                   onClick={() => setActiveCodeTab("pyplot")}
                   className={`flex-1 text-[10px] py-1.5 rounded-lg font-mono font-bold transition-all cursor-pointer ${
                     activeCodeTab === "pyplot"
-                      ? theme.buttonPrimary + " shadow-sm"
-                      : "text-stone-500 hover:text-stone-800 dark:hover:text-stone-200 hover:bg-stone-200/40"
+                      ? "bg-[var(--accent-color)] text-white shadow-sm"
+                      : "text-[var(--text-color)] opacity-80 hover:opacity-100"
                   }`}
                 >
                   pyplot + sns
@@ -4752,8 +4768,8 @@ fig.show()`;
                   onClick={() => setActiveCodeTab("plotly")}
                   className={`flex-1 text-[10px] py-1.5 rounded-lg font-mono font-bold transition-all cursor-pointer ${
                     activeCodeTab === "plotly"
-                      ? theme.buttonPrimary + " shadow-sm"
-                      : "text-stone-500 hover:text-stone-800 dark:hover:text-stone-200 hover:bg-stone-200/40"
+                      ? "bg-[var(--accent-color)] text-white shadow-sm"
+                      : "text-[var(--text-color)] opacity-80 hover:opacity-100"
                   }`}
                 >
                   plotly
@@ -4762,8 +4778,8 @@ fig.show()`;
                   onClick={() => setActiveCodeTab("library")}
                   className={`flex-1 text-[10px] py-1.5 rounded-lg font-mono font-bold transition-all cursor-pointer ${
                     activeCodeTab === "library"
-                      ? theme.buttonPrimary + " shadow-sm"
-                      : "text-stone-500 hover:text-stone-800 dark:hover:text-stone-200 hover:bg-stone-200/40"
+                      ? "bg-[var(--accent-color)] text-white shadow-sm"
+                      : "text-[var(--text-color)] opacity-80 hover:opacity-100"
                   }`}
                 >
                   pypalette.py
@@ -4778,19 +4794,19 @@ fig.show()`;
               </div>
 
               {/* PALETTE DOWNLOAD BUTTONS */}
-              <div className="flex gap-2 border-t border-stone-150 pt-3">
+              <div className="flex gap-2 border-t border-[var(--border-color)] pt-3">
                 <button
                   onClick={handleDownloadJson}
-                  className="flex-1 flex items-center justify-center gap-1.5 py-2 px-3 border border-stone-300 rounded-xl bg-stone-50 hover:bg-stone-100 text-stone-700 hover:text-stone-900 text-[10.5px] font-mono font-bold shadow-sm transition-all cursor-pointer"
+                  className="flex-1 flex items-center justify-center gap-1.5 py-2 px-3 border border-[var(--border-color)] rounded-xl bg-[var(--bg-secondary)] hover:bg-[var(--bg-color)] text-[var(--heading-color)] text-[10.5px] font-mono font-bold shadow-sm transition-all cursor-pointer"
                 >
-                  <Download className="w-3.5 h-3.5" />
+                  <Download className="w-3.5 h-3.5 text-[var(--accent-color)]" />
                   Download JSON
                 </button>
                 <button
                   onClick={handleDownloadCsv}
-                  className="flex-1 flex items-center justify-center gap-1.5 py-2 px-3 border border-stone-300 rounded-xl bg-stone-50 hover:bg-stone-100 text-stone-700 hover:text-stone-900 text-[10.5px] font-mono font-bold shadow-sm transition-all cursor-pointer"
+                  className="flex-1 flex items-center justify-center gap-1.5 py-2 px-3 border border-[var(--border-color)] rounded-xl bg-[var(--bg-secondary)] hover:bg-[var(--bg-color)] text-[var(--heading-color)] text-[10.5px] font-mono font-bold shadow-sm transition-all cursor-pointer"
                 >
-                  <Download className="w-3.5 h-3.5" />
+                  <Download className="w-3.5 h-3.5 text-[var(--accent-color)]" />
                   Download CSV
                 </button>
               </div>
