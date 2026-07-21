@@ -56,63 +56,33 @@ const DEFICIENCY_DETAILS = {
 
 const UI_THEMES = {
   swiss: {
-    bgClass: "bg-[#faf9f5] text-stone-900",
-    headerClass: "border-b border-stone-200/80 bg-white/95 text-stone-900",
-    cardClass: "bg-white border border-stone-200 shadow-xs",
-    inputClass: "bg-[#fbfaf8] border-stone-200 text-stone-900 focus:border-stone-500",
-    buttonPrimary: "bg-stone-900 hover:bg-stone-800 text-white",
-    buttonSecondary: "bg-stone-100 hover:bg-stone-200 text-stone-800 border border-stone-200",
-    accentText: "text-stone-800",
-    accentBorder: "border-stone-200",
-    tagClass: "bg-stone-100 text-stone-700 border-stone-200",
-    subBgClass: "bg-[#f5f4ed]",
-    textMuted: "text-stone-500",
-    title: "Neo-Swiss Minimal",
+    bgClass: "bg-[var(--bg-color)] text-[var(--text-color)]",
+    headerClass: "border-b border-[var(--border-color)] bg-[var(--bg-color)]/95 text-[var(--heading-color)]",
+    cardClass: "bg-[var(--bg-color)] border border-[var(--border-color)] shadow-xs",
+    inputClass: "bg-[var(--bg-secondary)] border-[var(--border-color)] text-[var(--text-color)] focus:border-[var(--accent-color)]",
+    buttonPrimary: "bg-[var(--accent-color)] text-white hover:opacity-90",
+    buttonSecondary: "bg-[var(--bg-secondary)] hover:bg-[var(--border-color)]/30 text-[var(--text-color)] border border-[var(--border-color)]",
+    accentText: "text-[var(--accent-color)]",
+    accentBorder: "border-[var(--border-color)]",
+    tagClass: "bg-[var(--bg-secondary)] text-[var(--text-color)] border-[var(--border-color)] opacity-80",
+    subBgClass: "bg-[var(--bg-secondary)]",
+    textMuted: "opacity-60 text-[var(--text-color)]",
+    title: "Editorial Minimal",
     icon: "",
   },
   midnight: {
-    bgClass: "bg-[#0b0b0a] text-[#f4f4f3] selection:bg-amber-500/20",
-    headerClass: "border-b border-stone-800/80 bg-[#121211]/95 text-[#f4f4f3]",
-    cardClass: "bg-[#141413] border border-stone-800/80 shadow-2xl",
-    inputClass: "bg-[#1e1e1d] border-stone-800 text-stone-200 focus:border-amber-600",
-    buttonPrimary: "bg-amber-600 hover:bg-amber-500 text-white",
-    buttonSecondary: "bg-stone-900 hover:bg-stone-800 text-stone-300 border border-stone-800",
-    accentText: "text-amber-500",
-    accentBorder: "border-stone-800/80",
-    tagClass: "bg-stone-900 text-stone-400 border-stone-800",
-    subBgClass: "bg-[#1d1d1c]",
-    textMuted: "text-stone-400",
-    title: "Midnight Astro",
-    icon: "",
-  },
-  academic: {
-    bgClass: "bg-[#faf7f0] text-[#2b2925]",
-    headerClass: "border-b border-amber-900/10 bg-[#fdfcf9]/95 text-[#2b2925]",
-    cardClass: "bg-[#fdfcf9] border border-amber-900/10 shadow-sm",
-    inputClass: "bg-[#fdfcf9] border-amber-900/15 text-[#2b2925] focus:border-amber-800",
-    buttonPrimary: "bg-amber-900 hover:bg-amber-955 text-[#fdfcf9]",
-    buttonSecondary: "bg-[#faf7f0] hover:bg-[#efece3] text-[#2b2925] border border-amber-900/10",
-    accentText: "text-amber-900",
-    accentBorder: "border-amber-900/10",
-    tagClass: "bg-[#faf7f0] text-amber-900 border-amber-900/10",
-    subBgClass: "bg-[#faf7f0]/60",
-    textMuted: "text-stone-500",
-    title: "Warm Editorial",
-    icon: "",
-  },
-  terminal: {
-    bgClass: "bg-[#040404] text-green-400 font-mono",
-    headerClass: "border-b-2 border-green-500 bg-[#0c0c0c] text-green-400",
-    cardClass: "bg-[#090909] border-2 border-green-900/60 shadow-[4px_4px_0px_#00ff001c]",
-    inputClass: "bg-black border-green-500 text-green-400 focus:border-green-300",
-    buttonPrimary: "bg-green-600 hover:bg-green-500 text-black font-extrabold",
-    buttonSecondary: "bg-black hover:bg-green-950/40 text-green-400 border border-green-500",
-    accentText: "text-green-400",
-    accentBorder: "border-green-500",
-    tagClass: "bg-black text-green-400 border border-green-900",
-    subBgClass: "bg-black/60",
-    textMuted: "text-green-600",
-    title: "Cyber Brutalist",
+    bgClass: "bg-[var(--bg-color)] text-[var(--text-color)]",
+    headerClass: "border-b border-[var(--border-color)] bg-[var(--bg-color)]/95 text-[var(--heading-color)]",
+    cardClass: "bg-[var(--bg-secondary)] border border-[var(--border-color)] shadow-xs",
+    inputClass: "bg-[var(--bg-color)] border-[var(--border-color)] text-[var(--text-color)] focus:border-[var(--accent-color)]",
+    buttonPrimary: "bg-[var(--accent-color)] text-white hover:opacity-90",
+    buttonSecondary: "bg-[var(--bg-color)] hover:bg-[var(--border-color)]/30 text-[var(--text-color)] border border-[var(--border-color)]",
+    accentText: "text-[var(--accent-color)]",
+    accentBorder: "border-[var(--border-color)]",
+    tagClass: "bg-[var(--bg-color)] text-[var(--text-color)] border-[var(--border-color)] opacity-80",
+    subBgClass: "bg-[var(--bg-color)]",
+    textMuted: "opacity-60 text-[var(--text-color)]",
+    title: "Graphite Studio",
     icon: "",
   },
 } as const;
@@ -2307,20 +2277,21 @@ fig.show()`;
       <header
         className={`border-b transition-colors duration-300 sticky top-0 z-50 px-6 py-4 flex flex-col lg:flex-row lg:items-center justify-between gap-4 backdrop-blur-md ${theme.headerClass}`}
       >
-        <div className="flex items-center gap-3">
-          <div className="bg-stone-800 p-2 rounded-xl text-white shadow-sm ring-1 ring-stone-700/10">
-            <Sparkles className="w-6 h-6 text-amber-100 animate-pulse" />
-          </div>
+        <div className="flex items-center gap-4">
+          <a
+            href="/"
+            className="inline-flex items-center gap-2 text-xs font-semibold tracking-[0.2em] uppercase text-[var(--text-color)] opacity-70 hover:opacity-100 hover:text-[var(--accent-color)] transition-all pr-4 border-r border-[var(--border-color)] shrink-0"
+          >
+            ← Return to Main Page
+          </a>
           <div>
             <div className="flex items-center gap-2">
-              <h1 className="text-xl font-bold tracking-tight font-mono">PyPalette Studio</h1>
-              <span className="text-[10px] bg-stone-150 text-stone-600 dark:text-stone-300 font-semibold px-1.5 py-0.5 rounded border border-stone-250">
-                v2.1 Stable
+              <h1 className="text-xl font-bold tracking-tight font-serif text-[var(--heading-color)]">Pylette Plot Studio</h1>
+              <span className="text-[10px] bg-[var(--bg-secondary)] text-[var(--text-color)] opacity-80 font-semibold px-2 py-0.5 rounded border border-[var(--border-color)]">
+                Interactive Tool
               </span>
             </div>
-            <p className="text-xs text-stone-500 dark:text-stone-400">
-              Design-principle-based color recommendations for Python Matplotlib & Seaborn plots
-            </p>
+            <p className="text-xs text-[var(--text-color)] opacity-60">Color palette extraction, visualization, and accessibility suite</p>
           </div>
         </div>
 
