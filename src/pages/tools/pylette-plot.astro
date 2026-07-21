@@ -1,6 +1,7 @@
 ---
 import Layout from '../../layouts/Layout.astro';
 import Header from '../../components/layout/Header.astro';
+import PyletteInteractive from '../../components/tools/PyletteInteractive';
 
 const tool = {
 	name: 'Pylette Plot',
@@ -70,6 +71,9 @@ fig.savefig("palette.png", dpi=150, bbox_inches="tight")`,
 				))}
 			</div>
 		</div>
+
+		{/* Interactive Generator App */}
+		<PyletteInteractive client:load />
 
 		{/* Description */}
 		<section class="mb-14 prose dark:prose-invert max-w-none text-[var(--text-color)] opacity-90 leading-relaxed">
