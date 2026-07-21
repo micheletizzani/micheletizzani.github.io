@@ -1,0 +1,75 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import Header from '../../components/layout/Header.astro';
+
+const tools = [
+	{
+		name: 'Pylette Plot',
+		href: '/tools/pylette-plot',
+		blurb:
+			'A Python library for extracting dominant colour palettes from images and visualising them as publication-ready figures.',
+		tags: ['Python', 'Colour Science', 'Visualisation'],
+		status: '',
+		github: 'https://github.com/mictiz/pylette_plot',
+	},
+];
+---
+
+<Layout title="Tools | Michele Tizzani">
+	<Header />
+
+	<main class="max-w-[60%] mx-auto px-8 pb-24 pt-12">
+		<div class="mb-14">
+			<h1
+				class="text-5xl font-serif mb-4 leading-tight border-b-2 border-[var(--border-color)] pb-4 inline-block text-[var(--heading-color)]"
+			>
+				Tools
+			</h1>
+			<p class="text-[var(--text-color)] opacity-75 text-base leading-relaxed max-w-xl">
+				Small utilities and open-source experiments — things I built and thought worth sharing.
+			</p>
+		</div>
+
+		<div
+			class="grid grid-cols-1 md:grid-cols-2 gap-px bg-[var(--border-color)] border border-[var(--border-color)]"
+		>
+			{
+				tools.map((tool) => (
+					<a
+						href={tool.href}
+						class="group relative bg-[var(--bg-color)] p-10 md:p-14 min-h-[220px] flex flex-col justify-between transition-colors duration-500 hover:bg-[var(--bg-secondary)]"
+					>
+						<div class="flex items-start justify-between gap-4">
+							<h2 class="text-2xl md:text-3xl font-serif tracking-wide text-[var(--heading-color)] group-hover:text-[var(--accent-color)] transition-colors leading-snug">
+								{tool.name}
+							</h2>
+							{tool.status && (
+								<span class="shrink-0 text-[10px] tracking-[0.2em] uppercase text-[var(--text-color)] opacity-50 border border-[var(--border-color)] rounded-full px-3 py-1">
+									{tool.status}
+								</span>
+							)}
+						</div>
+
+						<div class="mt-8">
+							<p class="text-sm text-[var(--text-color)] opacity-60 font-light leading-relaxed max-w-sm">
+								{tool.blurb}
+							</p>
+
+							<div class="flex flex-wrap gap-2 mt-5">
+								{tool.tags.map((tag) => (
+									<span class="text-[10px] tracking-[0.15em] uppercase px-2 py-0.5 border border-[var(--border-color)] text-[var(--text-color)] opacity-60 rounded-sm">
+										{tag}
+									</span>
+								))}
+							</div>
+
+							<span class="mt-6 inline-block text-xs tracking-[0.25em] uppercase text-[var(--text-color)] opacity-40 group-hover:text-[var(--accent-color)] group-hover:opacity-100 transition-all duration-500 group-hover:translate-x-1">
+								Explore →
+							</span>
+						</div>
+					</a>
+				))
+			}
+		</div>
+	</main>
+</Layout>
