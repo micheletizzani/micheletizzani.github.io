@@ -2416,13 +2416,21 @@ fig.show()`;
 
             {/* Parameter adjusters */}
             <div className={`pt-3 border-t flex flex-col gap-3 ${theme.accentBorder}`}>
-              <div className="flex items-center justify-between text-xs font-medium">
+              <div className="flex items-center justify-between text-xs">
                 <span className="text-[var(--heading-color)] flex items-center gap-1 font-semibold font-mono">
                   <SlidersHorizontal className="w-3.5 h-3.5 text-[var(--accent-color)]" /> Colors count (N):
                 </span>
-                <span className="font-mono px-2 py-0.5 rounded border border-[var(--border-color)] bg-[var(--bg-secondary)] text-[var(--heading-color)] font-bold">
-                  {numColors}
-                </span>
+                <input
+                  type="number"
+                  min={3}
+                  max={10}
+                  value={numColors}
+                  onChange={(e) => {
+                    const val = parseInt(e.target.value);
+                    if (!isNaN(val)) setNumColors(Math.min(10, Math.max(3, val)));
+                  }}
+                  className="w-14 text-center text-xs font-mono font-bold px-1.5 py-0.5 rounded border border-[var(--border-color)] bg-[var(--bg-secondary)] text-[var(--heading-color)] focus:outline-none focus:ring-1 focus:ring-[var(--accent-color)] cursor-pointer"
+                />
               </div>
               <input
                 type="range"
@@ -2533,8 +2541,8 @@ fig.show()`;
               </button>
             </div>
 
-            {/* List container */}
-            <div className="flex-1 overflow-y-auto space-y-2 pr-1 custom-scrollbar">
+            {/* List container with fixed desktop scroller aligned to middle container length */}
+            <div className="max-h-[420px] sm:max-h-[460px] xl:max-h-[480px] overflow-y-auto space-y-2 pr-1.5 custom-scrollbar">
               {paletteTab === "favorites" && favoritePalettes.length === 0 ? (
                 <div
                   className={`py-6 px-4 text-center text-xs border border-dashed rounded-xl bg-[var(--bg-secondary)] ${theme.accentBorder} text-[var(--text-color)] opacity-80`}
@@ -2573,7 +2581,7 @@ fig.show()`;
                         <div className="flex gap-1.5 items-center">
                           {deletingPaletteName === palette.name ? (
                             <div className="flex items-center gap-1.5" onClick={(e) => e.stopPropagation()}>
-                              <span className="text-[10px] font-bold text-red-500 font-mono">Delete?</span>
+                              <span className="text-[10px] font-bold text-red-400 font-mono">Delete?</span>
                               <button
                                 onClick={() => {
                                   handleDeletePalette(palette);
@@ -2585,7 +2593,7 @@ fig.show()`;
                               </button>
                               <button
                                 onClick={() => setDeletingPaletteName(null)}
-                                className="bg-stone-100 hover:bg-stone-200 dark:bg-stone-800 dark:hover:bg-stone-700 text-stone-700 dark:text-stone-300 text-[9px] px-2 py-0.5 rounded-md font-bold uppercase font-mono cursor-pointer border border-stone-200/30 transition-all"
+                                className="bg-[var(--bg-secondary)] text-[var(--text-color)] text-[9px] px-2 py-0.5 rounded-md font-bold uppercase font-mono cursor-pointer border border-[var(--border-color)] transition-all"
                               >
                                 No
                               </button>
@@ -2595,7 +2603,7 @@ fig.show()`;
                               {palette.tags.slice(0, 1).map((t) => (
                                 <span
                                   key={t}
-                                  className="text-[8px] text-stone-500 bg-stone-50 dark:bg-stone-900 border border-stone-200/60 dark:border-stone-850 px-1.5 py-0.2 rounded capitalize font-mono"
+                                  className="text-[8px] text-[var(--text-color)] opacity-80 bg-[var(--bg-secondary)] border border-[var(--border-color)] px-1.5 py-0.2 rounded capitalize font-mono"
                                 >
                                   {t}
                                 </span>
@@ -2607,10 +2615,8 @@ fig.show()`;
                                   e.stopPropagation();
                                   toggleFavoritePalette(palette);
                                 }}
-                                className={`p-1 rounded-md transition-all hover:bg-stone-200/50 dark:hover:bg-stone-800 ${
-                                  isFav
-                                    ? "text-red-500 scale-110"
-                                    : "text-stone-300 dark:text-stone-700 hover:text-stone-500 dark:hover:text-stone-400"
+                                className={`p-1 rounded-md transition-all hover:bg-[var(--bg-secondary)] ${
+                                  isFav ? "text-red-500 scale-110" : "text-[var(--text-color)] opacity-50 hover:opacity-100"
                                 }`}
                                 title={isFav ? "Remove from Favorites" : "Add to Favorites"}
                               >
@@ -2624,7 +2630,7 @@ fig.show()`;
                                     e.stopPropagation();
                                     setDeletingPaletteName(palette.name);
                                   }}
-                                  className="p-1 rounded-md text-stone-300 dark:text-stone-700 hover:text-red-500 dark:hover:text-red-400 hover:bg-red-50/50 dark:hover:bg-red-950/20 transition-all cursor-pointer"
+                                  className="p-1 rounded-md text-[var(--text-color)] opacity-50 hover:text-red-400 hover:opacity-100 hover:bg-red-950/20 transition-all cursor-pointer"
                                   title="Delete Palette"
                                 >
                                   <Trash2 className="w-3.5 h-3.5" />
@@ -2652,7 +2658,7 @@ fig.show()`;
                   );
                 })
               ) : (
-                <div className="py-8 text-center text-xs text-stone-400 border border-dashed border-stone-200 dark:border-stone-800 rounded-xl bg-stone-50/20">
+                <div className="py-8 text-center text-xs text-[var(--text-color)] opacity-70 border border-dashed border-[var(--border-color)] rounded-xl bg-[var(--bg-secondary)]">
                   No palettes match these filter criteria.
                 </div>
               )}
@@ -2736,9 +2742,17 @@ fig.show()`;
               <div className="flex flex-col gap-1.5">
                 <div className="flex justify-between items-center">
                   <label className="text-[10px] font-bold text-[var(--text-color)] opacity-80 font-mono uppercase">Steps (N-Colors)</label>
-                  <span className="text-xs font-bold font-mono px-1.5 py-0.5 bg-[var(--bg-secondary)] border border-[var(--border-color)] text-[var(--heading-color)] rounded">
-                    {theoryNumColors}
-                  </span>
+                  <input
+                    type="number"
+                    min={3}
+                    max={10}
+                    value={theoryNumColors}
+                    onChange={(e) => {
+                      const val = parseInt(e.target.value);
+                      if (!isNaN(val)) setTheoryNumColors(Math.min(10, Math.max(3, val)));
+                    }}
+                    className="w-14 text-center text-xs font-mono font-bold px-1.5 py-0.5 rounded border border-[var(--border-color)] bg-[var(--bg-secondary)] text-[var(--heading-color)] focus:outline-none focus:ring-1 focus:ring-[var(--accent-color)] cursor-pointer"
+                  />
                 </div>
                 <div className="flex items-center gap-3">
                   <input
@@ -2987,18 +3001,34 @@ fig.show()`;
                   </div>
 
                   {/* Brightness Adjust (HSL Lightness shift) */}
-                  <div className="md:col-span-4 flex flex-col gap-1.5 justify-center">
-                    <div className="flex justify-between items-center text-[10px] uppercase font-bold tracking-wider text-[var(--text-color)] opacity-75 font-mono">
+                  <div className="md:col-span-4 flex flex-col gap-1.5 justify-center" onClick={(e) => e.stopPropagation()}>
+                    <div className="flex justify-between items-center text-[10px] uppercase font-bold tracking-wider text-[var(--text-color)] opacity-85 font-mono">
                       <span>Brightness (HSL Shift):</span>
-                      <span className="text-[var(--heading-color)] font-bold">{lightShift > 0 ? `+${lightShift}` : lightShift}%</span>
+                      <div className="flex items-center gap-1">
+                        <input
+                          type="number"
+                          min={-80}
+                          max={80}
+                          value={lightShift}
+                          onChange={(e) => {
+                            const val = parseInt(e.target.value);
+                            if (!isNaN(val)) setLightShift(Math.min(80, Math.max(-80, val)));
+                          }}
+                          className="w-14 text-center text-xs font-mono font-bold px-1.5 py-0.5 rounded border border-[var(--border-color)] bg-[var(--bg-secondary)] text-[var(--heading-color)] focus:outline-none focus:ring-1 focus:ring-[var(--accent-color)] cursor-pointer"
+                        />
+                        <span className="text-xs font-bold font-mono text-[var(--heading-color)]">%</span>
+                      </div>
                     </div>
                     <input
                       type="range"
-                      min="-40"
-                      max="40"
+                      min="-80"
+                      max="80"
+                      step="1"
                       value={lightShift}
+                      onPointerDown={(e) => e.stopPropagation()}
+                      onMouseDown={(e) => e.stopPropagation()}
                       onChange={(e) => setLightShift(parseInt(e.target.value))}
-                      className="w-full h-1 bg-stone-700 rounded-lg appearance-none cursor-pointer accent-[var(--accent-color)]"
+                      className="w-full h-1.5 bg-stone-700 rounded-lg appearance-none cursor-pointer accent-[var(--accent-color)]"
                     />
                   </div>
 
@@ -3041,11 +3071,9 @@ fig.show()`;
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 {/* 1. Regional Choropleth Map */}
                 <div className={`transition-all duration-300 rounded-2xl p-5 border ${theme.cardClass} flex flex-col gap-3 shadow-md`}>
-                  <div className="flex items-center justify-between border-b border-stone-150 dark:border-stone-800 pb-2">
-                    <span className="text-xs font-bold font-mono uppercase tracking-wider text-stone-800 dark:text-stone-200">
-                      01. Choropleth Map
-                    </span>
-                    <span className="text-[9px] font-mono text-stone-400">Continuous Fill</span>
+                  <div className="flex items-center justify-between border-b border-[var(--border-color)] pb-2">
+                    <span className="text-xs font-extrabold font-mono uppercase tracking-wider text-white">01. Choropleth Map</span>
+                    <span className="text-[9px] font-mono text-[var(--text-color)] opacity-85 font-bold">Continuous Fill</span>
                   </div>
                   <div
                     className={`p-4 rounded-xl flex items-center justify-center transition-colors duration-300 ${
@@ -3056,18 +3084,16 @@ fig.show()`;
                       <MapChart colors={simulatedColors} plotBg={plotBg} />
                     </div>
                   </div>
-                  <p className="text-[10px] text-stone-450 font-mono italic leading-normal">
+                  <p className="text-[10px] text-[var(--text-color)] opacity-85 font-mono italic leading-normal">
                     Fills individual geographic zones using the target color scale to verify boundary contrast and regional spacing.
                   </p>
                 </div>
 
                 {/* 2. Voronoi Cells */}
                 <div className={`transition-all duration-300 rounded-2xl p-5 border ${theme.cardClass} flex flex-col gap-3 shadow-md`}>
-                  <div className="flex items-center justify-between border-b border-stone-150 dark:border-stone-800 pb-2">
-                    <span className="text-xs font-bold font-mono uppercase tracking-wider text-stone-800 dark:text-stone-200">
-                      02. Voronoi Diagram
-                    </span>
-                    <span className="text-[9px] font-mono text-stone-400">Tessellated Planes</span>
+                  <div className="flex items-center justify-between border-b border-[var(--border-color)] pb-2">
+                    <span className="text-xs font-extrabold font-mono uppercase tracking-wider text-white">02. Voronoi Diagram</span>
+                    <span className="text-[9px] font-mono text-[var(--text-color)] opacity-85 font-bold">Tessellated Planes</span>
                   </div>
                   <div
                     className={`p-4 rounded-xl flex items-center justify-center transition-colors duration-300 ${
@@ -3078,16 +3104,16 @@ fig.show()`;
                       <VoronoiChart colors={simulatedColors} plotBg={plotBg} />
                     </div>
                   </div>
-                  <p className="text-[10px] text-stone-450 font-mono italic leading-normal">
+                  <p className="text-[10px] text-[var(--text-color)] opacity-85 font-mono italic leading-normal">
                     Examines high-frequency boundaries and neighboring color adjacency across tessellated cells.
                   </p>
                 </div>
 
                 {/* 3. Heatmap Matrix */}
                 <div className={`transition-all duration-300 rounded-2xl p-5 border ${theme.cardClass} flex flex-col gap-3 shadow-md`}>
-                  <div className="flex items-center justify-between border-b border-stone-150 dark:border-stone-800 pb-2">
-                    <span className="text-xs font-bold font-mono uppercase tracking-wider text-stone-800 dark:text-stone-200">03. Heatmap Grid</span>
-                    <span className="text-[9px] font-mono text-stone-400">11×11 Correlation Matrix</span>
+                  <div className="flex items-center justify-between border-b border-[var(--border-color)] pb-2">
+                    <span className="text-xs font-extrabold font-mono uppercase tracking-wider text-white">03. Heatmap Grid</span>
+                    <span className="text-[9px] font-mono text-[var(--text-color)] opacity-85 font-bold">11×11 Correlation Matrix</span>
                   </div>
                   <div
                     className={`p-4 rounded-xl flex items-center justify-center transition-colors duration-300 ${
@@ -3098,16 +3124,16 @@ fig.show()`;
                       <HeatmapChart colors={simulatedColors} plotBg={plotBg} />
                     </div>
                   </div>
-                  <p className="text-[10px] text-stone-450 font-mono italic leading-normal">
+                  <p className="text-[10px] text-[var(--text-color)] opacity-85 font-mono italic leading-normal">
                     Evaluates multi-row grid alignment and step intensity mapping to test readability of numerical data clusters.
                   </p>
                 </div>
 
                 {/* 4. Bubble Scatter */}
                 <div className={`transition-all duration-300 rounded-2xl p-5 border ${theme.cardClass} flex flex-col gap-3 shadow-md`}>
-                  <div className="flex items-center justify-between border-b border-stone-150 dark:border-stone-800 pb-2">
-                    <span className="text-xs font-bold font-mono uppercase tracking-wider text-stone-800 dark:text-stone-200">04. Bubble Chart</span>
-                    <span className="text-[9px] font-mono text-stone-400">Overlapping Nodes</span>
+                  <div className="flex items-center justify-between border-b border-[var(--border-color)] pb-2">
+                    <span className="text-xs font-extrabold font-mono uppercase tracking-wider text-white">04. Bubble Chart</span>
+                    <span className="text-[9px] font-mono text-[var(--text-color)] opacity-85 font-bold">Overlapping Nodes</span>
                   </div>
                   <div
                     className={`p-4 rounded-xl flex items-center justify-center transition-colors duration-300 ${
@@ -3118,16 +3144,16 @@ fig.show()`;
                       <BubbleChart colors={simulatedColors} plotBg={plotBg} />
                     </div>
                   </div>
-                  <p className="text-[10px] text-stone-450 font-mono italic leading-normal">
+                  <p className="text-[10px] text-[var(--text-color)] opacity-85 font-mono italic leading-normal">
                     Inspects overlapping node markers and alpha transparencies under the selected deficiency.
                   </p>
                 </div>
 
                 {/* 5. Horizontal Bar Chart */}
                 <div className={`transition-all duration-300 rounded-2xl p-5 border ${theme.cardClass} flex flex-col gap-3 shadow-md`}>
-                  <div className="flex items-center justify-between border-b border-stone-150 dark:border-stone-800 pb-2">
-                    <span className="text-xs font-bold font-mono uppercase tracking-wider text-stone-800 dark:text-stone-200">05. Bar Plot</span>
-                    <span className="text-[9px] font-mono text-stone-400">Linear Proportions</span>
+                  <div className="flex items-center justify-between border-b border-[var(--border-color)] pb-2">
+                    <span className="text-xs font-extrabold font-mono uppercase tracking-wider text-white">05. Bar Plot</span>
+                    <span className="text-[9px] font-mono text-[var(--text-color)] opacity-85 font-bold">Linear Proportions</span>
                   </div>
                   <div
                     className={`p-4 rounded-xl flex items-center justify-center transition-colors duration-300 ${
@@ -3138,18 +3164,16 @@ fig.show()`;
                       <BarChartComponent colors={simulatedColors} />
                     </div>
                   </div>
-                  <p className="text-[10px] text-stone-450 font-mono italic leading-normal">
+                  <p className="text-[10px] text-[var(--text-color)] opacity-85 font-mono italic leading-normal">
                     Tests simple categorical proportions and value distinction in horizontal series blocks.
                   </p>
                 </div>
 
                 {/* 6. Streamgraph Waves */}
                 <div className={`transition-all duration-300 rounded-2xl p-5 border ${theme.cardClass} flex flex-col gap-3 shadow-md`}>
-                  <div className="flex items-center justify-between border-b border-stone-150 dark:border-stone-800 pb-2">
-                    <span className="text-xs font-bold font-mono uppercase tracking-wider text-stone-800 dark:text-stone-200">
-                      06. Streamgraph Waves
-                    </span>
-                    <span className="text-[9px] font-mono text-stone-400">Flow Area Splines</span>
+                  <div className="flex items-center justify-between border-b border-[var(--border-color)] pb-2">
+                    <span className="text-xs font-extrabold font-mono uppercase tracking-wider text-white">06. Streamgraph Waves</span>
+                    <span className="text-[9px] font-mono text-[var(--text-color)] opacity-85 font-bold">Flow Area Splines</span>
                   </div>
                   <div
                     className={`p-4 rounded-xl flex items-center justify-center transition-colors duration-300 ${
@@ -3160,18 +3184,16 @@ fig.show()`;
                       <StreamgraphChart colors={simulatedColors} />
                     </div>
                   </div>
-                  <p className="text-[10px] text-stone-450 font-mono italic leading-normal">
+                  <p className="text-[10px] text-[var(--text-color)] opacity-85 font-mono italic leading-normal">
                     Validates continuous stacked wave shapes and smooth color transitions along organic spline contours.
                   </p>
                 </div>
 
                 {/* 7. Ridgeline Density Estimation */}
                 <div className={`transition-all duration-300 rounded-2xl p-5 border ${theme.cardClass} flex flex-col gap-3 shadow-md`}>
-                  <div className="flex items-center justify-between border-b border-stone-150 dark:border-stone-800 pb-2">
-                    <span className="text-xs font-bold font-mono uppercase tracking-wider text-stone-800 dark:text-stone-200">
-                      07. Density Ridgelines
-                    </span>
-                    <span className="text-[9px] font-mono text-stone-400">Continuous KDE Curves</span>
+                  <div className="flex items-center justify-between border-b border-[var(--border-color)] pb-2">
+                    <span className="text-xs font-extrabold font-mono uppercase tracking-wider text-white">07. Density Ridgelines</span>
+                    <span className="text-[9px] font-mono text-[var(--text-color)] opacity-85 font-bold">Continuous KDE Curves</span>
                   </div>
                   <div
                     className={`p-4 rounded-xl flex items-center justify-center transition-colors duration-300 ${
@@ -3182,18 +3204,16 @@ fig.show()`;
                       <DensityChart colors={simulatedColors} plotBg={plotBg} />
                     </div>
                   </div>
-                  <p className="text-[10px] text-stone-450 font-mono italic leading-normal">
+                  <p className="text-[10px] text-[var(--text-color)] opacity-85 font-mono italic leading-normal">
                     Validates continuous multi-peak kernel density estimation curves with smooth, high-fidelity color gradients.
                   </p>
                 </div>
 
                 {/* 8. Bivariate Hexbin Density Map */}
                 <div className={`transition-all duration-300 rounded-2xl p-5 border ${theme.cardClass} flex flex-col gap-3 shadow-md`}>
-                  <div className="flex items-center justify-between border-b border-stone-150 dark:border-stone-800 pb-2">
-                    <span className="text-xs font-bold font-mono uppercase tracking-wider text-stone-800 dark:text-stone-200">
-                      08. Hexbin Density
-                    </span>
-                    <span className="text-[9px] font-mono text-stone-400">Continuous Hexagon Grid</span>
+                  <div className="flex items-center justify-between border-b border-[var(--border-color)] pb-2">
+                    <span className="text-xs font-extrabold font-mono uppercase tracking-wider text-white">08. Hexbin Density</span>
+                    <span className="text-[9px] font-mono text-[var(--text-color)] opacity-85 font-bold">Continuous Hexagon Grid</span>
                   </div>
                   <div
                     className={`p-4 rounded-xl flex items-center justify-center transition-colors duration-300 ${
@@ -3204,16 +3224,16 @@ fig.show()`;
                       <Kde2DChart colors={simulatedColors} plotBg={plotBg} />
                     </div>
                   </div>
-                  <p className="text-[10px] text-stone-450 font-mono italic leading-normal">
+                  <p className="text-[10px] text-[var(--text-color)] opacity-85 font-mono italic leading-normal">
                     Examines 2D bivariate continuous gradients and hexagonal density bins for continuous color scales.
                   </p>
                 </div>
 
                 {/* 9. Chord Diagram */}
                 <div className={`transition-all duration-300 rounded-2xl p-5 border ${theme.cardClass} flex flex-col gap-3 shadow-md`}>
-                  <div className="flex items-center justify-between border-b border-stone-150 dark:border-stone-800 pb-2">
-                    <span className="text-xs font-bold font-mono uppercase tracking-wider text-stone-800 dark:text-stone-200">09. Chord Diagram</span>
-                    <span className="text-[9px] font-mono text-stone-400">Circular Flows</span>
+                  <div className="flex items-center justify-between border-b border-[var(--border-color)] pb-2">
+                    <span className="text-xs font-extrabold font-mono uppercase tracking-wider text-white">09. Chord Diagram</span>
+                    <span className="text-[9px] font-mono text-[var(--text-color)] opacity-85 font-bold">Circular Flows</span>
                   </div>
                   <div
                     className={`p-4 rounded-xl flex items-center justify-center transition-colors duration-300 ${
@@ -3224,16 +3244,16 @@ fig.show()`;
                       <ChordChart colors={simulatedColors} />
                     </div>
                   </div>
-                  <p className="text-[10px] text-stone-450 font-mono italic leading-normal">
+                  <p className="text-[10px] text-[var(--text-color)] opacity-85 font-mono italic leading-normal">
                     Tests relationship arcs and circular cross-group flow ribbon contrast between communities.
                   </p>
                 </div>
 
                 {/* 10. Network Communities */}
                 <div className={`transition-all duration-300 rounded-2xl p-5 border ${theme.cardClass} flex flex-col gap-3 shadow-md`}>
-                  <div className="flex items-center justify-between border-b border-stone-150 dark:border-stone-800 pb-2">
-                    <span className="text-xs font-bold font-mono uppercase tracking-wider text-stone-800 dark:text-stone-200">10. Network Graph</span>
-                    <span className="text-[9px] font-mono text-stone-400">Node-Link Relations</span>
+                  <div className="flex items-center justify-between border-b border-[var(--border-color)] pb-2">
+                    <span className="text-xs font-extrabold font-mono uppercase tracking-wider text-white">10. Network Graph</span>
+                    <span className="text-[9px] font-mono text-[var(--text-color)] opacity-85 font-bold">Node-Link Relations</span>
                   </div>
                   <div
                     className={`p-4 rounded-xl flex items-center justify-center transition-colors duration-300 ${
@@ -3244,16 +3264,16 @@ fig.show()`;
                       <NetworkChart colors={simulatedColors} plotBg={plotBg} />
                     </div>
                   </div>
-                  <p className="text-[10px] text-stone-450 font-mono italic leading-normal">
+                  <p className="text-[10px] text-[var(--text-color)] opacity-85 font-mono italic leading-normal">
                     Validates node community clusters and inter-group network edge differentiation.
                   </p>
                 </div>
 
                 {/* 11. Word Cloud */}
                 <div className={`transition-all duration-300 rounded-2xl p-5 border ${theme.cardClass} flex flex-col gap-3 shadow-md`}>
-                  <div className="flex items-center justify-between border-b border-stone-150 dark:border-stone-800 pb-2">
-                    <span className="text-xs font-bold font-mono uppercase tracking-wider text-stone-800 dark:text-stone-200">11. Word Cloud</span>
-                    <span className="text-[9px] font-mono text-stone-400">Visual Semantic Weight</span>
+                  <div className="flex items-center justify-between border-b border-[var(--border-color)] pb-2">
+                    <span className="text-xs font-extrabold font-mono uppercase tracking-wider text-white">11. Word Cloud</span>
+                    <span className="text-[9px] font-mono text-[var(--text-color)] opacity-85 font-bold">Visual Semantic Weight</span>
                   </div>
                   <div
                     className={`p-4 rounded-xl flex items-center justify-center transition-colors duration-300 ${
@@ -3264,7 +3284,7 @@ fig.show()`;
                       <WordcloudChart colors={simulatedColors} plotBg={plotBg} />
                     </div>
                   </div>
-                  <p className="text-[10px] text-stone-450 font-mono italic leading-normal">
+                  <p className="text-[10px] text-[var(--text-color)] opacity-85 font-mono italic leading-normal">
                     Tests text readability, weight variations, and label distinctions across different color assignments.
                   </p>
                 </div>
@@ -3751,9 +3771,19 @@ fig.show()`;
                   </div>
 
                   <div className="flex flex-col gap-2 border-t border-[var(--border-color)] pt-3">
-                    <div className="flex justify-between text-xs text-[var(--text-color)] opacity-85 font-mono">
+                    <div className="flex justify-between items-center text-xs text-[var(--text-color)] opacity-85 font-mono">
                       <span>Interpolated Steps (N):</span>
-                      <span className="font-bold text-[var(--heading-color)]">{continuousSteps}</span>
+                      <input
+                        type="number"
+                        min={3}
+                        max={15}
+                        value={continuousSteps}
+                        onChange={(e) => {
+                          const val = parseInt(e.target.value);
+                          if (!isNaN(val)) setContinuousSteps(Math.min(15, Math.max(3, val)));
+                        }}
+                        className="w-14 text-center text-xs font-mono font-bold px-1.5 py-0.5 rounded border border-[var(--border-color)] bg-[var(--bg-secondary)] text-[var(--heading-color)] focus:outline-none focus:ring-1 focus:ring-[var(--accent-color)] cursor-pointer"
+                      />
                     </div>
                     <input
                       type="range"
@@ -3788,17 +3818,35 @@ fig.show()`;
                 </div>
                 <div className="flex flex-col gap-3.5 p-4 bg-[var(--bg-secondary)] rounded-xl border border-[var(--border-color)] text-xs font-mono">
                   {/* Hue shift */}
-                  <div className="flex flex-col gap-1">
-                    <div className="flex justify-between text-xs text-[var(--text-color)]">
+                  <div className="flex flex-col gap-1" onClick={(e) => e.stopPropagation()}>
+                    <div className="flex justify-between items-center text-xs text-[var(--text-color)]">
                       <span>Hue Rotation:</span>
-                      <span className="font-bold text-[var(--heading-color)]">{hueShift > 0 ? `+${hueShift}` : hueShift}°</span>
+                      <div className="flex items-center gap-1">
+                        <input
+                          type="number"
+                          min={-180}
+                          max={180}
+                          value={hueShift}
+                          onChange={(e) => {
+                            const val = parseInt(e.target.value);
+                            if (!isNaN(val)) setHueShift(Math.min(180, Math.max(-180, val)));
+                          }}
+                          className="w-14 text-center text-xs font-mono font-bold px-1.5 py-0.5 rounded border border-[var(--border-color)] bg-[var(--bg-secondary)] text-[var(--heading-color)] focus:outline-none focus:ring-1 focus:ring-[var(--accent-color)] cursor-pointer"
+                        />
+                        <span className="font-bold text-[var(--heading-color)]">°</span>
+                      </div>
                     </div>
                     <input
                       type="range"
                       min="-180"
                       max="180"
+                      step="1"
                       value={hueShift}
-                      onMouseDown={() => pushToUndo()}
+                      onPointerDown={(e) => e.stopPropagation()}
+                      onMouseDown={(e) => {
+                        e.stopPropagation();
+                        pushToUndo();
+                      }}
                       onTouchStart={() => pushToUndo()}
                       onChange={(e) => setHueShift(parseInt(e.target.value))}
                       className="w-full h-1 bg-stone-700 rounded-lg appearance-none cursor-pointer accent-[var(--accent-color)]"
@@ -3806,17 +3854,35 @@ fig.show()`;
                   </div>
 
                   {/* Saturation Shift */}
-                  <div className="flex flex-col gap-1">
-                    <div className="flex justify-between text-xs text-[var(--text-color)]">
+                  <div className="flex flex-col gap-1" onClick={(e) => e.stopPropagation()}>
+                    <div className="flex justify-between items-center text-xs text-[var(--text-color)]">
                       <span>Saturation Tuning:</span>
-                      <span className="font-bold text-[var(--heading-color)]">{satShift > 0 ? `+${satShift}` : satShift}%</span>
+                      <div className="flex items-center gap-1">
+                        <input
+                          type="number"
+                          min={-100}
+                          max={100}
+                          value={satShift}
+                          onChange={(e) => {
+                            const val = parseInt(e.target.value);
+                            if (!isNaN(val)) setSatShift(Math.min(100, Math.max(-100, val)));
+                          }}
+                          className="w-14 text-center text-xs font-mono font-bold px-1.5 py-0.5 rounded border border-[var(--border-color)] bg-[var(--bg-secondary)] text-[var(--heading-color)] focus:outline-none focus:ring-1 focus:ring-[var(--accent-color)] cursor-pointer"
+                        />
+                        <span className="font-bold text-[var(--heading-color)]">%</span>
+                      </div>
                     </div>
                     <input
                       type="range"
                       min="-100"
                       max="100"
+                      step="1"
                       value={satShift}
-                      onMouseDown={() => pushToUndo()}
+                      onPointerDown={(e) => e.stopPropagation()}
+                      onMouseDown={(e) => {
+                        e.stopPropagation();
+                        pushToUndo();
+                      }}
                       onTouchStart={() => pushToUndo()}
                       onChange={(e) => setSatShift(parseInt(e.target.value))}
                       className="w-full h-1 bg-stone-700 rounded-lg appearance-none cursor-pointer accent-[var(--accent-color)]"
@@ -3824,17 +3890,35 @@ fig.show()`;
                   </div>
 
                   {/* Lightness Shift */}
-                  <div className="flex flex-col gap-1">
-                    <div className="flex justify-between text-xs text-[var(--text-color)]">
+                  <div className="flex flex-col gap-1" onClick={(e) => e.stopPropagation()}>
+                    <div className="flex justify-between items-center text-xs text-[var(--text-color)]">
                       <span>Lightness Adjust:</span>
-                      <span className="font-bold text-[var(--heading-color)]">{lightShift > 0 ? `+${lightShift}` : lightShift}%</span>
+                      <div className="flex items-center gap-1">
+                        <input
+                          type="number"
+                          min={-80}
+                          max={80}
+                          value={lightShift}
+                          onChange={(e) => {
+                            const val = parseInt(e.target.value);
+                            if (!isNaN(val)) setLightShift(Math.min(80, Math.max(-80, val)));
+                          }}
+                          className="w-14 text-center text-xs font-mono font-bold px-1.5 py-0.5 rounded border border-[var(--border-color)] bg-[var(--bg-secondary)] text-[var(--heading-color)] focus:outline-none focus:ring-1 focus:ring-[var(--accent-color)] cursor-pointer"
+                        />
+                        <span className="font-bold text-[var(--heading-color)]">%</span>
+                      </div>
                     </div>
                     <input
                       type="range"
-                      min="-50"
-                      max="50"
+                      min="-80"
+                      max="80"
+                      step="1"
                       value={lightShift}
-                      onMouseDown={() => pushToUndo()}
+                      onPointerDown={(e) => e.stopPropagation()}
+                      onMouseDown={(e) => {
+                        e.stopPropagation();
+                        pushToUndo();
+                      }}
                       onTouchStart={() => pushToUndo()}
                       onChange={(e) => setLightShift(parseInt(e.target.value))}
                       className="w-full h-1 bg-stone-700 rounded-lg appearance-none cursor-pointer accent-[var(--accent-color)]"

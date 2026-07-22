@@ -2,9 +2,9 @@
 // Header.astro
 import KeyholeButton from './KeyholeButton.astro';
 ---
-<header class="w-full border-b border-[var(--border-color)] py-6 px-8 flex justify-between items-center bg-[var(--bg-color)] sticky top-0 z-40 transition-colors duration-300">
-  <div class="flex items-center space-x-6">
-    <a href="/" class="text-xl font-bold font-serif text-[var(--heading-color)]">Michele Tizzani</a>
+<header class="w-full border-b border-[var(--border-color)] py-4 sm:py-6 px-4 sm:px-8 flex justify-between items-center bg-[var(--bg-color)] sticky top-0 z-40 transition-colors duration-300">
+  <div class="flex items-center space-x-4 sm:space-x-6">
+    <a href="/" class="text-lg sm:text-xl font-bold font-serif text-[var(--heading-color)] tracking-tight">Michele Tizzani</a>
     <nav class="hidden md:flex space-x-4 text-sm font-medium">
       <a href="/publications" class="hover:text-[var(--accent-color)] transition-colors">Publications</a>
       <a href="/cv" class="hover:text-[var(--accent-color)] transition-colors">CV</a>
@@ -14,16 +14,35 @@ import KeyholeButton from './KeyholeButton.astro';
     </nav>
   </div>
 
-  <div class="flex items-center space-x-4">
+  <div class="flex items-center space-x-2 sm:space-x-4">
     <button id="theme-toggle" class="p-2 rounded-md hover:bg-[var(--bg-secondary)] transition-colors" aria-label="Toggle Dark Mode">
       <svg id="theme-toggle-dark-icon" class="hidden w-5 h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z"></path></svg>
       <svg id="theme-toggle-light-icon" class="hidden w-5 h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4.22 1.78a1 1 0 011.415 0l.707.707a1 1 0 01-1.414 1.414l-.707-.707a1 1 0 010-1.414zM18 10a1 1 0 01-1 1h-1a1 1 0 110-2h1a1 1 0 011 1zM14.22 15.78a1 1 0 010 1.415l-.707.707a1 1 0 01-1.414-1.414l.707-.707a1 1 0 011.415 0zM10 16a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zm-4.22-1.78a1 1 0 01-1.415 0l-.707-.707a1 1 0 011.414-1.414l.707.707a1 1 0 010 1.414zM2 10a1 1 0 011-1h1a1 1 0 110 2H3a1 1 0 01-1-1zM5.78 4.22a1 1 0 010-1.415l.707-.707a1 1 0 011.414 1.414l-.707.707a1 1 0 01-1.415 0zM10 5a5 5 0 100 10 5 5 0 000-10z"></path></svg>
+    </button>
+
+    <!-- Mobile Hamburger Toggle Button -->
+    <button id="mobile-menu-toggle" class="md:hidden p-2 rounded-md hover:bg-[var(--bg-secondary)] transition-colors text-[var(--heading-color)]" aria-label="Toggle Navigation Menu">
+      <svg id="hamburger-icon" class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+      </svg>
+      <svg id="close-icon" class="hidden w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+      </svg>
     </button>
 
     <!-- The Keyhole Gateway -->
     <KeyholeButton />
   </div>
 </header>
+
+<!-- Mobile Navigation Menu -->
+<div id="mobile-menu" class="hidden md:hidden border-b border-[var(--border-color)] bg-[var(--bg-color)] px-6 py-4 space-y-3 sticky top-[65px] z-30 transition-colors duration-300">
+  <a href="/publications" class="block py-2 text-base font-medium text-[var(--heading-color)] hover:text-[var(--accent-color)] border-b border-[var(--border-color)]/30">Publications</a>
+  <a href="/cv" class="block py-2 text-base font-medium text-[var(--heading-color)] hover:text-[var(--accent-color)] border-b border-[var(--border-color)]/30">CV</a>
+  <a href="/thoughts" class="block py-2 text-base font-medium text-[var(--heading-color)] hover:text-[var(--accent-color)] border-b border-[var(--border-color)]/30">Thoughts</a>
+  <a href="/tools" class="block py-2 text-base font-medium text-[var(--heading-color)] hover:text-[var(--accent-color)] border-b border-[var(--border-color)]/30">Tools</a>
+  <a href="/contact" class="block py-2 text-base font-medium text-[var(--heading-color)] hover:text-[var(--accent-color)]">Contact</a>
+</div>
 
 <script>
   // Theme toggle logic
@@ -59,6 +78,20 @@ import KeyholeButton from './KeyholeButton.astro';
                 localStorage.setItem('theme', 'dark');
             }
         }
+    });
+  }
+
+  // Mobile menu toggle logic
+  const mobileMenuBtn = document.getElementById('mobile-menu-toggle');
+  const mobileMenu = document.getElementById('mobile-menu');
+  const hamburgerIcon = document.getElementById('hamburger-icon');
+  const closeIcon = document.getElementById('close-icon');
+
+  if (mobileMenuBtn && mobileMenu && hamburgerIcon && closeIcon) {
+    mobileMenuBtn.addEventListener('click', () => {
+      mobileMenu.classList.toggle('hidden');
+      hamburgerIcon.classList.toggle('hidden');
+      closeIcon.classList.toggle('hidden');
     });
   }
 </script>
