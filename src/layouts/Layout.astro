@@ -67,7 +67,7 @@ const { title } = Astro.props;
 				<h1 class="text-6xl font-serif text-[var(--heading-color)] mb-4 tracking-wider">The Gallery</h1>
 				<p class="text-[var(--text-color)] opacity-70 tracking-widest uppercase text-sm mb-12">Photography · Digital · Music · Writing</p>
 
-				<div class="pointer-events-auto flex flex-wrap justify-center gap-4 max-w-xl">
+				<div id="art-gallery-links" class="pointer-events-none flex flex-wrap justify-center gap-4 max-w-xl">
 					<a href="/art/photography" class="px-6 py-4 border border-[var(--border-color)] hover:border-[var(--accent-color)] text-[var(--text-color)] hover:text-[var(--accent-color)] transition-colors bg-[var(--bg-color)]/50 backdrop-blur-sm">Photography</a>
 					<a href="/art/digital" class="px-6 py-4 border border-[var(--border-color)] hover:border-[var(--accent-color)] text-[var(--text-color)] hover:text-[var(--accent-color)] transition-colors bg-[var(--bg-color)]/50 backdrop-blur-sm">Digital Art</a>
 					<a href="/art/music" class="px-6 py-4 border border-[var(--border-color)] hover:border-[var(--accent-color)] text-[var(--text-color)] hover:text-[var(--accent-color)] transition-colors bg-[var(--bg-color)]/50 backdrop-blur-sm">Music</a>
@@ -88,6 +88,7 @@ const { title } = Astro.props;
 			const artContent = document.getElementById('art-content-overlay');
 			const artContainer = document.getElementById('artistic-canvas-container');
 			const keyholeMask = document.getElementById('keyhole-transition-mask');
+			const galleryLinks = document.getElementById('art-gallery-links');
 
 			if (exitBtn && profPlane && artContent && artContainer && keyholeMask) {
 				exitBtn.addEventListener('click', () => {
@@ -98,6 +99,7 @@ const { title } = Astro.props;
 					profPlane.style.pointerEvents = 'auto';
 					
 					artContent.style.opacity = '0';
+					if (galleryLinks) galleryLinks.style.pointerEvents = 'none';
 					exitBtn.style.opacity = '0';
 					exitBtn.style.pointerEvents = 'none';
 					
@@ -117,6 +119,7 @@ const { title } = Astro.props;
 						profPlane.style.pointerEvents = 'auto';
 						
 						artContent.style.opacity = '0';
+						if (galleryLinks) galleryLinks.style.pointerEvents = 'none';
 						exitBtn.style.opacity = '0';
 						exitBtn.style.pointerEvents = 'none';
 						
@@ -130,6 +133,7 @@ const { title } = Astro.props;
 					    // Activate transition
 					    keyholeMask.style.transform = 'scale(100)';
 					    keyholeMask.style.opacity = '1';
+					    if (galleryLinks) galleryLinks.style.pointerEvents = 'auto';
 					}
 				});
 			}

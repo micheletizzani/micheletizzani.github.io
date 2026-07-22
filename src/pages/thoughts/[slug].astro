@@ -26,7 +26,7 @@ const { Content } = await render(entry);
 <Layout title={`${entry.data.title} | Dr. Jane Doe`}>
   <Header />
   <main class="w-full max-w-4xl mx-auto px-4 sm:px-6 md:px-8 py-10 sm:py-16 prose dark:prose-invert prose-headings:font-serif prose-a:text-[var(--accent-color)]">
-    <a href="/thoughts" class="text-sm font-medium hover:underline mb-8 inline-block opacity-70">← Back to Thoughts</a>
+    <a href="/thoughts" class="inline-flex items-center gap-2 text-xs font-mono font-bold uppercase px-3.5 py-2 rounded-xl bg-[var(--bg-secondary)] border border-[var(--border-color)] text-[var(--heading-color)] hover:bg-[var(--accent-color)] hover:text-white hover:border-[var(--accent-color)] transition-all shadow-sm mb-8 cursor-pointer">← Back to Thoughts</a>
     <h1 class="text-4xl font-serif mb-2">{entry.data.title}</h1>
     {entry.data.date && <p class="text-sm opacity-70 mb-8">{entry.data.date.toLocaleDateString()}</p>}
     <article>

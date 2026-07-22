@@ -2300,7 +2300,7 @@ fig.show()`;
         <div className="flex items-center gap-4">
           <a
             href="/"
-            className="inline-flex items-center gap-2 text-xs font-semibold tracking-[0.2em] uppercase text-[var(--text-color)] opacity-70 hover:opacity-100 hover:text-[var(--accent-color)] transition-all pr-4 border-r border-[var(--border-color)] shrink-0"
+            className="inline-flex items-center justify-center gap-2 text-xs font-mono font-bold tracking-wider uppercase px-4 py-2.5 rounded-xl bg-[var(--bg-secondary)] border border-[var(--border-color)] text-[var(--heading-color)] hover:bg-[var(--accent-color)] hover:text-white hover:border-[var(--accent-color)] transition-all shadow-sm shrink-0 cursor-pointer"
           >
             ← Return to Main Page
           </a>
