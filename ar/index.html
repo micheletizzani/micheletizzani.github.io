@@ -11,6 +11,11 @@
         --design-teal: #075056;
         --design-ink: #233038;
         --design-cream: #fdf6e3;
+        --design-dark: #0f171c;
+        --design-card-bg: rgba(26, 36, 43, 0.94);
+        --design-blue: #38bdf8;
+        --design-green: #10b981;
+        --design-red: #e11d48;
         --font-main: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
         --font-mono: "SF Mono", Monaco, Inconsolata, monospace;
       }
@@ -27,7 +32,7 @@
         width: 100%;
         height: 100%;
         overflow: hidden;
-        background-color: #0d1418;
+        background-color: var(--design-dark);
         color: #ffffff;
         font-family: var(--font-main);
         user-select: none;
@@ -75,19 +80,23 @@
         background: radial-gradient(circle at center, #1b2830 0%, #0d1418 100%);
         flex-direction: column;
         align-items: center;
-        justify-content: center;
-        padding: 20px;
+        justify-content: flex-start;
+        padding: 70px 16px 200px 16px;
+        overflow-y: auto;
       }
 
       #sim-canvas {
         max-width: 100%;
-        max-height: 70vh;
-        border-radius: 8px;
-        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.6);
-        background: #ffffff;
+        width: 800px;
+        height: auto;
+        aspect-ratio: 1000 / 360;
+        border-radius: 12px;
+        box-shadow: 0 20px 50px rgba(0, 0, 0, 0.7);
+        border: 1px solid rgba(255, 91, 4, 0.4);
+        background: #141e24;
       }
 
-      /* UI Overlay */
+      /* UI Overlay Layer */
       .ui-layer {
         position: absolute;
         top: 0;
@@ -99,7 +108,7 @@
         display: flex;
         flex-direction: column;
         justify-content: space-between;
-        padding: 16px;
+        padding: 14px;
       }
 
       .interactive {
@@ -111,21 +120,22 @@
         display: flex;
         justify-content: space-between;
         align-items: center;
-        gap: 12px;
+        gap: 8px;
+        flex-wrap: wrap;
       }
 
       .brand-badge {
         display: flex;
         align-items: center;
         gap: 8px;
-        background: rgba(35, 48, 56, 0.88);
-        backdrop-filter: blur(12px);
+        background: var(--design-card-bg);
+        backdrop-filter: blur(16px);
         border: 1px solid rgba(255, 91, 4, 0.4);
-        padding: 8px 14px;
+        padding: 6px 12px;
         border-radius: 20px;
         font-size: 11px;
         font-weight: 700;
-        letter-spacing: 0.12em;
+        letter-spacing: 0.1em;
         text-transform: uppercase;
       }
 
@@ -145,15 +155,15 @@
           transform: scale(1);
         }
         50% {
-          opacity: 0.4;
-          transform: scale(0.8);
+          opacity: 0.35;
+          transform: scale(0.85);
         }
       }
 
       .mode-pill {
         display: flex;
-        background: rgba(35, 48, 56, 0.88);
-        backdrop-filter: blur(12px);
+        background: var(--design-card-bg);
+        backdrop-filter: blur(16px);
         border: 1px solid rgba(255, 255, 255, 0.15);
         border-radius: 20px;
         padding: 3px;
@@ -162,7 +172,7 @@
       .mode-btn {
         background: transparent;
         border: none;
-        color: rgba(255, 255, 255, 0.6);
+        color: rgba(255, 255, 255, 0.65);
         padding: 6px 12px;
         font-size: 11px;
         font-weight: 600;
@@ -177,29 +187,83 @@
         box-shadow: 0 2px 8px rgba(7, 80, 86, 0.5);
       }
 
+      .sound-btn {
+        background: var(--design-card-bg);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        color: #ffffff;
+        width: 34px;
+        height: 34px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        transition: all 0.2s ease;
+      }
+
+      /* Section Tab Bar */
+      .section-tabs {
+        display: flex;
+        background: rgba(18, 27, 33, 0.95);
+        backdrop-filter: blur(14px);
+        border: 1px solid rgba(255, 255, 255, 0.14);
+        border-radius: 22px;
+        padding: 3px;
+        gap: 2px;
+        overflow-x: auto;
+        max-width: 100%;
+        scrollbar-width: none;
+      }
+
+      .section-tabs::-webkit-scrollbar {
+        display: none;
+      }
+
+      .tab-btn {
+        background: transparent;
+        border: none;
+        color: rgba(255, 255, 255, 0.65);
+        padding: 5px 11px;
+        font-size: 10px;
+        font-weight: 700;
+        letter-spacing: 0.05em;
+        text-transform: uppercase;
+        border-radius: 16px;
+        cursor: pointer;
+        white-space: nowrap;
+        transition: all 0.2s ease;
+      }
+
+      .tab-btn.active {
+        background: var(--design-orange);
+        color: #ffffff;
+        box-shadow: 0 2px 8px rgba(255, 91, 4, 0.4);
+      }
+
       /* Target Scanner Reticle */
       #scanner-guide {
         position: absolute;
-        top: 50%;
+        top: 42%;
         left: 50%;
         transform: translate(-50%, -50%);
         width: 88vw;
         max-width: 480px;
         aspect-ratio: 800 / 141;
-        border: 2px dashed rgba(255, 91, 4, 0.6);
-        border-radius: 8px;
+        border: 2px dashed rgba(255, 91, 4, 0.65);
+        border-radius: 10px;
         pointer-events: none;
         display: flex;
         flex-direction: column;
         align-items: center;
         justify-content: center;
-        background: rgba(7, 80, 86, 0.08);
-        transition: opacity 0.3s ease;
+        background: rgba(7, 80, 86, 0.12);
+        transition: all 0.3s ease;
       }
 
       #scanner-guide.locked {
         border-color: #10b981;
-        background: rgba(16, 185, 129, 0.08);
+        background: rgba(16, 185, 129, 0.12);
+        box-shadow: 0 0 24px rgba(16, 185, 129, 0.3);
       }
 
       .scan-beam {
@@ -209,7 +273,7 @@
         width: 100%;
         height: 2px;
         background: linear-gradient(90deg, transparent, var(--design-orange), transparent);
-        box-shadow: 0 0 8px var(--design-orange);
+        box-shadow: 0 0 10px var(--design-orange);
         animation: scanSweep 2.5s ease-in-out infinite alternate;
       }
 
@@ -225,42 +289,44 @@
       .scanner-text {
         font-size: 10px;
         font-weight: 700;
-        letter-spacing: 0.15em;
+        letter-spacing: 0.14em;
         text-transform: uppercase;
         color: var(--design-cream);
-        background: rgba(35, 48, 56, 0.9);
+        background: rgba(26, 36, 43, 0.95);
         padding: 4px 10px;
         border-radius: 12px;
         margin-top: 6px;
-        border: 1px solid rgba(255, 91, 4, 0.3);
+        border: 1px solid rgba(255, 91, 4, 0.4);
       }
 
-      /* Bottom Info Card */
+      /* Bottom HUD Container */
       .bottom-hud {
         display: flex;
         flex-direction: column;
         gap: 8px;
+        max-height: 52vh;
       }
 
       .info-card {
-        background: rgba(35, 48, 56, 0.92);
-        backdrop-filter: blur(16px);
-        border: 1px solid rgba(255, 255, 255, 0.12);
+        background: var(--design-card-bg);
+        backdrop-filter: blur(20px);
+        border: 1px solid rgba(255, 255, 255, 0.15);
         border-radius: 14px;
         padding: 12px 16px;
-        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+        box-shadow: 0 14px 34px rgba(0, 0, 0, 0.55);
+        overflow-y: auto;
       }
 
       .info-header {
         display: flex;
         justify-content: space-between;
         align-items: center;
-        margin-bottom: 6px;
+        margin-bottom: 5px;
       }
 
       .info-title {
         font-size: 12px;
-        font-weight: 700;
+        font-weight: 800;
         letter-spacing: 0.08em;
         color: var(--design-orange);
         text-transform: uppercase;
@@ -269,71 +335,68 @@
       .info-sub {
         font-size: 11px;
         color: #e2e8f0;
-        line-height: 1.4;
+        line-height: 1.45;
       }
 
+      /* Metrics Grid */
       .metrics-row {
         display: flex;
-        gap: 12px;
+        gap: 10px;
         margin-top: 8px;
         padding-top: 8px;
         border-top: 1px solid rgba(255, 255, 255, 0.1);
+        flex-wrap: wrap;
       }
 
       .metric-item {
         flex: 1;
+        min-width: 75px;
       }
 
       .metric-lbl {
-        font-size: 9px;
-        color: rgba(255, 255, 255, 0.5);
+        font-size: 8.5px;
+        color: rgba(255, 255, 255, 0.55);
         text-transform: uppercase;
-        letter-spacing: 0.1em;
+        letter-spacing: 0.08em;
       }
 
       .metric-val {
-        font-size: 15px;
+        font-size: 14px;
         font-weight: 800;
         color: #ffffff;
         font-family: var(--font-mono);
       }
 
-      .metric-val.anti {
-        color: #ff5b04;
-      }
-
-      .metric-val.pro {
-        color: #38bdf8;
-      }
-
-      /* Scrub Controls for Direct Mode */
-      .scrub-controls {
+      /* Interactive Controls Row */
+      .interactive-controls {
         display: flex;
         align-items: center;
-        gap: 12px;
-        background: rgba(35, 48, 56, 0.9);
-        padding: 8px 14px;
-        border-radius: 12px;
+        gap: 10px;
+        background: rgba(18, 27, 33, 0.85);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        padding: 6px 12px;
+        border-radius: 10px;
         margin-top: 8px;
       }
 
-      .scrub-slider {
+      .interactive-slider {
         flex: 1;
         accent-color: var(--design-orange);
       }
 
-      /* Sound Button */
-      .sound-btn {
-        background: rgba(35, 48, 56, 0.9);
+      .ctrl-btn {
+        background: rgba(255, 255, 255, 0.1);
         border: 1px solid rgba(255, 255, 255, 0.2);
         color: #ffffff;
-        width: 36px;
-        height: 36px;
-        border-radius: 50%;
-        display: flex;
-        align-items: center;
-        justify-content: center;
+        padding: 3px 8px;
+        font-size: 10px;
+        border-radius: 6px;
         cursor: pointer;
+      }
+
+      .ctrl-btn.active {
+        background: var(--design-teal);
+        border-color: #38bdf8;
       }
 
       /* Target thumbnail preview */
@@ -341,15 +404,14 @@
         display: flex;
         align-items: center;
         gap: 10px;
-        background: rgba(7, 80, 86, 0.4);
+        background: rgba(7, 80, 86, 0.45);
         border: 1px solid rgba(7, 80, 86, 0.8);
         border-radius: 8px;
         padding: 6px 10px;
-        margin-bottom: 6px;
       }
 
       .target-preview img {
-        width: 90px;
+        width: 85px;
         height: auto;
         border-radius: 4px;
         border: 1px solid #ffffff;
@@ -358,7 +420,7 @@
       .target-preview-text {
         font-size: 10px;
         color: #f1f5f9;
-        line-height: 1.3;
+        line-height: 1.35;
       }
 
       .target-preview-text strong {
@@ -378,32 +440,35 @@
     </script>
   </head>
   <body>
-    <!-- AR Tracking Container -->
+    <!-- AR Tracking Viewport -->
     <div id="ar-container"></div>
 
-    <!-- Direct Fallback Simulation Container -->
+    <!-- Direct Fallback Simulation Viewport -->
     <div id="sim-container">
-      <canvas id="sim-canvas" width="800" height="260"></canvas>
-      <div class="scrub-controls interactive" style="width: 100%; max-width: 600px">
-        <span style="font-size: 10px; font-weight: 700; color: var(--design-orange); text-transform: uppercase">Time:</span>
-        <input type="range" id="time-slider" class="scrub-slider" min="0" max="60" value="18" />
-        <span id="time-display" style="font-size: 11px; font-family: var(--font-mono); font-weight: 700; min-width: 55px">Day 18</span>
-      </div>
+      <canvas id="sim-canvas" width="1000" height="360"></canvas>
     </div>
 
-    <!-- Scanner Reticle (Visible in AR Mode) -->
+    <!-- Scanner Reticle (Visible in AR Camera Mode) -->
     <div id="scanner-guide">
       <div class="scan-beam"></div>
       <div class="scanner-text" id="scanner-status">Align with Top Mechanism Panel</div>
     </div>
 
-    <!-- UI Overlay -->
+    <!-- UI Overlay Layer -->
     <div class="ui-layer">
-      <!-- Top Bar -->
+      <!-- Top Navigation -->
       <div class="top-bar interactive">
         <div class="brand-badge">
           <div class="brand-dot" id="tracking-dot"></div>
           <span id="brand-text">Poster AR Engine</span>
+        </div>
+
+        <!-- Section Switcher Tabs -->
+        <div class="section-tabs" id="section-tabs">
+          <button class="tab-btn active" data-tab="mechanisms">1. Mechanisms</button>
+          <button class="tab-btn" data-tab="pipeline">2. Data Pipeline</button>
+          <button class="tab-btn" data-tab="zeroshot">3. Zero-Shot</button>
+          <button class="tab-btn" data-tab="saturation">4. Saturation</button>
         </div>
 
         <div class="mode-pill">
@@ -429,42 +494,34 @@
         </button>
       </div>
 
-      <!-- Bottom HUD -->
+      <!-- Bottom HUD & Controls -->
       <div class="bottom-hud interactive">
         <div class="target-preview" id="preview-box">
           <img src="./target.png" alt="Target: Mechanism Panel" />
           <div class="target-preview-text">
-            <strong>Spatial Anchor:</strong> Point camera at the top header panel: <em>"One Platform. Two Engagement Architectures."</em>
+            <strong>Spatial Anchor:</strong> Point camera at the top header panel:
+            <em>"One Platform. Two Engagement Architectures."</em>
           </div>
         </div>
 
         <div class="info-card">
           <div class="info-header">
-            <span class="info-title" id="hud-title">Descriptive vs Controlled Saturation</span>
+            <span class="info-title" id="hud-title">1. Mechanisms: Echo Chamber vs Battleground</span>
             <span id="hud-status" style="font-size: 10px; font-weight: 700; color: #38bdf8; font-family: var(--font-mono)">AR READY</span>
           </div>
           <div class="info-sub" id="hud-desc">
-            Anti-vaccine content achieves descriptive 90% view saturation in 18 days vs 32 days for pro-vaccine. Approximately 20% differential
-            remains after volume controls.
+            Under identical recommendation algorithms, vaccine-hesitant content forms dense in-group consensus with rapid view saturation, whereas
+            pro-vaccine broadcasts face sustained cross-ideological contention and persistent disagreement.
           </div>
 
-          <div class="metrics-row">
-            <div class="metric-item">
-              <div class="metric-lbl">Anti-Vaccine (P90)</div>
-              <div class="metric-val anti">18 Days</div>
-            </div>
-            <div class="metric-item">
-              <div class="metric-lbl">Pro-Vaccine (P90)</div>
-              <div class="metric-val pro">32 Days</div>
-            </div>
-            <div class="metric-item">
-              <div class="metric-lbl">Descriptive Velocity</div>
-              <div class="metric-val" style="color: #f59e0b">+44% Faster</div>
-            </div>
-            <div class="metric-item">
-              <div class="metric-lbl">Net Controlled</div>
-              <div class="metric-val" style="color: #10b981">~20% Gap</div>
-            </div>
+          <!-- Section Controls Row -->
+          <div class="interactive-controls" id="interactive-controls">
+            <!-- Dynamically populated per tab -->
+          </div>
+
+          <!-- Section Metrics Row -->
+          <div class="metrics-row" id="metrics-row">
+            <!-- Dynamically populated per tab -->
           </div>
         </div>
       </div>
@@ -474,13 +531,20 @@
       import * as THREE from "three";
       import { MindARThree } from "mindar-image-three";
 
-      // State
+      // Global State
       let isARMode = true;
       let soundEnabled = false;
       let targetLocked = false;
       let audioCtx = null;
       let animId = null;
+      let activeTab = "mechanisms";
+
+      // Tab Specific Parameters
       let scrubDay = 18;
+      let modelMode = "descriptive"; // 'descriptive' vs 'controlled'
+      let pipelineStep = 0; // 0 to 3
+      let zeroShotInspectStance = "SA"; // 'SIF', 'IF', 'Neutral', 'A', 'SA'
+      let conflictIntensity = 1.0;
 
       // Elements
       const arContainer = document.querySelector("#ar-container");
@@ -491,13 +555,16 @@
       const scannerStatus = document.querySelector("#scanner-status");
       const trackingDot = document.querySelector("#tracking-dot");
       const hudStatus = document.querySelector("#hud-status");
+      const hudTitle = document.querySelector("#hud-title");
+      const hudDesc = document.querySelector("#hud-desc");
+      const metricsRow = document.querySelector("#metrics-row");
+      const interactiveControls = document.querySelector("#interactive-controls");
       const btnModeAR = document.querySelector("#btn-mode-ar");
       const btnModeSim = document.querySelector("#btn-mode-sim");
       const btnSound = document.querySelector("#btn-sound");
-      const timeSlider = document.querySelector("#time-slider");
-      const timeDisplay = document.querySelector("#time-display");
+      const sectionTabs = document.querySelector("#section-tabs");
 
-      // Target image loading for direct sim
+      // Load base target for simulation backdrop
       const targetImg = new Image();
       targetImg.src = "./target.png";
 
@@ -539,113 +606,131 @@
       });
 
       // -------------------------------------------------------------
-      // DYNAMIC OVERLAY CANVAS TEXTURE (For 3D Anchor & 2D Simulation)
+      // DYNAMIC OVERLAY CANVAS (Rendered to Three.js Texture & 2D Canvas)
+      // High-Contrast Semi-Transparent Slate Backing Substrate
       // -------------------------------------------------------------
       const overlayCanvas = document.createElement("canvas");
       overlayCanvas.width = 1000;
-      overlayCanvas.height = 320;
+      overlayCanvas.height = 360;
       const ctx = overlayCanvas.getContext("2d");
 
-      // Simulation particle particles
+      // Simulation Particles for Tab 1 (Mechanisms)
       const echoParticles = [];
-      for (let i = 0; i < 30; i++) {
+      for (let i = 0; i < 36; i++) {
         echoParticles.push({
           cluster: i % 2 === 0 ? "anti" : "pro",
           angle: Math.random() * Math.PI * 2,
-          radius: 35 + Math.random() * 32,
-          speed: 0.02 + Math.random() * 0.025,
+          radius: 36 + Math.random() * 38,
+          speed: 0.018 + Math.random() * 0.024,
         });
       }
 
       const battleParticles = [];
-      for (let i = 0; i < 35; i++) {
+      for (let i = 0; i < 40; i++) {
         battleParticles.push({
           fromLeft: Math.random() > 0.5,
           progress: Math.random(),
-          speed: 0.008 + Math.random() * 0.014,
-          offsetY: (Math.random() - 0.5) * 50,
+          speed: 0.009 + Math.random() * 0.016,
+          offsetY: (Math.random() - 0.5) * 60,
         });
       }
 
       let globalTick = 0;
 
-      function renderOverlayGraphics(currentDay) {
+      function renderOverlayGraphics() {
         ctx.clearRect(0, 0, overlayCanvas.width, overlayCanvas.height);
         globalTick += 0.03;
 
-        // LEFT REGION: Echo Chamber Mechanism (Homophilic Circulating Loops)
-        const cx1 = 175;
-        const cy1 = 150;
-        const cx2 = 325;
-        const cy2 = 150;
-
-        // Draw Orbit Tracks
-        ctx.strokeStyle = "rgba(255, 91, 4, 0.35)";
-        ctx.lineWidth = 1.5;
+        // 1. High-Contrast Semi-Transparent Slate Backing Plate
+        // Accented with subtle teal/orange borders to separate digital layer from white poster substrate
+        ctx.fillStyle = "rgba(22, 32, 38, 0.90)";
+        ctx.strokeStyle = "rgba(255, 91, 4, 0.45)";
+        ctx.lineWidth = 2;
         ctx.beginPath();
-        ctx.ellipse(cx1, cy1, 60, 48, 0, 0, Math.PI * 2);
+        ctx.roundRect(8, 8, overlayCanvas.width - 16, overlayCanvas.height - 16, 14);
+        ctx.fill();
         ctx.stroke();
 
-        ctx.strokeStyle = "rgba(29, 78, 216, 0.35)";
+        // 2. Render Selected Section Visualization
+        if (activeTab === "mechanisms") {
+          renderMechanismsTab();
+        } else if (activeTab === "pipeline") {
+          renderPipelineTab();
+        } else if (activeTab === "zeroshot") {
+          renderZeroShotTab();
+        } else if (activeTab === "saturation") {
+          renderSaturationTab();
+        }
+      }
+
+      // --- TAB 1: MECHANISMS (Echo Chamber vs Battleground) ---
+      function renderMechanismsTab() {
+        const cx1 = 180;
+        const cy1 = 180;
+        const cx2 = 330;
+        const cy2 = 180;
+
+        // Left Orbit Tracks
+        ctx.strokeStyle = "rgba(255, 91, 4, 0.45)";
+        ctx.lineWidth = 1.6;
         ctx.beginPath();
-        ctx.ellipse(cx2, cy2, 60, 48, 0, 0, Math.PI * 2);
+        ctx.ellipse(cx1, cy1, 68, 54, 0, 0, Math.PI * 2);
         ctx.stroke();
 
-        // Draw Circulating Echo Particles
+        ctx.strokeStyle = "rgba(56, 189, 248, 0.45)";
+        ctx.beginPath();
+        ctx.ellipse(cx2, cy2, 68, 54, 0, 0, Math.PI * 2);
+        ctx.stroke();
+
+        // Left Circulating Particles
         echoParticles.forEach((p, idx) => {
           p.angle += p.speed;
           const baseCx = p.cluster === "anti" ? cx1 : cx2;
-          const color = p.cluster === "anti" ? "#FF5B04" : "#3B82F6";
+          const color = p.cluster === "anti" ? "#FF5B04" : "#38BDF8";
           const px = baseCx + Math.cos(p.angle) * p.radius;
-          const py = cy1 + Math.sin(p.angle) * (p.radius * 0.8);
+          const py = cy1 + Math.sin(p.angle) * (p.radius * 0.78);
 
           ctx.fillStyle = color;
           ctx.beginPath();
-          ctx.arc(px, py, 3.2, 0, Math.PI * 2);
+          ctx.arc(px, py, 3.5, 0, Math.PI * 2);
           ctx.fill();
 
-          // Particle trail
-          const trailX = baseCx + Math.cos(p.angle - 0.15) * p.radius;
-          const trailY = cy1 + Math.sin(p.angle - 0.15) * (p.radius * 0.8);
+          // Motion Trail
+          const trailX = baseCx + Math.cos(p.angle - 0.18) * p.radius;
+          const trailY = cy1 + Math.sin(p.angle - 0.18) * (p.radius * 0.78);
           ctx.strokeStyle = color;
-          ctx.lineWidth = 1.2;
+          ctx.lineWidth = 1.4;
           ctx.beginPath();
           ctx.moveTo(trailX, trailY);
           ctx.lineTo(px, py);
           ctx.stroke();
-
-          if (idx === 0 && Math.random() < 0.03) {
-            playTone(220, "sine", 0.08, 0.03);
-          }
         });
 
-        // Left Mechanism Labels
+        // Left Labels
         ctx.fillStyle = "#FF5B04";
-        ctx.font = 'bold 13px "Inter", sans-serif';
+        ctx.font = 'bold 14px "Inter", sans-serif';
         ctx.textAlign = "center";
-        ctx.fillText("HOMOPHILIC RE-ENGAGEMENT", (cx1 + cx2) / 2, 50);
-        ctx.fillStyle = "#233038";
-        ctx.font = '10px "Inter", sans-serif';
-        ctx.fillText("P90: 18 Days (Anti-Vaccine Cluster)", (cx1 + cx2) / 2, 66);
+        ctx.fillText("IN-GROUP CONSENSUS (ECHO)", (cx1 + cx2) / 2, 45);
+        ctx.fillStyle = "#FDF6E3";
+        ctx.font = '11px "Inter", sans-serif';
+        ctx.fillText("Net Agreement: +21.3% • 2.9x Likes/View", (cx1 + cx2) / 2, 65);
 
-        // RIGHT REGION: Battleground Mechanism (Cross-Cluster Collisions)
+        // Right Collision Network
         const bx1 = 660;
-        const bx2 = 860;
+        const bx2 = 880;
         const bCenter = (bx1 + bx2) / 2;
-        const bY = 150;
+        const bY = 180;
 
-        // Draw Dispersed Boundary Wave
-        ctx.strokeStyle = "rgba(7, 80, 86, 0.4)";
+        ctx.strokeStyle = "rgba(7, 80, 86, 0.6)";
         ctx.setLineDash([4, 4]);
         ctx.beginPath();
         ctx.moveTo(bCenter, 70);
-        ctx.lineTo(bCenter, 230);
+        ctx.lineTo(bCenter, 290);
         ctx.stroke();
         ctx.setLineDash([]);
 
-        // Draw Cross-Conflict Particles
         battleParticles.forEach((p, idx) => {
-          p.progress += p.speed;
+          p.progress += p.speed * conflictIntensity;
           if (p.progress > 1) {
             p.progress = 0;
             p.fromLeft = Math.random() > 0.5;
@@ -654,98 +739,557 @@
           let px, py;
           if (p.fromLeft) {
             px = bx1 + p.progress * (bx2 - bx1);
-            py = bY + p.offsetY + Math.sin(p.progress * Math.PI) * 15;
+            py = bY + p.offsetY + Math.sin(p.progress * Math.PI) * 18;
             ctx.fillStyle = "#FF5B04";
           } else {
             px = bx2 - p.progress * (bx2 - bx1);
-            py = bY + p.offsetY - Math.sin(p.progress * Math.PI) * 15;
+            py = bY + p.offsetY - Math.sin(p.progress * Math.PI) * 18;
             ctx.fillStyle = "#075056";
           }
 
           ctx.beginPath();
-          ctx.arc(px, py, 3.5, 0, Math.PI * 2);
+          ctx.arc(px, py, 3.8, 0, Math.PI * 2);
           ctx.fill();
 
           // Collision wavefront near center
-          if (Math.abs(px - bCenter) < 12) {
-            ctx.strokeStyle = "rgba(225, 29, 72, 0.8)";
-            ctx.lineWidth = 1.5;
+          if (Math.abs(px - bCenter) < 14) {
+            ctx.strokeStyle = "rgba(225, 29, 72, 0.85)";
+            ctx.lineWidth = 1.8;
             ctx.beginPath();
-            ctx.arc(bCenter, py, 8 + Math.sin(globalTick * 5) * 4, 0, Math.PI * 2);
+            ctx.arc(bCenter, py, 10 + Math.sin(globalTick * 6) * 5, 0, Math.PI * 2);
             ctx.stroke();
 
-            if (idx === 0 && Math.random() < 0.05) {
-              playTone(840, "triangle", 0.06, 0.04);
+            if (idx === 0 && Math.random() < 0.04) {
+              playTone(820, "triangle", 0.05, 0.03);
             }
           }
         });
 
-        // Right Mechanism Labels
-        ctx.fillStyle = "#075056";
-        ctx.font = 'bold 13px "Inter", sans-serif';
+        // Right Labels
+        ctx.fillStyle = "#38BDF8";
+        ctx.font = 'bold 14px "Inter", sans-serif';
         ctx.textAlign = "center";
-        ctx.fillText("CROSS-COMMUNITY FRICTION", bCenter, 50);
-        ctx.fillStyle = "#233038";
-        ctx.font = '10px "Inter", sans-serif';
-        ctx.fillText("P90: 32 Days (Pro-Vaccine Cohort)", bCenter, 66);
+        ctx.fillText("OUT-GROUP CONTENTION (BATTLEGROUND)", bCenter, 45);
+        ctx.fillStyle = "#FDF6E3";
+        ctx.font = '11px "Inter", sans-serif';
+        ctx.fillText("Net Disagreement: -11.5% • Contested Discourse", bCenter, 65);
 
-        // CENTER FLOATING BADGE: Cumulative Differential
-        ctx.fillStyle = "rgba(253, 246, 227, 0.95)";
-        ctx.strokeStyle = "#233038";
-        ctx.lineWidth = 1.2;
+        // Center Empirical Anchor Badge
+        ctx.fillStyle = "rgba(35, 48, 56, 0.95)";
+        ctx.strokeStyle = "#38BDF8";
+        ctx.lineWidth = 1.4;
         ctx.beginPath();
-        ctx.roundRect(435, 90, 150, 95, 8);
+        ctx.roundRect(435, 110, 150, 130, 8);
         ctx.fill();
         ctx.stroke();
 
         ctx.fillStyle = "#FF5B04";
         ctx.font = 'bold 11px "SF Mono", monospace';
         ctx.textAlign = "center";
-        ctx.fillText("P90 SATURATION", 510, 110);
+        ctx.fillText("EMPIRICAL RATIOS", 510, 135);
+        ctx.fillStyle = "#FFFFFF";
+        ctx.font = 'bold 15px "SF Mono", monospace';
+        ctx.fillText("2.41x Odds", 510, 160);
+        ctx.fillStyle = "#38BDF8";
+        ctx.font = '10px "Inter", sans-serif';
+        ctx.fillText("In-Group Consensus", 510, 178);
+        ctx.fillStyle = "#FDF6E3";
+        ctx.fillText("Bayesian 94% HDI", 510, 202);
+        ctx.fillText("[1.95, 2.98]", 510, 218);
+      }
 
-        // Saturation progress relative to scrubDay
-        const antiSat = Math.min(100, Math.round((1 - Math.exp(-scrubDay / 8.5)) * 100));
-        const proSat = Math.min(100, Math.round((1 - Math.exp(-scrubDay / 16)) * 100));
+      // --- TAB 2: DATA COLLECTION PIPELINE (Longitudinal Funnel) ---
+      function renderPipelineTab() {
+        ctx.fillStyle = "#38BDF8";
+        ctx.font = 'bold 15px "Inter", sans-serif';
+        ctx.textAlign = "center";
+        ctx.fillText("LONGITUDINAL DATA PIPELINE (6-MONTH SAMPLING WINDOW)", 500, 45);
 
-        ctx.font = 'bold 18px "SF Mono", monospace';
+        const steps = [
+          {
+            num: "7,213",
+            title: "1. Raw Uploads",
+            sub: "Daily tracking via API v3",
+            detail: "Nov 20, 2024 to May 20, 2025",
+          },
+          {
+            num: "6,074",
+            title: "2. Analytical Set",
+            sub: "1-60 min long-form videos",
+            detail: "Shorts excluded (distinct algorithm)",
+          },
+          {
+            num: "3,789",
+            title: "3. Distinct Channels",
+            sub: "Channel categorization",
+            detail: "Institutional vs Independent",
+          },
+          {
+            num: "60,507",
+            title: "4. Annotated Comments",
+            sub: ">=10 comments threshold",
+            detail: "From 911,219 corpus pool",
+          },
+        ];
+
+        const startX = 60;
+        const boxW = 195;
+        const boxH = 180;
+        const gap = 35;
+
+        steps.forEach((s, idx) => {
+          const bx = startX + idx * (boxW + gap);
+          const by = 80;
+          const isSelected = idx === pipelineStep;
+
+          ctx.fillStyle = isSelected ? "rgba(7, 80, 86, 0.85)" : "rgba(35, 48, 56, 0.75)";
+          ctx.strokeStyle = isSelected ? "#FF5B04" : "rgba(255, 255, 255, 0.2)";
+          ctx.lineWidth = isSelected ? 2.5 : 1;
+          ctx.beginPath();
+          ctx.roundRect(bx, by, boxW, boxH, 10);
+          ctx.fill();
+          ctx.stroke();
+
+          // Step count badge
+          ctx.fillStyle = isSelected ? "#FF5B04" : "#38BDF8";
+          ctx.font = 'bold 22px "SF Mono", monospace';
+          ctx.textAlign = "center";
+          ctx.fillText(s.num, bx + boxW / 2, by + 40);
+
+          ctx.fillStyle = "#FFFFFF";
+          ctx.font = 'bold 12px "Inter", sans-serif';
+          ctx.fillText(s.title, bx + boxW / 2, by + 70);
+
+          ctx.fillStyle = "#FDF6E3";
+          ctx.font = '10px "Inter", sans-serif';
+          ctx.fillText(s.sub, bx + boxW / 2, by + 98);
+
+          ctx.fillStyle = "rgba(255, 255, 255, 0.65)";
+          ctx.font = '9px "Inter", sans-serif';
+          ctx.fillText(s.detail, bx + boxW / 2, by + 125);
+
+          // Connecting arrow between stages
+          if (idx < steps.length - 1) {
+            ctx.fillStyle = "#FF5B04";
+            ctx.beginPath();
+            const arrX = bx + boxW + 12;
+            const arrY = by + boxH / 2;
+            ctx.moveTo(arrX, arrY - 6);
+            ctx.lineTo(arrX + 10, arrY);
+            ctx.lineTo(arrX, arrY + 6);
+            ctx.fill();
+          }
+        });
+
+        // Bottom timeline bar
+        ctx.fillStyle = "rgba(255, 255, 255, 0.1)";
+        ctx.fillRect(80, 285, 840, 6);
         ctx.fillStyle = "#FF5B04";
-        ctx.fillText(`18d: ${antiSat}%`, 510, 134);
+        const progressX = 80 + (pipelineStep / 3) * 840;
+        ctx.fillRect(80, 285, progressX - 80, 6);
 
-        ctx.fillStyle = "#075056";
-        ctx.fillText(`32d: ${proSat}%`, 510, 156);
+        ctx.fillStyle = "#38BDF8";
+        ctx.beginPath();
+        ctx.arc(progressX, 288, 8, 0, Math.PI * 2);
+        ctx.fill();
 
-        ctx.fillStyle = "#576973";
-        ctx.font = '8px "Inter", sans-serif';
-        ctx.fillText("Volume Control: ~20% Gap", 510, 174);
+        ctx.fillStyle = "#FDF6E3";
+        ctx.font = 'bold 10px "SF Mono", monospace';
+        ctx.fillText(`Stage ${pipelineStep + 1} of 4 Active • Tap below to step`, 500, 318);
+      }
+
+      // --- TAB 3: ZERO-SHOT CLASSIFICATION & BAYESIAN MODELING ---
+      function renderZeroShotTab() {
+        ctx.fillStyle = "#FF5B04";
+        ctx.font = 'bold 15px "Inter", sans-serif';
+        ctx.textAlign = "center";
+        ctx.fillText("ZERO-SHOT LLM CLASSIFICATION & BAYESIAN INFERENCE", 500, 45);
+
+        // Left Panel: Stance Spectrum
+        const stances = [
+          { code: "SA", label: "Strongly Against", color: "#DC2626", pct: "18.2%" },
+          { code: "A", label: "Against", color: "#EA580C", pct: "12.4%" },
+          { code: "Neutral", label: "Neutral / Ambiguous", color: "#64748B", pct: "22.1%" },
+          { code: "IF", label: "In Favor", color: "#3B82F6", pct: "26.8%" },
+          { code: "SIF", label: "Strongly In Favor", color: "#1D4ED8", pct: "20.5%" },
+        ];
+
+        const barX = 70;
+        const barY = 85;
+        const barW = 380;
+
+        stances.forEach((st, idx) => {
+          const sy = barY + idx * 36;
+          const isInspected = st.code === zeroShotInspectStance;
+
+          ctx.fillStyle = isInspected ? "rgba(255, 255, 255, 0.15)" : "transparent";
+          ctx.roundRect(barX - 8, sy - 6, barW + 16, 32, 6);
+          ctx.fill();
+
+          ctx.fillStyle = st.color;
+          ctx.beginPath();
+          ctx.arc(barX + 8, sy + 10, 7, 0, Math.PI * 2);
+          ctx.fill();
+
+          ctx.fillStyle = "#FFFFFF";
+          ctx.font = 'bold 11px "Inter", sans-serif';
+          ctx.textAlign = "left";
+          ctx.fillText(`${st.code}: ${st.label}`, barX + 24, sy + 14);
+
+          ctx.fillStyle = "#FDF6E3";
+          ctx.font = 'bold 11px "SF Mono", monospace';
+          ctx.textAlign = "right";
+          ctx.fillText(st.pct, barX + barW, sy + 14);
+        });
+
+        // Right Panel: Validation Matrix & Multilevel Model Odds
+        const rx = 520;
+        const ry = 80;
+
+        ctx.fillStyle = "rgba(35, 48, 56, 0.85)";
+        ctx.strokeStyle = "#38BDF8";
+        ctx.lineWidth = 1.5;
+        ctx.beginPath();
+        ctx.roundRect(rx, ry, 410, 190, 10);
+        ctx.fill();
+        ctx.stroke();
+
+        ctx.fillStyle = "#38BDF8";
+        ctx.font = 'bold 13px "Inter", sans-serif';
+        ctx.textAlign = "center";
+        ctx.fillText("VALIDATION & INFERENCE SPECIFICATION", rx + 205, ry + 28);
+
+        ctx.fillStyle = "#FFFFFF";
+        ctx.font = '11px "Inter", sans-serif';
+        ctx.textAlign = "left";
+        ctx.fillText("• Model: GPT-4o-mini Zero-Shot Prompt Formulation", rx + 24, ry + 60);
+        ctx.fillText("• Inter-Rater Reliability: 82.5% Human Concordance", rx + 24, ry + 84);
+        ctx.fillText("• Agreement Metric: Cohen's kappa = 0.94 (Near-Perfect)", rx + 24, ry + 108);
+
+        ctx.fillStyle = "#FF5B04";
+        ctx.font = 'bold 11px "Inter", sans-serif';
+        ctx.fillText("• Bayesian Model: Multilevel Logistic Regression", rx + 24, ry + 134);
+        ctx.fillStyle = "#FDF6E3";
+        ctx.font = '10px "Inter", sans-serif';
+        ctx.fillText("  Random creator intercepts: y_ij ~ Bernoulli(p_ij)", rx + 24, ry + 152);
+        ctx.fillText("  Odds Ratio: OR = 2.41 (94% HDI [1.95, 2.98])", rx + 24, ry + 170);
+
+        ctx.fillStyle = "rgba(255, 255, 255, 0.5)";
+        ctx.font = '9px "Inter", sans-serif';
+        ctx.textAlign = "center";
+        ctx.fillText("Tap stance badges below to inspect posterior estimates", 500, 310);
+      }
+
+      // --- TAB 4: TEMPORAL SATURATION DYNAMICS (P90 View Accumulation) ---
+      function renderSaturationTab() {
+        ctx.fillStyle = "#FF5B04";
+        ctx.font = 'bold 15px "Inter", sans-serif';
+        ctx.textAlign = "center";
+        const titleSuffix = modelMode === "descriptive" ? "DESCRIPTIVE ACCELERATION" : "VOLUME-CONTROLLED ATTENUATION";
+        ctx.fillText(`LIFECYCLE SATURATION CURVES (${titleSuffix})`, 500, 42);
+
+        // Coordinate axes
+        const ox = 120;
+        const oy = 260;
+        const gw = 760;
+        const gh = 180;
+
+        ctx.strokeStyle = "rgba(255, 255, 255, 0.25)";
+        ctx.lineWidth = 1.2;
+        ctx.beginPath();
+        ctx.moveTo(ox, oy);
+        ctx.lineTo(ox + gw, oy);
+        ctx.moveTo(ox, oy);
+        ctx.lineTo(ox, oy - gh);
+        ctx.stroke();
+
+        // 90% horizontal reference line
+        const p90Y = oy - gh * 0.9;
+        ctx.strokeStyle = "rgba(255, 255, 255, 0.35)";
+        ctx.setLineDash([4, 4]);
+        ctx.beginPath();
+        ctx.moveTo(ox, p90Y);
+        ctx.lineTo(ox + gw, p90Y);
+        ctx.stroke();
+        ctx.setLineDash([]);
+
+        ctx.fillStyle = "#FDF6E3";
+        ctx.font = '10px "SF Mono", monospace';
+        ctx.textAlign = "right";
+        ctx.fillText("90% Saturation (P90)", ox - 10, p90Y + 4);
+
+        // Decay constants
+        // Descriptive: Anti-vaccine tau = 8.0 (reaches 90% at d18), Pro tau = 14.5 (reaches 90% at d32)
+        // Controlled: Anti tau = 9.8, Pro tau = 12.2 (attenuated ~20% differential)
+        const tauAnti = modelMode === "descriptive" ? 7.8 : 9.5;
+        const tauPro = modelMode === "descriptive" ? 14.2 : 12.5;
+
+        // Draw Anti-Vaccine Curve (Orange)
+        ctx.strokeStyle = "#FF5B04";
+        ctx.lineWidth = 2.8;
+        ctx.beginPath();
+        for (let d = 0; d <= 60; d += 0.5) {
+          const val = 1 - Math.exp(-d / tauAnti);
+          const px = ox + (d / 60) * gw;
+          const py = oy - val * gh;
+          if (d === 0) ctx.moveTo(px, py);
+          else ctx.lineTo(px, py);
+        }
+        ctx.stroke();
+
+        // Draw Pro-Vaccine Curve (Teal/Blue)
+        ctx.strokeStyle = "#38BDF8";
+        ctx.lineWidth = 2.8;
+        ctx.beginPath();
+        for (let d = 0; d <= 60; d += 0.5) {
+          const val = 1 - Math.exp(-d / tauPro);
+          const px = ox + (d / 60) * gw;
+          const py = oy - val * gh;
+          if (d === 0) ctx.moveTo(px, py);
+          else ctx.lineTo(px, py);
+        }
+        ctx.stroke();
+
+        // Marker for P90 days
+        const dAntiP90 = modelMode === "descriptive" ? 18 : 22;
+        const dProP90 = modelMode === "descriptive" ? 32 : 28;
+
+        const pAntiX = ox + (dAntiP90 / 60) * gw;
+        ctx.fillStyle = "#FF5B04";
+        ctx.beginPath();
+        ctx.arc(pAntiX, p90Y, 6, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.fillText(`${dAntiP90}d`, pAntiX, p90Y - 12);
+
+        const pProX = ox + (dProP90 / 60) * gw;
+        ctx.fillStyle = "#38BDF8";
+        ctx.beginPath();
+        ctx.arc(pProX, p90Y, 6, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.fillText(`${dProP90}d`, pProX, p90Y - 12);
+
+        // Interactive Scrubber Needle (Day scrubDay)
+        const scrubX = ox + (scrubDay / 60) * gw;
+        ctx.strokeStyle = "#FDF6E3";
+        ctx.lineWidth = 1.5;
+        ctx.beginPath();
+        ctx.moveTo(scrubX, oy);
+        ctx.lineTo(scrubX, oy - gh);
+        ctx.stroke();
+
+        const curAnti = Math.min(100, Math.round((1 - Math.exp(-scrubDay / tauAnti)) * 100));
+        const curPro = Math.min(100, Math.round((1 - Math.exp(-scrubDay / tauPro)) * 100));
+
+        ctx.fillStyle = "#FDF6E3";
+        ctx.font = 'bold 11px "SF Mono", monospace';
+        ctx.textAlign = "center";
+        ctx.fillText(`Day ${scrubDay} : Anti ${curAnti}% vs Pro ${curPro}%`, scrubX, oy + 22);
+
+        // Axes ticks
+        ctx.fillStyle = "rgba(255, 255, 255, 0.6)";
+        ctx.font = '9px "SF Mono", monospace';
+        for (let t = 0; t <= 60; t += 10) {
+          const tx = ox + (t / 60) * gw;
+          ctx.fillText(`${t}d`, tx, oy + 14);
+        }
       }
 
       // -------------------------------------------------------------
-      // DIRECT 2D SIMULATION LOOP (Interactive Fallback)
+      // UI SYNC & TAB CONTENT MANAGER
+      // -------------------------------------------------------------
+      function updateHUDContent() {
+        if (activeTab === "mechanisms") {
+          hudTitle.textContent = "1. Mechanisms: Echo Chamber vs Battleground";
+          hudDesc.textContent =
+            "Under identical recommendation algorithms, vaccine-hesitant content forms dense in-group consensus with rapid view saturation, whereas pro-vaccine broadcasts face sustained cross-ideological contention.";
+
+          interactiveControls.innerHTML = `
+          <span style="font-size: 10px; font-weight: 700; color: var(--design-orange); text-transform: uppercase;">Friction:</span>
+          <input type="range" id="conflict-slider" class="interactive-slider" min="0.2" max="2.5" step="0.1" value="${conflictIntensity}">
+          <span id="friction-val" style="font-size: 11px; font-family: var(--font-mono); font-weight: 700; min-width: 40px;">${conflictIntensity}x</span>
+        `;
+
+          metricsRow.innerHTML = `
+          <div class="metric-item">
+            <div class="metric-lbl">Hesitant Net Consensus</div>
+            <div class="metric-val" style="color: #FF5B04;">+21.3% Agree</div>
+          </div>
+          <div class="metric-item">
+            <div class="metric-lbl">Pro Net Contention</div>
+            <div class="metric-val" style="color: #38BDF8;">-11.5% Disagree</div>
+          </div>
+          <div class="metric-item">
+            <div class="metric-lbl">Likes / View Ratio</div>
+            <div class="metric-val" style="color: #10B981;">2.9x Higher (SA)</div>
+          </div>
+          <div class="metric-item">
+            <div class="metric-lbl">Bayesian Odds Ratio</div>
+            <div class="metric-val" style="color: #F59E0B;">OR = 2.41 [1.95, 2.98]</div>
+          </div>
+        `;
+
+          document.querySelector("#conflict-slider").addEventListener("input", (e) => {
+            conflictIntensity = parseFloat(e.target.value);
+            document.querySelector("#friction-val").textContent = `${conflictIntensity.toFixed(1)}x`;
+            if (soundEnabled) playTone(480 * conflictIntensity, "sine", 0.08, 0.04);
+          });
+        } else if (activeTab === "pipeline") {
+          hudTitle.textContent = "2. Data Pipeline: Daily Longitudinal Attrition";
+          hudDesc.textContent =
+            "Sampling 7,213 uploads over 6 months (Nov 20, 2024 to May 20, 2025) via YouTube Data API v3. Deliberately excluding Shorts to eliminate confounding swipe-feed mechanics.";
+
+          interactiveControls.innerHTML = `
+          <span style="font-size: 10px; font-weight: 700; color: #38BDF8; text-transform: uppercase;">Pipeline Stage:</span>
+          <button class="ctrl-btn ${pipelineStep === 0 ? "active" : ""}" data-step="0">1. Uploads</button>
+          <button class="ctrl-btn ${pipelineStep === 1 ? "active" : ""}" data-step="1">2. Duration</button>
+          <button class="ctrl-btn ${pipelineStep === 2 ? "active" : ""}" data-step="2">3. Channels</button>
+          <button class="ctrl-btn ${pipelineStep === 3 ? "active" : ""}" data-step="3">4. Comments</button>
+        `;
+
+          metricsRow.innerHTML = `
+          <div class="metric-item">
+            <div class="metric-lbl">Collected Corpus</div>
+            <div class="metric-val">7,213 Videos</div>
+          </div>
+          <div class="metric-item">
+            <div class="metric-lbl">Analytical Dataset</div>
+            <div class="metric-val" style="color: #10B981;">6,074 Videos</div>
+          </div>
+          <div class="metric-item">
+            <div class="metric-lbl">Unique Channels</div>
+            <div class="metric-val" style="color: #38BDF8;">3,789 Channels</div>
+          </div>
+          <div class="metric-item">
+            <div class="metric-lbl">Annotated Comments</div>
+            <div class="metric-val" style="color: #FF5B04;">60,507 Comments</div>
+          </div>
+        `;
+
+          interactiveControls.querySelectorAll(".ctrl-btn").forEach((btn) => {
+            btn.addEventListener("click", () => {
+              pipelineStep = parseInt(btn.dataset.step);
+              updateHUDContent();
+              if (soundEnabled) playTone(300 + pipelineStep * 120, "triangle", 0.1, 0.06);
+            });
+          });
+        } else if (activeTab === "zeroshot") {
+          hudTitle.textContent = "3. Zero-Shot Stance & Bayesian Logistic Validation";
+          hudDesc.textContent =
+            "GPT-4o-mini zero-shot classification achieves 82.5% accuracy against human ground truth with Cohen kappa = 0.94. Bayesian multilevel modeling controls for channel clustering.";
+
+          interactiveControls.innerHTML = `
+          <span style="font-size: 10px; font-weight: 700; color: #38BDF8; text-transform: uppercase;">Inspect Stance:</span>
+          <button class="ctrl-btn ${zeroShotInspectStance === "SA" ? "active" : ""}" data-stance="SA">SA</button>
+          <button class="ctrl-btn ${zeroShotInspectStance === "A" ? "active" : ""}" data-stance="A">A</button>
+          <button class="ctrl-btn ${zeroShotInspectStance === "Neutral" ? "active" : ""}" data-stance="Neutral">Neutral</button>
+          <button class="ctrl-btn ${zeroShotInspectStance === "IF" ? "active" : ""}" data-stance="IF">IF</button>
+          <button class="ctrl-btn ${zeroShotInspectStance === "SIF" ? "active" : ""}" data-stance="SIF">SIF</button>
+        `;
+
+          metricsRow.innerHTML = `
+          <div class="metric-item">
+            <div class="metric-lbl">Human Agreement</div>
+            <div class="metric-val" style="color: #10B981;">82.5% Accuracy</div>
+          </div>
+          <div class="metric-item">
+            <div class="metric-lbl">Inter-Rater Reliability</div>
+            <div class="metric-val" style="color: #38BDF8;">Cohen κ = 0.94</div>
+          </div>
+          <div class="metric-item">
+            <div class="metric-lbl">Stance Categories</div>
+            <div class="metric-val">5 Ordinal Classes</div>
+          </div>
+          <div class="metric-item">
+            <div class="metric-lbl">Model Architecture</div>
+            <div class="metric-val" style="color: #FF5B04;">GPT-4o-mini Zero-Shot</div>
+          </div>
+        `;
+
+          interactiveControls.querySelectorAll(".ctrl-btn").forEach((btn) => {
+            btn.addEventListener("click", () => {
+              zeroShotInspectStance = btn.dataset.stance;
+              updateHUDContent();
+              if (soundEnabled) playTone(400, "sine", 0.08, 0.05);
+            });
+          });
+        } else if (activeTab === "saturation") {
+          hudTitle.textContent = "4. Temporal Saturation: 18 vs 32 Day Velocities";
+          hudDesc.textContent =
+            "Anti-vaccine uploads reach 90% cumulative views in 18 days vs 32 days for pro-vaccine (44% faster descriptive velocity, IRR = 0.80). Conditioning on total volume attenuates the gap to ~20%.";
+
+          interactiveControls.innerHTML = `
+          <div style="display:flex; align-items:center; gap:8px; width:100%;">
+            <span style="font-size: 10px; font-weight: 700; color: var(--design-orange); text-transform: uppercase;">Scrub:</span>
+            <input type="range" id="time-slider" class="interactive-slider" min="0" max="60" value="${scrubDay}">
+            <span id="time-display" style="font-size: 11px; font-family: var(--font-mono); font-weight: 700; min-width: 48px;">Day ${scrubDay}</span>
+            <button id="btn-model-toggle" class="ctrl-btn active" style="margin-left:auto;">${modelMode === "descriptive" ? "Descriptive (44%)" : "Controlled (~20%)"}</button>
+          </div>
+        `;
+
+          const antiP90 = modelMode === "descriptive" ? "18 Days" : "22 Days";
+          const proP90 = modelMode === "descriptive" ? "32 Days" : "28 Days";
+          const velGap = modelMode === "descriptive" ? "+44% Faster" : "~20% Residual";
+
+          metricsRow.innerHTML = `
+          <div class="metric-item">
+            <div class="metric-lbl">Anti-Vaccine (P90)</div>
+            <div class="metric-val" style="color: #FF5B04;">${antiP90}</div>
+          </div>
+          <div class="metric-item">
+            <div class="metric-lbl">Pro-Vaccine (P90)</div>
+            <div class="metric-val" style="color: #38BDF8;">${proP90}</div>
+          </div>
+          <div class="metric-item">
+            <div class="metric-lbl">Saturation Velocity</div>
+            <div class="metric-val" style="color: #F59E0B;">${velGap}</div>
+          </div>
+          <div class="metric-item">
+            <div class="metric-lbl">Bayesian Hazard Ratio</div>
+            <div class="metric-val" style="color: #10B981;">IRR = 0.80 [0.70, 0.90]</div>
+          </div>
+        `;
+
+          document.querySelector("#time-slider").addEventListener("input", (e) => {
+            scrubDay = parseInt(e.target.value);
+            document.querySelector("#time-display").textContent = `Day ${scrubDay}`;
+            if (scrubDay === 18 || scrubDay === 32) {
+              playTone(440, "sine", 0.15, 0.08);
+            }
+          });
+
+          document.querySelector("#btn-model-toggle").addEventListener("click", () => {
+            modelMode = modelMode === "descriptive" ? "controlled" : "descriptive";
+            updateHUDContent();
+            if (soundEnabled) playTone(modelMode === "descriptive" ? 640 : 520, "sine", 0.12, 0.07);
+          });
+        }
+      }
+
+      // Tab click binding
+      sectionTabs.querySelectorAll(".tab-btn").forEach((btn) => {
+        btn.addEventListener("click", () => {
+          sectionTabs.querySelectorAll(".tab-btn").forEach((b) => b.classList.remove("active"));
+          btn.classList.add("active");
+          activeTab = btn.dataset.tab;
+          updateHUDContent();
+          if (soundEnabled) playTone(540, "triangle", 0.1, 0.08);
+        });
+      });
+
+      // -------------------------------------------------------------
+      // DIRECT 2D SIMULATION LOOP (Zero-Camera Fallback)
       // -------------------------------------------------------------
       function directSimLoop() {
         if (!isARMode) {
           simCtx.clearRect(0, 0, simCanvas.width, simCanvas.height);
 
-          // Draw Base Target Graphic
-          if (targetImg.complete && targetImg.naturalWidth > 0) {
-            simCtx.drawImage(targetImg, 0, 0, simCanvas.width, 141 * (simCanvas.width / 800));
-          }
-
-          // Draw Dynamic Overlay
-          renderOverlayGraphics(scrubDay);
+          // Render Dynamic Layer
+          renderOverlayGraphics();
           simCtx.drawImage(overlayCanvas, 0, 0, simCanvas.width, simCanvas.height);
 
           animId = requestAnimationFrame(directSimLoop);
         }
       }
-
-      timeSlider.addEventListener("input", (e) => {
-        scrubDay = parseInt(e.target.value);
-        timeDisplay.textContent = `Day ${scrubDay}`;
-        if (scrubDay === 18 || scrubDay === 32) {
-          playTone(440, "sine", 0.15, 0.08);
-        }
-      });
 
       // -------------------------------------------------------------
       // WEBAR IMAGE TRACKING (MindAR + Three.js)
@@ -765,11 +1309,12 @@
 
           const { renderer, scene, camera } = mindarThree;
 
-          // Create Three.js Overlay on Target 0
+          // Anchor 0: Hero Mechanisms Panel
           const anchor = mindarThree.addAnchor(0);
 
-          // Plane aspect ratio matching 800 x 141
-          const planeGeo = new THREE.PlaneGeometry(1.0, 141 / 800);
+          // Geometry matching 1000 x 360 overlay aspect ratio over 800 x 141 target
+          // Width = 1.0, Height = 0.36
+          const planeGeo = new THREE.PlaneGeometry(1.04, 0.38);
           canvasTexture = new THREE.CanvasTexture(overlayCanvas);
           canvasTexture.minFilter = THREE.LinearFilter;
           canvasTexture.magFilter = THREE.LinearFilter;
@@ -777,28 +1322,21 @@
           const planeMat = new THREE.MeshBasicMaterial({
             map: canvasTexture,
             transparent: true,
-            opacity: 0.96,
+            opacity: 0.98,
             side: THREE.DoubleSide,
           });
 
           const overlayMesh = new THREE.Mesh(planeGeo, planeMat);
-          overlayMesh.position.set(0, 0, 0.02); // Slightly raised above physical poster
+          overlayMesh.position.set(0, 0, 0.02); // Slightly raised above paper
           anchor.group.add(overlayMesh);
 
-          // Floating 3D Accent Marker for Saturation Gap
-          const badgeGeo = new THREE.BoxGeometry(0.24, 0.08, 0.02);
-          const badgeMat = new THREE.MeshBasicMaterial({ color: 0xff5b04 });
-          const badgeMesh = new THREE.Mesh(badgeGeo, badgeMat);
-          badgeMesh.position.set(0, 0.14, 0.04);
-          anchor.group.add(badgeMesh);
-
-          // Anchor Events
+          // Anchor Status Callbacks
           anchor.onTargetFound = () => {
             targetLocked = true;
             scannerGuide.classList.add("locked");
-            scannerStatus.textContent = "ANCHOR LOCKED : DYNAMICS ACTIVE";
+            scannerStatus.textContent = "ANCHOR LOCKED : SCIENTIFIC DYNAMICS ACTIVE";
             trackingDot.style.background = "#10B981";
-            trackingDot.style.boxShadow = "0 0 10px #10B981";
+            trackingDot.style.boxShadow = "0 0 12px #10B981";
             hudStatus.textContent = "LOCKED";
             hudStatus.style.color = "#10B981";
             playTone(520, "sine", 0.2, 0.1);
@@ -818,18 +1356,18 @@
           hudStatus.textContent = "SCANNING...";
 
           renderer.setAnimationLoop(() => {
-            renderOverlayGraphics(scrubDay);
+            renderOverlayGraphics();
             if (canvasTexture) canvasTexture.needsUpdate = true;
             renderer.render(scene, camera);
           });
         } catch (err) {
-          console.warn("AR Camera Init Failed or Denied, switching to simulation:", err);
+          console.warn("AR Camera Init Failed or Denied, switching to interactive simulation:", err);
           switchToSimMode();
         }
       }
 
       // -------------------------------------------------------------
-      // MODE SWITCHING (AR Camera vs Direct Simulation)
+      // MODE SWITCHING (AR Camera vs Direct Interactive Simulation)
       // -------------------------------------------------------------
       function switchToARMode() {
         isARMode = true;
@@ -861,8 +1399,9 @@
       btnModeAR.addEventListener("click", switchToARMode);
       btnModeSim.addEventListener("click", switchToSimMode);
 
-      // Auto-start AR on load
+      // Initialize HUD and start
       window.addEventListener("DOMContentLoaded", () => {
+        updateHUDContent();
         initAR();
       });
     </script>
