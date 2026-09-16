@@ -1,849 +1,870 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-  <title>Echo / Battleground : Poster Augmented Reality</title>
-  <link rel="icon" type="image/jpeg" href="/assets/img/icon.jpg" />
-  <style>
-    :root {
-      --design-orange: #FF5B04;
-      --design-teal: #075056;
-      --design-ink: #233038;
-      --design-cream: #FDF6E3;
-      --font-main: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-      --font-mono: "SF Mono", Monaco, Inconsolata, monospace;
-    }
-
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-      -webkit-tap-highlight-color: transparent;
-    }
-
-    html, body {
-      width: 100%;
-      height: 100%;
-      overflow: hidden;
-      background-color: #0d1418;
-      color: #FFFFFF;
-      font-family: var(--font-main);
-      user-select: none;
-    }
-
-    #ar-container {
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      overflow: hidden;
-      z-index: 1;
-    }
-
-    #ar-container video {
-      position: absolute !important;
-      top: 50% !important;
-      left: 50% !important;
-      transform: translate(-50%, -50%) !important;
-      object-fit: cover !important;
-      width: 100% !important;
-      height: 100% !important;
-      z-index: 1;
-    }
-
-    #ar-container canvas {
-      position: absolute !important;
-      top: 0 !important;
-      left: 0 !important;
-      width: 100% !important;
-      height: 100% !important;
-      z-index: 2;
-    }
-
-    /* Direct Simulation Canvas (Fallback) */
-    #sim-container {
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      z-index: 3;
-      display: none;
-      background: radial-gradient(circle at center, #1b2830 0%, #0d1418 100%);
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      padding: 20px;
-    }
-
-    #sim-canvas {
-      max-width: 100%;
-      max-height: 70vh;
-      border-radius: 8px;
-      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.6);
-      background: #FFFFFF;
-    }
-
-    /* UI Overlay */
-    .ui-layer {
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      z-index: 10;
-      pointer-events: none;
-      display: flex;
-      flex-direction: column;
-      justify-content: space-between;
-      padding: 16px;
-    }
-
-    .interactive {
-      pointer-events: auto;
-    }
-
-    /* Top Bar */
-    .top-bar {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      gap: 12px;
-    }
-
-    .brand-badge {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      background: rgba(35, 48, 56, 0.88);
-      backdrop-filter: blur(12px);
-      border: 1px solid rgba(255, 91, 4, 0.4);
-      padding: 8px 14px;
-      border-radius: 20px;
-      font-size: 11px;
-      font-weight: 700;
-      letter-spacing: 0.12em;
-      text-transform: uppercase;
-    }
-
-    .brand-dot {
-      width: 8px;
-      height: 8px;
-      border-radius: 50%;
-      background: var(--design-orange);
-      box-shadow: 0 0 10px var(--design-orange);
-      animation: blink 2s infinite ease-in-out;
-    }
-
-    @keyframes blink {
-      0%, 100% { opacity: 1; transform: scale(1); }
-      50% { opacity: 0.4; transform: scale(0.8); }
-    }
-
-    .mode-pill {
-      display: flex;
-      background: rgba(35, 48, 56, 0.88);
-      backdrop-filter: blur(12px);
-      border: 1px solid rgba(255, 255, 255, 0.15);
-      border-radius: 20px;
-      padding: 3px;
-    }
-
-    .mode-btn {
-      background: transparent;
-      border: none;
-      color: rgba(255, 255, 255, 0.6);
-      padding: 6px 12px;
-      font-size: 11px;
-      font-weight: 600;
-      border-radius: 16px;
-      cursor: pointer;
-      transition: all 0.2s ease;
-    }
-
-    .mode-btn.active {
-      background: var(--design-teal);
-      color: #FFFFFF;
-      box-shadow: 0 2px 8px rgba(7, 80, 86, 0.5);
-    }
-
-    /* Target Scanner Reticle */
-    #scanner-guide {
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      width: 88vw;
-      max-width: 480px;
-      aspect-ratio: 800 / 141;
-      border: 2px dashed rgba(255, 91, 4, 0.6);
-      border-radius: 8px;
-      pointer-events: none;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      background: rgba(7, 80, 86, 0.08);
-      transition: opacity 0.3s ease;
-    }
-
-    #scanner-guide.locked {
-      border-color: #10B981;
-      background: rgba(16, 185, 129, 0.08);
-    }
-
-    .scan-beam {
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 2px;
-      background: linear-gradient(90deg, transparent, var(--design-orange), transparent);
-      box-shadow: 0 0 8px var(--design-orange);
-      animation: scanSweep 2.5s ease-in-out infinite alternate;
-    }
-
-    @keyframes scanSweep {
-      0% { top: 0%; }
-      100% { top: 100%; }
-    }
-
-    .scanner-text {
-      font-size: 10px;
-      font-weight: 700;
-      letter-spacing: 0.15em;
-      text-transform: uppercase;
-      color: var(--design-cream);
-      background: rgba(35, 48, 56, 0.9);
-      padding: 4px 10px;
-      border-radius: 12px;
-      margin-top: 6px;
-      border: 1px solid rgba(255, 91, 4, 0.3);
-    }
-
-    /* Bottom Info Card */
-    .bottom-hud {
-      display: flex;
-      flex-direction: column;
-      gap: 8px;
-    }
-
-    .info-card {
-      background: rgba(35, 48, 56, 0.92);
-      backdrop-filter: blur(16px);
-      border: 1px solid rgba(255, 255, 255, 0.12);
-      border-radius: 14px;
-      padding: 12px 16px;
-      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
-    }
-
-    .info-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 6px;
-    }
-
-    .info-title {
-      font-size: 12px;
-      font-weight: 700;
-      letter-spacing: 0.08em;
-      color: var(--design-orange);
-      text-transform: uppercase;
-    }
-
-    .info-sub {
-      font-size: 11px;
-      color: #E2E8F0;
-      line-height: 1.4;
-    }
-
-    .metrics-row {
-      display: flex;
-      gap: 12px;
-      margin-top: 8px;
-      padding-top: 8px;
-      border-top: 1px solid rgba(255, 255, 255, 0.1);
-    }
-
-    .metric-item {
-      flex: 1;
-    }
-
-    .metric-lbl {
-      font-size: 9px;
-      color: rgba(255, 255, 255, 0.5);
-      text-transform: uppercase;
-      letter-spacing: 0.1em;
-    }
-
-    .metric-val {
-      font-size: 15px;
-      font-weight: 800;
-      color: #FFFFFF;
-      font-family: var(--font-mono);
-    }
-
-    .metric-val.anti {
-      color: #FF5B04;
-    }
-
-    .metric-val.pro {
-      color: #38BDF8;
-    }
-
-    /* Scrub Controls for Direct Mode */
-    .scrub-controls {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      background: rgba(35, 48, 56, 0.9);
-      padding: 8px 14px;
-      border-radius: 12px;
-      margin-top: 8px;
-    }
-
-    .scrub-slider {
-      flex: 1;
-      accent-color: var(--design-orange);
-    }
-
-    /* Sound Button */
-    .sound-btn {
-      background: rgba(35, 48, 56, 0.9);
-      border: 1px solid rgba(255, 255, 255, 0.2);
-      color: #FFFFFF;
-      width: 36px;
-      height: 36px;
-      border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      cursor: pointer;
-    }
-
-    /* Target thumbnail preview */
-    .target-preview {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      background: rgba(7, 80, 86, 0.4);
-      border: 1px solid rgba(7, 80, 86, 0.8);
-      border-radius: 8px;
-      padding: 6px 10px;
-      margin-bottom: 6px;
-    }
-
-    .target-preview img {
-      width: 90px;
-      height: auto;
-      border-radius: 4px;
-      border: 1px solid #FFFFFF;
-    }
-
-    .target-preview-text {
-      font-size: 10px;
-      color: #F1F5F9;
-      line-height: 1.3;
-    }
-
-    .target-preview-text strong {
-      color: var(--design-orange);
-    }
-  </style>
-
-  <!-- Import Maps for Three.js and MindAR -->
-  <script type="importmap">
-  {
-    "imports": {
-      "three": "https://unpkg.com/three@0.160.0/build/three.module.js",
-      "three/addons/": "https://unpkg.com/three@0.160.0/examples/jsm/",
-      "mindar-image-three": "https://cdn.jsdelivr.net/npm/mind-ar@1.2.5/dist/mindar-image-three.prod.js"
-    }
-  }
-  </script>
-</head>
-<body>
-
-  <!-- AR Tracking Container -->
-  <div id="ar-container"></div>
-
-  <!-- Direct Fallback Simulation Container -->
-  <div id="sim-container">
-    <canvas id="sim-canvas" width="800" height="260"></canvas>
-    <div class="scrub-controls interactive" style="width: 100%; max-width: 600px;">
-      <span style="font-size: 10px; font-weight: 700; color: var(--design-orange); text-transform: uppercase;">Time:</span>
-      <input type="range" id="time-slider" class="scrub-slider" min="0" max="60" value="18" />
-      <span id="time-display" style="font-size: 11px; font-family: var(--font-mono); font-weight: 700; min-width: 55px;">Day 18</span>
-    </div>
-  </div>
-
-  <!-- Scanner Reticle (Visible in AR Mode) -->
-  <div id="scanner-guide">
-    <div class="scan-beam"></div>
-    <div class="scanner-text" id="scanner-status">Align with Top Mechanism Panel</div>
-  </div>
-
-  <!-- UI Overlay -->
-  <div class="ui-layer">
-    <!-- Top Bar -->
-    <div class="top-bar interactive">
-      <div class="brand-badge">
-        <div class="brand-dot" id="tracking-dot"></div>
-        <span id="brand-text">Poster AR Engine</span>
-      </div>
-
-      <div class="mode-pill">
-        <button id="btn-mode-ar" class="mode-btn active">AR Camera</button>
-        <button id="btn-mode-sim" class="mode-btn">Interactive</button>
-      </div>
-
-      <button id="btn-sound" class="sound-btn" title="Toggle Sonification">
-        <svg id="sound-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-          <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon>
-          <path d="M15.54 8.46a5 5 0 0 1 0 7.07"></path>
-        </svg>
-      </button>
-    </div>
-
-    <!-- Bottom HUD -->
-    <div class="bottom-hud interactive">
-      <div class="target-preview" id="preview-box">
-        <img src="/ar/target.png" alt="Target: Mechanism Panel" />
-        <div class="target-preview-text">
-          <strong>Spatial Anchor:</strong> Point camera at the top header panel: <em>"One Platform. Two Engagement Architectures."</em>
-        </div>
-      </div>
-
-      <div class="info-card">
-        <div class="info-header">
-          <span class="info-title" id="hud-title">Descriptive vs Controlled Saturation</span>
-          <span id="hud-status" style="font-size: 10px; font-weight: 700; color: #38BDF8; font-family: var(--font-mono);">AR READY</span>
-        </div>
-        <div class="info-sub" id="hud-desc">
-          Anti-vaccine content achieves descriptive 90% view saturation in 18 days vs 32 days for pro-vaccine. Approximately 20% differential remains after volume controls.
-        </div>
-
-        <div class="metrics-row">
-          <div class="metric-item">
-            <div class="metric-lbl">Anti-Vaccine (P90)</div>
-            <div class="metric-val anti">18 Days</div>
-          </div>
-          <div class="metric-item">
-            <div class="metric-lbl">Pro-Vaccine (P90)</div>
-            <div class="metric-val pro">32 Days</div>
-          </div>
-          <div class="metric-item">
-            <div class="metric-lbl">Descriptive Velocity</div>
-            <div class="metric-val" style="color: #F59E0B;">+44% Faster</div>
-          </div>
-          <div class="metric-item">
-            <div class="metric-lbl">Net Controlled</div>
-            <div class="metric-val" style="color: #10B981;">~20% Gap</div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <script type="module">
-    import * as THREE from 'three';
-    import { MindARThree } from 'mindar-image-three';
-
-    // State
-    let isARMode = true;
-    let soundEnabled = false;
-    let targetLocked = false;
-    let audioCtx = null;
-    let animId = null;
-    let scrubDay = 18;
-
-    // Elements
-    const arContainer = document.querySelector('#ar-container');
-    const simContainer = document.querySelector('#sim-container');
-    const simCanvas = document.querySelector('#sim-canvas');
-    const simCtx = simCanvas.getContext('2d');
-    const scannerGuide = document.querySelector('#scanner-guide');
-    const scannerStatus = document.querySelector('#scanner-status');
-    const trackingDot = document.querySelector('#tracking-dot');
-    const hudStatus = document.querySelector('#hud-status');
-    const btnModeAR = document.querySelector('#btn-mode-ar');
-    const btnModeSim = document.querySelector('#btn-mode-sim');
-    const btnSound = document.querySelector('#btn-sound');
-    const timeSlider = document.querySelector('#time-slider');
-    const timeDisplay = document.querySelector('#time-display');
-
-    // Target image loading for direct sim
-    const targetImg = new Image();
-    targetImg.src = '/ar/target.png';
-
-    // -------------------------------------------------------------
-    // AUDIO ENGINE (Web Audio API Synthesizer)
-    // -------------------------------------------------------------
-    function initAudio() {
-      if (!audioCtx) {
-        const AudioContext = window.AudioContext || window.webkitAudioContext;
-        audioCtx = new AudioContext();
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <title>Echo / Battleground : Poster Augmented Reality</title>
+    <link rel="icon" type="image/jpeg" href="/assets/img/icon.jpg" />
+    <style>
+      :root {
+        --design-orange: #ff5b04;
+        --design-teal: #075056;
+        --design-ink: #233038;
+        --design-cream: #fdf6e3;
+        --font-main: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+        --font-mono: "SF Mono", Monaco, Inconsolata, monospace;
       }
-      if (audioCtx.state === 'suspended') {
-        audioCtx.resume();
+
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+        -webkit-tap-highlight-color: transparent;
       }
-    }
 
-    function playTone(freq, type = 'sine', duration = 0.15, gainVal = 0.08) {
-      if (!soundEnabled || !audioCtx) return;
-      try {
-        const osc = audioCtx.createOscillator();
-        const gain = audioCtx.createGain();
-        osc.type = type;
-        osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
-        gain.gain.setValueAtTime(gainVal, audioCtx.currentTime);
-        gain.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + duration);
-        osc.connect(gain);
-        gain.connect(audioCtx.destination);
-        osc.start();
-        osc.stop(audioCtx.currentTime + duration);
-      } catch (e) {}
-    }
+      html,
+      body {
+        width: 100%;
+        height: 100%;
+        overflow: hidden;
+        background-color: #0d1418;
+        color: #ffffff;
+        font-family: var(--font-main);
+        user-select: none;
+      }
 
-    btnSound.addEventListener('click', () => {
-      initAudio();
-      soundEnabled = !soundEnabled;
-      btnSound.style.borderColor = soundEnabled ? 'var(--design-orange)' : 'rgba(255,255,255,0.2)';
-      btnSound.style.color = soundEnabled ? 'var(--design-orange)' : '#FFFFFF';
-      if (soundEnabled) playTone(580, 'triangle', 0.2, 0.1);
-    });
+      #ar-container {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        overflow: hidden;
+        z-index: 1;
+      }
 
-    // -------------------------------------------------------------
-    // DYNAMIC OVERLAY CANVAS TEXTURE (For 3D Anchor & 2D Simulation)
-    // -------------------------------------------------------------
-    const overlayCanvas = document.createElement('canvas');
-    overlayCanvas.width = 1000;
-    overlayCanvas.height = 320;
-    const ctx = overlayCanvas.getContext('2d');
+      #ar-container video {
+        position: absolute !important;
+        top: 50% !important;
+        left: 50% !important;
+        transform: translate(-50%, -50%) !important;
+        object-fit: cover !important;
+        width: 100% !important;
+        height: 100% !important;
+        z-index: 1;
+      }
 
-    // Simulation particle particles
-    const echoParticles = [];
-    for (let i = 0; i < 30; i++) {
-      echoParticles.push({
-        cluster: i % 2 === 0 ? 'anti' : 'pro',
-        angle: Math.random() * Math.PI * 2,
-        radius: 35 + Math.random() * 32,
-        speed: 0.02 + Math.random() * 0.025
+      #ar-container canvas {
+        position: absolute !important;
+        top: 0 !important;
+        left: 0 !important;
+        width: 100% !important;
+        height: 100% !important;
+        z-index: 2;
+      }
+
+      /* Direct Simulation Canvas (Fallback) */
+      #sim-container {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        z-index: 3;
+        display: none;
+        background: radial-gradient(circle at center, #1b2830 0%, #0d1418 100%);
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        padding: 20px;
+      }
+
+      #sim-canvas {
+        max-width: 100%;
+        max-height: 70vh;
+        border-radius: 8px;
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.6);
+        background: #ffffff;
+      }
+
+      /* UI Overlay */
+      .ui-layer {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        z-index: 10;
+        pointer-events: none;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        padding: 16px;
+      }
+
+      .interactive {
+        pointer-events: auto;
+      }
+
+      /* Top Bar */
+      .top-bar {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 12px;
+      }
+
+      .brand-badge {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        background: rgba(35, 48, 56, 0.88);
+        backdrop-filter: blur(12px);
+        border: 1px solid rgba(255, 91, 4, 0.4);
+        padding: 8px 14px;
+        border-radius: 20px;
+        font-size: 11px;
+        font-weight: 700;
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+      }
+
+      .brand-dot {
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        background: var(--design-orange);
+        box-shadow: 0 0 10px var(--design-orange);
+        animation: blink 2s infinite ease-in-out;
+      }
+
+      @keyframes blink {
+        0%,
+        100% {
+          opacity: 1;
+          transform: scale(1);
+        }
+        50% {
+          opacity: 0.4;
+          transform: scale(0.8);
+        }
+      }
+
+      .mode-pill {
+        display: flex;
+        background: rgba(35, 48, 56, 0.88);
+        backdrop-filter: blur(12px);
+        border: 1px solid rgba(255, 255, 255, 0.15);
+        border-radius: 20px;
+        padding: 3px;
+      }
+
+      .mode-btn {
+        background: transparent;
+        border: none;
+        color: rgba(255, 255, 255, 0.6);
+        padding: 6px 12px;
+        font-size: 11px;
+        font-weight: 600;
+        border-radius: 16px;
+        cursor: pointer;
+        transition: all 0.2s ease;
+      }
+
+      .mode-btn.active {
+        background: var(--design-teal);
+        color: #ffffff;
+        box-shadow: 0 2px 8px rgba(7, 80, 86, 0.5);
+      }
+
+      /* Target Scanner Reticle */
+      #scanner-guide {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        width: 88vw;
+        max-width: 480px;
+        aspect-ratio: 800 / 141;
+        border: 2px dashed rgba(255, 91, 4, 0.6);
+        border-radius: 8px;
+        pointer-events: none;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        background: rgba(7, 80, 86, 0.08);
+        transition: opacity 0.3s ease;
+      }
+
+      #scanner-guide.locked {
+        border-color: #10b981;
+        background: rgba(16, 185, 129, 0.08);
+      }
+
+      .scan-beam {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 2px;
+        background: linear-gradient(90deg, transparent, var(--design-orange), transparent);
+        box-shadow: 0 0 8px var(--design-orange);
+        animation: scanSweep 2.5s ease-in-out infinite alternate;
+      }
+
+      @keyframes scanSweep {
+        0% {
+          top: 0%;
+        }
+        100% {
+          top: 100%;
+        }
+      }
+
+      .scanner-text {
+        font-size: 10px;
+        font-weight: 700;
+        letter-spacing: 0.15em;
+        text-transform: uppercase;
+        color: var(--design-cream);
+        background: rgba(35, 48, 56, 0.9);
+        padding: 4px 10px;
+        border-radius: 12px;
+        margin-top: 6px;
+        border: 1px solid rgba(255, 91, 4, 0.3);
+      }
+
+      /* Bottom Info Card */
+      .bottom-hud {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+      }
+
+      .info-card {
+        background: rgba(35, 48, 56, 0.92);
+        backdrop-filter: blur(16px);
+        border: 1px solid rgba(255, 255, 255, 0.12);
+        border-radius: 14px;
+        padding: 12px 16px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+      }
+
+      .info-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 6px;
+      }
+
+      .info-title {
+        font-size: 12px;
+        font-weight: 700;
+        letter-spacing: 0.08em;
+        color: var(--design-orange);
+        text-transform: uppercase;
+      }
+
+      .info-sub {
+        font-size: 11px;
+        color: #e2e8f0;
+        line-height: 1.4;
+      }
+
+      .metrics-row {
+        display: flex;
+        gap: 12px;
+        margin-top: 8px;
+        padding-top: 8px;
+        border-top: 1px solid rgba(255, 255, 255, 0.1);
+      }
+
+      .metric-item {
+        flex: 1;
+      }
+
+      .metric-lbl {
+        font-size: 9px;
+        color: rgba(255, 255, 255, 0.5);
+        text-transform: uppercase;
+        letter-spacing: 0.1em;
+      }
+
+      .metric-val {
+        font-size: 15px;
+        font-weight: 800;
+        color: #ffffff;
+        font-family: var(--font-mono);
+      }
+
+      .metric-val.anti {
+        color: #ff5b04;
+      }
+
+      .metric-val.pro {
+        color: #38bdf8;
+      }
+
+      /* Scrub Controls for Direct Mode */
+      .scrub-controls {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        background: rgba(35, 48, 56, 0.9);
+        padding: 8px 14px;
+        border-radius: 12px;
+        margin-top: 8px;
+      }
+
+      .scrub-slider {
+        flex: 1;
+        accent-color: var(--design-orange);
+      }
+
+      /* Sound Button */
+      .sound-btn {
+        background: rgba(35, 48, 56, 0.9);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        color: #ffffff;
+        width: 36px;
+        height: 36px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+      }
+
+      /* Target thumbnail preview */
+      .target-preview {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        background: rgba(7, 80, 86, 0.4);
+        border: 1px solid rgba(7, 80, 86, 0.8);
+        border-radius: 8px;
+        padding: 6px 10px;
+        margin-bottom: 6px;
+      }
+
+      .target-preview img {
+        width: 90px;
+        height: auto;
+        border-radius: 4px;
+        border: 1px solid #ffffff;
+      }
+
+      .target-preview-text {
+        font-size: 10px;
+        color: #f1f5f9;
+        line-height: 1.3;
+      }
+
+      .target-preview-text strong {
+        color: var(--design-orange);
+      }
+    </style>
+
+    <!-- Import Maps for Three.js and MindAR -->
+    <script type="importmap">
+      {
+        "imports": {
+          "three": "https://unpkg.com/three@0.160.0/build/three.module.js",
+          "three/addons/": "https://unpkg.com/three@0.160.0/examples/jsm/",
+          "mindar-image-three": "https://cdn.jsdelivr.net/npm/mind-ar@1.2.5/dist/mindar-image-three.prod.js"
+        }
+      }
+    </script>
+  </head>
+  <body>
+    <!-- AR Tracking Container -->
+    <div id="ar-container"></div>
+
+    <!-- Direct Fallback Simulation Container -->
+    <div id="sim-container">
+      <canvas id="sim-canvas" width="800" height="260"></canvas>
+      <div class="scrub-controls interactive" style="width: 100%; max-width: 600px">
+        <span style="font-size: 10px; font-weight: 700; color: var(--design-orange); text-transform: uppercase">Time:</span>
+        <input type="range" id="time-slider" class="scrub-slider" min="0" max="60" value="18" />
+        <span id="time-display" style="font-size: 11px; font-family: var(--font-mono); font-weight: 700; min-width: 55px">Day 18</span>
+      </div>
+    </div>
+
+    <!-- Scanner Reticle (Visible in AR Mode) -->
+    <div id="scanner-guide">
+      <div class="scan-beam"></div>
+      <div class="scanner-text" id="scanner-status">Align with Top Mechanism Panel</div>
+    </div>
+
+    <!-- UI Overlay -->
+    <div class="ui-layer">
+      <!-- Top Bar -->
+      <div class="top-bar interactive">
+        <div class="brand-badge">
+          <div class="brand-dot" id="tracking-dot"></div>
+          <span id="brand-text">Poster AR Engine</span>
+        </div>
+
+        <div class="mode-pill">
+          <button id="btn-mode-ar" class="mode-btn active">AR Camera</button>
+          <button id="btn-mode-sim" class="mode-btn">Interactive</button>
+        </div>
+
+        <button id="btn-sound" class="sound-btn" title="Toggle Sonification">
+          <svg
+            id="sound-icon"
+            width="16"
+            height="16"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          >
+            <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon>
+            <path d="M15.54 8.46a5 5 0 0 1 0 7.07"></path>
+          </svg>
+        </button>
+      </div>
+
+      <!-- Bottom HUD -->
+      <div class="bottom-hud interactive">
+        <div class="target-preview" id="preview-box">
+          <img src="./target.png" alt="Target: Mechanism Panel" />
+          <div class="target-preview-text">
+            <strong>Spatial Anchor:</strong> Point camera at the top header panel: <em>"One Platform. Two Engagement Architectures."</em>
+          </div>
+        </div>
+
+        <div class="info-card">
+          <div class="info-header">
+            <span class="info-title" id="hud-title">Descriptive vs Controlled Saturation</span>
+            <span id="hud-status" style="font-size: 10px; font-weight: 700; color: #38bdf8; font-family: var(--font-mono)">AR READY</span>
+          </div>
+          <div class="info-sub" id="hud-desc">
+            Anti-vaccine content achieves descriptive 90% view saturation in 18 days vs 32 days for pro-vaccine. Approximately 20% differential
+            remains after volume controls.
+          </div>
+
+          <div class="metrics-row">
+            <div class="metric-item">
+              <div class="metric-lbl">Anti-Vaccine (P90)</div>
+              <div class="metric-val anti">18 Days</div>
+            </div>
+            <div class="metric-item">
+              <div class="metric-lbl">Pro-Vaccine (P90)</div>
+              <div class="metric-val pro">32 Days</div>
+            </div>
+            <div class="metric-item">
+              <div class="metric-lbl">Descriptive Velocity</div>
+              <div class="metric-val" style="color: #f59e0b">+44% Faster</div>
+            </div>
+            <div class="metric-item">
+              <div class="metric-lbl">Net Controlled</div>
+              <div class="metric-val" style="color: #10b981">~20% Gap</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script type="module">
+      import * as THREE from "three";
+      import { MindARThree } from "mindar-image-three";
+
+      // State
+      let isARMode = true;
+      let soundEnabled = false;
+      let targetLocked = false;
+      let audioCtx = null;
+      let animId = null;
+      let scrubDay = 18;
+
+      // Elements
+      const arContainer = document.querySelector("#ar-container");
+      const simContainer = document.querySelector("#sim-container");
+      const simCanvas = document.querySelector("#sim-canvas");
+      const simCtx = simCanvas.getContext("2d");
+      const scannerGuide = document.querySelector("#scanner-guide");
+      const scannerStatus = document.querySelector("#scanner-status");
+      const trackingDot = document.querySelector("#tracking-dot");
+      const hudStatus = document.querySelector("#hud-status");
+      const btnModeAR = document.querySelector("#btn-mode-ar");
+      const btnModeSim = document.querySelector("#btn-mode-sim");
+      const btnSound = document.querySelector("#btn-sound");
+      const timeSlider = document.querySelector("#time-slider");
+      const timeDisplay = document.querySelector("#time-display");
+
+      // Target image loading for direct sim
+      const targetImg = new Image();
+      targetImg.src = "./target.png";
+
+      // -------------------------------------------------------------
+      // AUDIO ENGINE (Web Audio API Synthesizer)
+      // -------------------------------------------------------------
+      function initAudio() {
+        if (!audioCtx) {
+          const AudioContext = window.AudioContext || window.webkitAudioContext;
+          audioCtx = new AudioContext();
+        }
+        if (audioCtx.state === "suspended") {
+          audioCtx.resume();
+        }
+      }
+
+      function playTone(freq, type = "sine", duration = 0.15, gainVal = 0.08) {
+        if (!soundEnabled || !audioCtx) return;
+        try {
+          const osc = audioCtx.createOscillator();
+          const gain = audioCtx.createGain();
+          osc.type = type;
+          osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
+          gain.gain.setValueAtTime(gainVal, audioCtx.currentTime);
+          gain.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + duration);
+          osc.connect(gain);
+          gain.connect(audioCtx.destination);
+          osc.start();
+          osc.stop(audioCtx.currentTime + duration);
+        } catch (e) {}
+      }
+
+      btnSound.addEventListener("click", () => {
+        initAudio();
+        soundEnabled = !soundEnabled;
+        btnSound.style.borderColor = soundEnabled ? "var(--design-orange)" : "rgba(255,255,255,0.2)";
+        btnSound.style.color = soundEnabled ? "var(--design-orange)" : "#FFFFFF";
+        if (soundEnabled) playTone(580, "triangle", 0.2, 0.1);
       });
-    }
 
-    const battleParticles = [];
-    for (let i = 0; i < 35; i++) {
-      battleParticles.push({
-        fromLeft: Math.random() > 0.5,
-        progress: Math.random(),
-        speed: 0.008 + Math.random() * 0.014,
-        offsetY: (Math.random() - 0.5) * 50
-      });
-    }
+      // -------------------------------------------------------------
+      // DYNAMIC OVERLAY CANVAS TEXTURE (For 3D Anchor & 2D Simulation)
+      // -------------------------------------------------------------
+      const overlayCanvas = document.createElement("canvas");
+      overlayCanvas.width = 1000;
+      overlayCanvas.height = 320;
+      const ctx = overlayCanvas.getContext("2d");
 
-    let globalTick = 0;
+      // Simulation particle particles
+      const echoParticles = [];
+      for (let i = 0; i < 30; i++) {
+        echoParticles.push({
+          cluster: i % 2 === 0 ? "anti" : "pro",
+          angle: Math.random() * Math.PI * 2,
+          radius: 35 + Math.random() * 32,
+          speed: 0.02 + Math.random() * 0.025,
+        });
+      }
 
-    function renderOverlayGraphics(currentDay) {
-      ctx.clearRect(0, 0, overlayCanvas.width, overlayCanvas.height);
-      globalTick += 0.03;
+      const battleParticles = [];
+      for (let i = 0; i < 35; i++) {
+        battleParticles.push({
+          fromLeft: Math.random() > 0.5,
+          progress: Math.random(),
+          speed: 0.008 + Math.random() * 0.014,
+          offsetY: (Math.random() - 0.5) * 50,
+        });
+      }
 
-      // LEFT REGION: Echo Chamber Mechanism (Homophilic Circulating Loops)
-      const cx1 = 175;
-      const cy1 = 150;
-      const cx2 = 325;
-      const cy2 = 150;
+      let globalTick = 0;
 
-      // Draw Orbit Tracks
-      ctx.strokeStyle = 'rgba(255, 91, 4, 0.35)';
-      ctx.lineWidth = 1.5;
-      ctx.beginPath();
-      ctx.ellipse(cx1, cy1, 60, 48, 0, 0, Math.PI * 2);
-      ctx.stroke();
+      function renderOverlayGraphics(currentDay) {
+        ctx.clearRect(0, 0, overlayCanvas.width, overlayCanvas.height);
+        globalTick += 0.03;
 
-      ctx.strokeStyle = 'rgba(29, 78, 216, 0.35)';
-      ctx.beginPath();
-      ctx.ellipse(cx2, cy2, 60, 48, 0, 0, Math.PI * 2);
-      ctx.stroke();
+        // LEFT REGION: Echo Chamber Mechanism (Homophilic Circulating Loops)
+        const cx1 = 175;
+        const cy1 = 150;
+        const cx2 = 325;
+        const cy2 = 150;
 
-      // Draw Circulating Echo Particles
-      echoParticles.forEach((p, idx) => {
-        p.angle += p.speed;
-        const baseCx = p.cluster === 'anti' ? cx1 : cx2;
-        const color = p.cluster === 'anti' ? '#FF5B04' : '#3B82F6';
-        const px = baseCx + Math.cos(p.angle) * p.radius;
-        const py = cy1 + Math.sin(p.angle) * (p.radius * 0.8);
-
-        ctx.fillStyle = color;
+        // Draw Orbit Tracks
+        ctx.strokeStyle = "rgba(255, 91, 4, 0.35)";
+        ctx.lineWidth = 1.5;
         ctx.beginPath();
-        ctx.arc(px, py, 3.2, 0, Math.PI * 2);
-        ctx.fill();
-
-        // Particle trail
-        const trailX = baseCx + Math.cos(p.angle - 0.15) * p.radius;
-        const trailY = cy1 + Math.sin(p.angle - 0.15) * (p.radius * 0.8);
-        ctx.strokeStyle = color;
-        ctx.lineWidth = 1.2;
-        ctx.beginPath();
-        ctx.moveTo(trailX, trailY);
-        ctx.lineTo(px, py);
+        ctx.ellipse(cx1, cy1, 60, 48, 0, 0, Math.PI * 2);
         ctx.stroke();
 
-        if (idx === 0 && Math.random() < 0.03) {
-          playTone(220, 'sine', 0.08, 0.03);
-        }
-      });
-
-      // Left Mechanism Labels
-      ctx.fillStyle = '#FF5B04';
-      ctx.font = 'bold 13px "Inter", sans-serif';
-      ctx.textAlign = 'center';
-      ctx.fillText('HOMOPHILIC RE-ENGAGEMENT', (cx1 + cx2) / 2, 50);
-      ctx.fillStyle = '#233038';
-      ctx.font = '10px "Inter", sans-serif';
-      ctx.fillText('P90: 18 Days (Anti-Vaccine Cluster)', (cx1 + cx2) / 2, 66);
-
-      // RIGHT REGION: Battleground Mechanism (Cross-Cluster Collisions)
-      const bx1 = 660;
-      const bx2 = 860;
-      const bCenter = (bx1 + bx2) / 2;
-      const bY = 150;
-
-      // Draw Dispersed Boundary Wave
-      ctx.strokeStyle = 'rgba(7, 80, 86, 0.4)';
-      ctx.setLineDash([4, 4]);
-      ctx.beginPath();
-      ctx.moveTo(bCenter, 70);
-      ctx.lineTo(bCenter, 230);
-      ctx.stroke();
-      ctx.setLineDash([]);
-
-      // Draw Cross-Conflict Particles
-      battleParticles.forEach((p, idx) => {
-        p.progress += p.speed;
-        if (p.progress > 1) {
-          p.progress = 0;
-          p.fromLeft = Math.random() > 0.5;
-        }
-
-        let px, py;
-        if (p.fromLeft) {
-          px = bx1 + p.progress * (bx2 - bx1);
-          py = bY + p.offsetY + Math.sin(p.progress * Math.PI) * 15;
-          ctx.fillStyle = '#FF5B04';
-        } else {
-          px = bx2 - p.progress * (bx2 - bx1);
-          py = bY + p.offsetY - Math.sin(p.progress * Math.PI) * 15;
-          ctx.fillStyle = '#075056';
-        }
-
+        ctx.strokeStyle = "rgba(29, 78, 216, 0.35)";
         ctx.beginPath();
-        ctx.arc(px, py, 3.5, 0, Math.PI * 2);
-        ctx.fill();
+        ctx.ellipse(cx2, cy2, 60, 48, 0, 0, Math.PI * 2);
+        ctx.stroke();
 
-        // Collision wavefront near center
-        if (Math.abs(px - bCenter) < 12) {
-          ctx.strokeStyle = 'rgba(225, 29, 72, 0.8)';
-          ctx.lineWidth = 1.5;
+        // Draw Circulating Echo Particles
+        echoParticles.forEach((p, idx) => {
+          p.angle += p.speed;
+          const baseCx = p.cluster === "anti" ? cx1 : cx2;
+          const color = p.cluster === "anti" ? "#FF5B04" : "#3B82F6";
+          const px = baseCx + Math.cos(p.angle) * p.radius;
+          const py = cy1 + Math.sin(p.angle) * (p.radius * 0.8);
+
+          ctx.fillStyle = color;
           ctx.beginPath();
-          ctx.arc(bCenter, py, 8 + Math.sin(globalTick * 5) * 4, 0, Math.PI * 2);
+          ctx.arc(px, py, 3.2, 0, Math.PI * 2);
+          ctx.fill();
+
+          // Particle trail
+          const trailX = baseCx + Math.cos(p.angle - 0.15) * p.radius;
+          const trailY = cy1 + Math.sin(p.angle - 0.15) * (p.radius * 0.8);
+          ctx.strokeStyle = color;
+          ctx.lineWidth = 1.2;
+          ctx.beginPath();
+          ctx.moveTo(trailX, trailY);
+          ctx.lineTo(px, py);
           ctx.stroke();
 
-          if (idx === 0 && Math.random() < 0.05) {
-            playTone(840, 'triangle', 0.06, 0.04);
+          if (idx === 0 && Math.random() < 0.03) {
+            playTone(220, "sine", 0.08, 0.03);
           }
+        });
+
+        // Left Mechanism Labels
+        ctx.fillStyle = "#FF5B04";
+        ctx.font = 'bold 13px "Inter", sans-serif';
+        ctx.textAlign = "center";
+        ctx.fillText("HOMOPHILIC RE-ENGAGEMENT", (cx1 + cx2) / 2, 50);
+        ctx.fillStyle = "#233038";
+        ctx.font = '10px "Inter", sans-serif';
+        ctx.fillText("P90: 18 Days (Anti-Vaccine Cluster)", (cx1 + cx2) / 2, 66);
+
+        // RIGHT REGION: Battleground Mechanism (Cross-Cluster Collisions)
+        const bx1 = 660;
+        const bx2 = 860;
+        const bCenter = (bx1 + bx2) / 2;
+        const bY = 150;
+
+        // Draw Dispersed Boundary Wave
+        ctx.strokeStyle = "rgba(7, 80, 86, 0.4)";
+        ctx.setLineDash([4, 4]);
+        ctx.beginPath();
+        ctx.moveTo(bCenter, 70);
+        ctx.lineTo(bCenter, 230);
+        ctx.stroke();
+        ctx.setLineDash([]);
+
+        // Draw Cross-Conflict Particles
+        battleParticles.forEach((p, idx) => {
+          p.progress += p.speed;
+          if (p.progress > 1) {
+            p.progress = 0;
+            p.fromLeft = Math.random() > 0.5;
+          }
+
+          let px, py;
+          if (p.fromLeft) {
+            px = bx1 + p.progress * (bx2 - bx1);
+            py = bY + p.offsetY + Math.sin(p.progress * Math.PI) * 15;
+            ctx.fillStyle = "#FF5B04";
+          } else {
+            px = bx2 - p.progress * (bx2 - bx1);
+            py = bY + p.offsetY - Math.sin(p.progress * Math.PI) * 15;
+            ctx.fillStyle = "#075056";
+          }
+
+          ctx.beginPath();
+          ctx.arc(px, py, 3.5, 0, Math.PI * 2);
+          ctx.fill();
+
+          // Collision wavefront near center
+          if (Math.abs(px - bCenter) < 12) {
+            ctx.strokeStyle = "rgba(225, 29, 72, 0.8)";
+            ctx.lineWidth = 1.5;
+            ctx.beginPath();
+            ctx.arc(bCenter, py, 8 + Math.sin(globalTick * 5) * 4, 0, Math.PI * 2);
+            ctx.stroke();
+
+            if (idx === 0 && Math.random() < 0.05) {
+              playTone(840, "triangle", 0.06, 0.04);
+            }
+          }
+        });
+
+        // Right Mechanism Labels
+        ctx.fillStyle = "#075056";
+        ctx.font = 'bold 13px "Inter", sans-serif';
+        ctx.textAlign = "center";
+        ctx.fillText("CROSS-COMMUNITY FRICTION", bCenter, 50);
+        ctx.fillStyle = "#233038";
+        ctx.font = '10px "Inter", sans-serif';
+        ctx.fillText("P90: 32 Days (Pro-Vaccine Cohort)", bCenter, 66);
+
+        // CENTER FLOATING BADGE: Cumulative Differential
+        ctx.fillStyle = "rgba(253, 246, 227, 0.95)";
+        ctx.strokeStyle = "#233038";
+        ctx.lineWidth = 1.2;
+        ctx.beginPath();
+        ctx.roundRect(435, 90, 150, 95, 8);
+        ctx.fill();
+        ctx.stroke();
+
+        ctx.fillStyle = "#FF5B04";
+        ctx.font = 'bold 11px "SF Mono", monospace';
+        ctx.textAlign = "center";
+        ctx.fillText("P90 SATURATION", 510, 110);
+
+        // Saturation progress relative to scrubDay
+        const antiSat = Math.min(100, Math.round((1 - Math.exp(-scrubDay / 8.5)) * 100));
+        const proSat = Math.min(100, Math.round((1 - Math.exp(-scrubDay / 16)) * 100));
+
+        ctx.font = 'bold 18px "SF Mono", monospace';
+        ctx.fillStyle = "#FF5B04";
+        ctx.fillText(`18d: ${antiSat}%`, 510, 134);
+
+        ctx.fillStyle = "#075056";
+        ctx.fillText(`32d: ${proSat}%`, 510, 156);
+
+        ctx.fillStyle = "#576973";
+        ctx.font = '8px "Inter", sans-serif';
+        ctx.fillText("Volume Control: ~20% Gap", 510, 174);
+      }
+
+      // -------------------------------------------------------------
+      // DIRECT 2D SIMULATION LOOP (Interactive Fallback)
+      // -------------------------------------------------------------
+      function directSimLoop() {
+        if (!isARMode) {
+          simCtx.clearRect(0, 0, simCanvas.width, simCanvas.height);
+
+          // Draw Base Target Graphic
+          if (targetImg.complete && targetImg.naturalWidth > 0) {
+            simCtx.drawImage(targetImg, 0, 0, simCanvas.width, 141 * (simCanvas.width / 800));
+          }
+
+          // Draw Dynamic Overlay
+          renderOverlayGraphics(scrubDay);
+          simCtx.drawImage(overlayCanvas, 0, 0, simCanvas.width, simCanvas.height);
+
+          animId = requestAnimationFrame(directSimLoop);
+        }
+      }
+
+      timeSlider.addEventListener("input", (e) => {
+        scrubDay = parseInt(e.target.value);
+        timeDisplay.textContent = `Day ${scrubDay}`;
+        if (scrubDay === 18 || scrubDay === 32) {
+          playTone(440, "sine", 0.15, 0.08);
         }
       });
 
-      // Right Mechanism Labels
-      ctx.fillStyle = '#075056';
-      ctx.font = 'bold 13px "Inter", sans-serif';
-      ctx.textAlign = 'center';
-      ctx.fillText('CROSS-COMMUNITY FRICTION', bCenter, 50);
-      ctx.fillStyle = '#233038';
-      ctx.font = '10px "Inter", sans-serif';
-      ctx.fillText('P90: 32 Days (Pro-Vaccine Cohort)', bCenter, 66);
+      // -------------------------------------------------------------
+      // WEBAR IMAGE TRACKING (MindAR + Three.js)
+      // -------------------------------------------------------------
+      let mindarThree = null;
+      let canvasTexture = null;
 
-      // CENTER FLOATING BADGE: Cumulative Differential
-      ctx.fillStyle = 'rgba(253, 246, 227, 0.95)';
-      ctx.strokeStyle = '#233038';
-      ctx.lineWidth = 1.2;
-      ctx.beginPath();
-      ctx.roundRect(435, 90, 150, 95, 8);
-      ctx.fill();
-      ctx.stroke();
+      async function initAR() {
+        try {
+          hudStatus.textContent = "INIT CAMERA...";
+          mindarThree = new MindARThree({
+            container: arContainer,
+            imageTargetSrc: "./targets.mind",
+            filterMinCF: 0.0005,
+            filterBeta: 1000,
+          });
 
-      ctx.fillStyle = '#FF5B04';
-      ctx.font = 'bold 11px "SF Mono", monospace';
-      ctx.textAlign = 'center';
-      ctx.fillText('P90 SATURATION', 510, 110);
+          const { renderer, scene, camera } = mindarThree;
 
-      // Saturation progress relative to scrubDay
-      const antiSat = Math.min(100, Math.round((1 - Math.exp(-scrubDay / 8.5)) * 100));
-      const proSat = Math.min(100, Math.round((1 - Math.exp(-scrubDay / 16)) * 100));
+          // Create Three.js Overlay on Target 0
+          const anchor = mindarThree.addAnchor(0);
 
-      ctx.font = 'bold 18px "SF Mono", monospace';
-      ctx.fillStyle = '#FF5B04';
-      ctx.fillText(`18d: ${antiSat}%`, 510, 134);
+          // Plane aspect ratio matching 800 x 141
+          const planeGeo = new THREE.PlaneGeometry(1.0, 141 / 800);
+          canvasTexture = new THREE.CanvasTexture(overlayCanvas);
+          canvasTexture.minFilter = THREE.LinearFilter;
+          canvasTexture.magFilter = THREE.LinearFilter;
 
-      ctx.fillStyle = '#075056';
-      ctx.fillText(`32d: ${proSat}%`, 510, 156);
+          const planeMat = new THREE.MeshBasicMaterial({
+            map: canvasTexture,
+            transparent: true,
+            opacity: 0.96,
+            side: THREE.DoubleSide,
+          });
 
-      ctx.fillStyle = '#576973';
-      ctx.font = '8px "Inter", sans-serif';
-      ctx.fillText('Volume Control: ~20% Gap', 510, 174);
-    }
+          const overlayMesh = new THREE.Mesh(planeGeo, planeMat);
+          overlayMesh.position.set(0, 0, 0.02); // Slightly raised above physical poster
+          anchor.group.add(overlayMesh);
 
-    // -------------------------------------------------------------
-    // DIRECT 2D SIMULATION LOOP (Interactive Fallback)
-    // -------------------------------------------------------------
-    function directSimLoop() {
-      if (!isARMode) {
-        simCtx.clearRect(0, 0, simCanvas.width, simCanvas.height);
+          // Floating 3D Accent Marker for Saturation Gap
+          const badgeGeo = new THREE.BoxGeometry(0.24, 0.08, 0.02);
+          const badgeMat = new THREE.MeshBasicMaterial({ color: 0xff5b04 });
+          const badgeMesh = new THREE.Mesh(badgeGeo, badgeMat);
+          badgeMesh.position.set(0, 0.14, 0.04);
+          anchor.group.add(badgeMesh);
 
-        // Draw Base Target Graphic
-        if (targetImg.complete && targetImg.naturalWidth > 0) {
-          simCtx.drawImage(targetImg, 0, 0, simCanvas.width, 141 * (simCanvas.width / 800));
+          // Anchor Events
+          anchor.onTargetFound = () => {
+            targetLocked = true;
+            scannerGuide.classList.add("locked");
+            scannerStatus.textContent = "ANCHOR LOCKED : DYNAMICS ACTIVE";
+            trackingDot.style.background = "#10B981";
+            trackingDot.style.boxShadow = "0 0 10px #10B981";
+            hudStatus.textContent = "LOCKED";
+            hudStatus.style.color = "#10B981";
+            playTone(520, "sine", 0.2, 0.1);
+          };
+
+          anchor.onTargetLost = () => {
+            targetLocked = false;
+            scannerGuide.classList.remove("locked");
+            scannerStatus.textContent = "Align with Top Mechanism Panel";
+            trackingDot.style.background = "var(--design-orange)";
+            trackingDot.style.boxShadow = "0 0 10px var(--design-orange)";
+            hudStatus.textContent = "SEARCHING";
+            hudStatus.style.color = "#38BDF8";
+          };
+
+          await mindarThree.start();
+          hudStatus.textContent = "SCANNING...";
+
+          renderer.setAnimationLoop(() => {
+            renderOverlayGraphics(scrubDay);
+            if (canvasTexture) canvasTexture.needsUpdate = true;
+            renderer.render(scene, camera);
+          });
+        } catch (err) {
+          console.warn("AR Camera Init Failed or Denied, switching to simulation:", err);
+          switchToSimMode();
         }
-
-        // Draw Dynamic Overlay
-        renderOverlayGraphics(scrubDay);
-        simCtx.drawImage(overlayCanvas, 0, 0, simCanvas.width, simCanvas.height);
-
-        animId = requestAnimationFrame(directSimLoop);
       }
-    }
 
-    timeSlider.addEventListener('input', (e) => {
-      scrubDay = parseInt(e.target.value);
-      timeDisplay.textContent = `Day ${scrubDay}`;
-      if (scrubDay === 18 || scrubDay === 32) {
-        playTone(440, 'sine', 0.15, 0.08);
+      // -------------------------------------------------------------
+      // MODE SWITCHING (AR Camera vs Direct Simulation)
+      // -------------------------------------------------------------
+      function switchToARMode() {
+        isARMode = true;
+        btnModeAR.classList.add("active");
+        btnModeSim.classList.remove("active");
+        arContainer.style.display = "block";
+        simContainer.style.display = "none";
+        scannerGuide.style.display = "flex";
+        cancelAnimationFrame(animId);
+        if (!mindarThree) {
+          initAR();
+        }
       }
-    });
 
-    // -------------------------------------------------------------
-    // WEBAR IMAGE TRACKING (MindAR + Three.js)
-    // -------------------------------------------------------------
-    let mindarThree = null;
-    let canvasTexture = null;
-
-    async function initAR() {
-      try {
-        hudStatus.textContent = 'INIT CAMERA...';
-        mindarThree = new MindARThree({
-          container: arContainer,
-          imageTargetSrc: '/ar/targets.mind',
-          filterMinCF: 0.0005,
-          filterBeta: 1000
-        });
-
-        const { renderer, scene, camera } = mindarThree;
-
-        // Create Three.js Overlay on Target 0
-        const anchor = mindarThree.addAnchor(0);
-
-        // Plane aspect ratio matching 800 x 141
-        const planeGeo = new THREE.PlaneGeometry(1.0, 141 / 800);
-        canvasTexture = new THREE.CanvasTexture(overlayCanvas);
-        canvasTexture.minFilter = THREE.LinearFilter;
-        canvasTexture.magFilter = THREE.LinearFilter;
-
-        const planeMat = new THREE.MeshBasicMaterial({
-          map: canvasTexture,
-          transparent: true,
-          opacity: 0.96,
-          side: THREE.DoubleSide
-        });
-
-        const overlayMesh = new THREE.Mesh(planeGeo, planeMat);
-        overlayMesh.position.set(0, 0, 0.02); // Slightly raised above physical poster
-        anchor.group.add(overlayMesh);
-
-        // Floating 3D Accent Marker for Saturation Gap
-        const badgeGeo = new THREE.BoxGeometry(0.24, 0.08, 0.02);
-        const badgeMat = new THREE.MeshBasicMaterial({ color: 0xFF5B04 });
-        const badgeMesh = new THREE.Mesh(badgeGeo, badgeMat);
-        badgeMesh.position.set(0, 0.14, 0.04);
-        anchor.group.add(badgeMesh);
-
-        // Anchor Events
-        anchor.onTargetFound = () => {
-          targetLocked = true;
-          scannerGuide.classList.add('locked');
-          scannerStatus.textContent = 'ANCHOR LOCKED : DYNAMICS ACTIVE';
-          trackingDot.style.background = '#10B981';
-          trackingDot.style.boxShadow = '0 0 10px #10B981';
-          hudStatus.textContent = 'LOCKED';
-          hudStatus.style.color = '#10B981';
-          playTone(520, 'sine', 0.2, 0.1);
-        };
-
-        anchor.onTargetLost = () => {
-          targetLocked = false;
-          scannerGuide.classList.remove('locked');
-          scannerStatus.textContent = 'Align with Top Mechanism Panel';
-          trackingDot.style.background = 'var(--design-orange)';
-          trackingDot.style.boxShadow = '0 0 10px var(--design-orange)';
-          hudStatus.textContent = 'SEARCHING';
-          hudStatus.style.color = '#38BDF8';
-        };
-
-        await mindarThree.start();
-        hudStatus.textContent = 'SCANNING...';
-
-        renderer.setAnimationLoop(() => {
-          renderOverlayGraphics(scrubDay);
-          if (canvasTexture) canvasTexture.needsUpdate = true;
-          renderer.render(scene, camera);
-        });
-
-      } catch (err) {
-        console.warn('AR Camera Init Failed or Denied, switching to simulation:', err);
-        switchToSimMode();
+      function switchToSimMode() {
+        isARMode = false;
+        btnModeSim.classList.add("active");
+        btnModeAR.classList.remove("active");
+        arContainer.style.display = "none";
+        simContainer.style.display = "flex";
+        scannerGuide.style.display = "none";
+        trackingDot.style.background = "#38BDF8";
+        trackingDot.style.boxShadow = "0 0 10px #38BDF8";
+        hudStatus.textContent = "SIMULATION ACTIVE";
+        hudStatus.style.color = "#38BDF8";
+        directSimLoop();
       }
-    }
 
-    // -------------------------------------------------------------
-    // MODE SWITCHING (AR Camera vs Direct Simulation)
-    // -------------------------------------------------------------
-    function switchToARMode() {
-      isARMode = true;
-      btnModeAR.classList.add('active');
-      btnModeSim.classList.remove('active');
-      arContainer.style.display = 'block';
-      simContainer.style.display = 'none';
-      scannerGuide.style.display = 'flex';
-      cancelAnimationFrame(animId);
-      if (!mindarThree) {
+      btnModeAR.addEventListener("click", switchToARMode);
+      btnModeSim.addEventListener("click", switchToSimMode);
+
+      // Auto-start AR on load
+      window.addEventListener("DOMContentLoaded", () => {
         initAR();
-      }
-    }
-
-    function switchToSimMode() {
-      isARMode = false;
-      btnModeSim.classList.add('active');
-      btnModeAR.classList.remove('active');
-      arContainer.style.display = 'none';
-      simContainer.style.display = 'flex';
-      scannerGuide.style.display = 'none';
-      trackingDot.style.background = '#38BDF8';
-      trackingDot.style.boxShadow = '0 0 10px #38BDF8';
-      hudStatus.textContent = 'SIMULATION ACTIVE';
-      hudStatus.style.color = '#38BDF8';
-      directSimLoop();
-    }
-
-    btnModeAR.addEventListener('click', switchToARMode);
-    btnModeSim.addEventListener('click', switchToSimMode);
-
-    // Auto-start AR on load
-    window.addEventListener('DOMContentLoaded', () => {
-      initAR();
-    });
-  </script>
-</body>
+      });
+    </script>
+  </body>
 </html>
