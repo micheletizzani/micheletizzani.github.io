@@ -68,7 +68,7 @@
         z-index: 2;
       }
 
-      /* Direct Simulation Canvas (Fallback) */
+      /* Direct Simulation Canvas (Zero-Camera Fallback) */
       #sim-container {
         position: absolute;
         top: 0;
@@ -81,18 +81,27 @@
         flex-direction: column;
         align-items: center;
         justify-content: flex-start;
-        padding: 70px 16px 200px 16px;
+        padding: 68px 14px 210px 14px;
         overflow-y: auto;
+      }
+
+      #sim-canvas-wrapper {
+        width: 100%;
+        max-width: 880px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        margin-bottom: 12px;
       }
 
       #sim-canvas {
         max-width: 100%;
-        width: 800px;
+        max-height: 52vh;
+        width: auto;
         height: auto;
-        aspect-ratio: 1000 / 360;
         border-radius: 12px;
         box-shadow: 0 20px 50px rgba(0, 0, 0, 0.7);
-        border: 1px solid rgba(255, 91, 4, 0.4);
+        border: 1.5px solid rgba(255, 91, 4, 0.45);
         background: #141e24;
       }
 
@@ -108,7 +117,7 @@
         display: flex;
         flex-direction: column;
         justify-content: space-between;
-        padding: 14px;
+        padding: 12px;
       }
 
       .interactive {
@@ -116,6 +125,13 @@
       }
 
       /* Top Bar */
+      .top-nav-group {
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+        width: 100%;
+      }
+
       .top-bar {
         display: flex;
         justify-content: space-between;
@@ -297,6 +313,7 @@
         border-radius: 12px;
         margin-top: 6px;
         border: 1px solid rgba(255, 91, 4, 0.4);
+        text-align: center;
       }
 
       /* Bottom HUD Container */
@@ -304,7 +321,7 @@
         display: flex;
         flex-direction: column;
         gap: 8px;
-        max-height: 52vh;
+        max-height: 54vh;
       }
 
       .info-card {
@@ -349,14 +366,12 @@
       }
 
       .sample-badge {
-        display: inline-block;
-        padding: 2px 7px;
-        border-radius: 10px;
         font-size: 9px;
-        font-weight: 700;
-        font-family: var(--font-mono);
+        font-weight: 800;
         text-transform: uppercase;
-        letter-spacing: 0.04em;
+        letter-spacing: 0.05em;
+        padding: 2px 7px;
+        border-radius: 6px;
       }
 
       .badge-agree {
@@ -373,130 +388,272 @@
 
       .badge-neutral {
         background: rgba(148, 163, 184, 0.2);
-        color: #94a3b8;
+        color: #cbd5e1;
         border: 1px solid #94a3b8;
       }
 
       .badge-positive {
         background: rgba(16, 185, 129, 0.2);
-        color: #34d399;
+        color: #10b981;
       }
 
       .badge-negative {
         background: rgba(225, 29, 72, 0.2);
-        color: #fb7185;
+        color: #f43f5e;
       }
 
       .sample-quote {
-        background: rgba(15, 23, 28, 0.85);
+        background: rgba(15, 23, 28, 0.7);
         border-left: 3px solid var(--design-orange);
-        padding: 8px 10px;
+        padding: 6px 10px;
         border-radius: 0 6px 6px 0;
         margin: 6px 0;
         font-size: 11px;
-        color: #ffffff;
-        line-height: 1.45;
         font-style: italic;
-      }
-
-      .sample-reasoning-box {
-        background: rgba(7, 80, 86, 0.22);
-        border: 1px solid rgba(7, 80, 86, 0.6);
-        border-radius: 6px;
-        padding: 7px 10px;
-        margin: 6px 0;
-        font-size: 10.5px;
         color: #fdf6e3;
         line-height: 1.4;
       }
 
-      /* Metrics Grid */
-      .metrics-row {
+      .sample-reasoning-box {
+        background: rgba(7, 80, 86, 0.25);
+        border: 1px solid rgba(7, 80, 86, 0.5);
+        padding: 6px 10px;
+        border-radius: 6px;
+        margin: 4px 0;
+        font-size: 10px;
+        color: #e2e8f0;
+        line-height: 1.4;
+      }
+
+      .interactive-controls {
         display: flex;
-        gap: 10px;
+        align-items: center;
+        gap: 6px;
         margin-top: 8px;
         padding-top: 8px;
         border-top: 1px solid rgba(255, 255, 255, 0.1);
         flex-wrap: wrap;
       }
 
-      .metric-item {
-        flex: 1;
-        min-width: 75px;
-      }
-
-      .metric-lbl {
-        font-size: 8.5px;
-        color: rgba(255, 255, 255, 0.55);
-        text-transform: uppercase;
-        letter-spacing: 0.08em;
-      }
-
-      .metric-val {
-        font-size: 14px;
-        font-weight: 800;
+      .ctrl-btn {
+        background: rgba(35, 48, 56, 0.8);
+        border: 1px solid rgba(255, 255, 255, 0.2);
         color: #ffffff;
-        font-family: var(--font-mono);
+        font-size: 10px;
+        font-weight: 700;
+        padding: 4px 9px;
+        border-radius: 12px;
+        cursor: pointer;
+        transition: all 0.2s ease;
       }
 
-      /* Interactive Controls Row */
-      .interactive-controls {
-        display: flex;
-        align-items: center;
-        gap: 10px;
-        background: rgba(18, 27, 33, 0.85);
-        border: 1px solid rgba(255, 255, 255, 0.1);
-        padding: 6px 12px;
-        border-radius: 10px;
-        margin-top: 8px;
+      .ctrl-btn:hover {
+        border-color: var(--design-orange);
+        color: var(--design-orange);
+      }
+
+      .ctrl-btn.active {
+        background: var(--design-orange);
+        border-color: var(--design-orange);
+        color: #ffffff;
       }
 
       .interactive-slider {
         flex: 1;
         accent-color: var(--design-orange);
-      }
-
-      .ctrl-btn {
-        background: rgba(255, 255, 255, 0.1);
-        border: 1px solid rgba(255, 255, 255, 0.2);
-        color: #ffffff;
-        padding: 3px 8px;
-        font-size: 10px;
-        border-radius: 6px;
         cursor: pointer;
       }
 
-      .ctrl-btn.active {
-        background: var(--design-teal);
-        border-color: #38bdf8;
+      .metrics-row {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 6px;
+        margin-top: 8px;
+        padding-top: 8px;
+        border-top: 1px solid rgba(255, 255, 255, 0.1);
       }
 
-      /* Target thumbnail preview */
+      .metric-item {
+        background: rgba(15, 23, 28, 0.6);
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        border-radius: 8px;
+        padding: 6px 8px;
+        text-align: center;
+      }
+
+      .metric-lbl {
+        font-size: 8px;
+        color: rgba(255, 255, 255, 0.55);
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        margin-bottom: 2px;
+      }
+
+      .metric-val {
+        font-size: 11px;
+        font-weight: 800;
+        font-family: var(--font-mono);
+        color: var(--design-cream);
+      }
+
+      /* Target Preview Box in Bottom HUD */
       .target-preview {
         display: flex;
         align-items: center;
         gap: 10px;
-        background: rgba(7, 80, 86, 0.45);
-        border: 1px solid rgba(7, 80, 86, 0.8);
-        border-radius: 8px;
+        background: rgba(22, 32, 38, 0.92);
+        border: 1px solid rgba(255, 255, 255, 0.15);
+        border-radius: 10px;
         padding: 6px 10px;
       }
 
       .target-preview img {
-        width: 85px;
-        height: auto;
+        height: 34px;
+        width: auto;
         border-radius: 4px;
-        border: 1px solid #ffffff;
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        object-fit: cover;
       }
 
       .target-preview-text {
         font-size: 10px;
-        color: #f1f5f9;
+        color: #e2e8f0;
         line-height: 1.35;
       }
 
       .target-preview-text strong {
         color: var(--design-orange);
+      }
+
+      /* Poster Mini-Map in Simulation Mode */
+      .poster-mini-map {
+        width: 100%;
+        max-width: 880px;
+        background: rgba(15, 23, 28, 0.9);
+        border: 1.5px solid rgba(7, 80, 86, 0.55);
+        border-radius: 10px;
+        padding: 10px 14px;
+        margin-bottom: 12px;
+      }
+      .mini-map-header {
+        font-size: 10px;
+        font-family: var(--font-mono);
+        font-weight: 800;
+        color: var(--design-orange);
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+        margin-bottom: 8px;
+        display: flex;
+        justify-content: space-between;
+      }
+      .mini-map-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 6px;
+      }
+      .map-tile {
+        background: rgba(35, 48, 56, 0.7);
+        border: 1px solid rgba(56, 189, 248, 0.25);
+        border-radius: 6px;
+        padding: 6px 10px;
+        font-size: 11px;
+        font-weight: 600;
+        color: #e2e8f0;
+        cursor: pointer;
+        transition: all 0.15s ease;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+      .map-tile:hover {
+        background: rgba(7, 80, 86, 0.7);
+        border-color: var(--design-orange);
+      }
+      .map-tile.active {
+        background: rgba(255, 91, 4, 0.18);
+        border-color: var(--design-orange);
+        color: #ffffff;
+        box-shadow: 0 0 10px rgba(255, 91, 4, 0.35);
+      }
+      .map-hero {
+        grid-column: span 2;
+      }
+      .map-badge {
+        font-size: 9.5px;
+        font-family: var(--font-mono);
+        font-weight: 800;
+        padding: 2px 6px;
+        border-radius: 4px;
+        background: rgba(7, 80, 86, 0.6);
+        color: #38bdf8;
+      }
+      .map-tile.active .map-badge {
+        background: var(--design-orange);
+        color: #ffffff;
+      }
+
+      /* Local Debug Bar */
+      #local-debug-bar {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        background: rgba(15, 23, 28, 0.92);
+        border: 1px solid rgba(56, 189, 248, 0.35);
+        border-radius: 8px;
+        padding: 4px 10px;
+        margin: 6px auto 0 auto;
+        max-width: 880px;
+        flex-wrap: wrap;
+      }
+      .dbg-label {
+        font-size: 9.5px;
+        font-family: var(--font-mono);
+        font-weight: 800;
+        color: var(--design-orange);
+      }
+      .dbg-btn {
+        background: rgba(35, 48, 56, 0.85);
+        border: 1px solid rgba(255, 255, 255, 0.18);
+        color: #94a3b8;
+        font-size: 10px;
+        font-family: var(--font-mono);
+        font-weight: 700;
+        padding: 3px 8px;
+        border-radius: 4px;
+        cursor: pointer;
+        transition: all 0.15s;
+      }
+      .dbg-btn:hover {
+        color: #ffffff;
+        border-color: #38bdf8;
+      }
+      .dbg-btn.active {
+        background: var(--design-orange);
+        color: #ffffff;
+        border-color: var(--design-orange);
+        box-shadow: 0 0 8px rgba(255, 91, 4, 0.5);
+      }
+      .dbg-unlock {
+        margin-left: auto;
+        border-color: rgba(225, 29, 72, 0.4);
+        color: #fda4af;
+      }
+      .dbg-unlock.active {
+        background: #e11d48;
+        color: #ffffff;
+        border-color: #e11d48;
+      }
+
+      @media (max-width: 600px) {
+        .metrics-row {
+          grid-template-columns: repeat(2, 1fr);
+        }
+        .info-card {
+          padding: 10px 12px;
+        }
+        .bottom-hud {
+          max-height: 56vh;
+        }
       }
     </style>
 
@@ -512,67 +669,116 @@
     </script>
   </head>
   <body>
-    <!-- AR Tracking Viewport -->
+    <!-- AR Camera View Container (MindAR Canvas + Video) -->
     <div id="ar-container"></div>
 
-    <!-- Direct Fallback Simulation Viewport -->
+    <!-- Direct 2D Simulation Container (Fallback / Local Debugging) -->
     <div id="sim-container">
-      <canvas id="sim-canvas" width="1000" height="360"></canvas>
-    </div>
+      <div class="poster-mini-map" id="poster-mini-map">
+        <div class="mini-map-header">
+          <span>POSTER SPATIAL MAP (CLICK ANY CARD TO TEST AR COUNTERPART)</span>
+          <span style="color: #38bdf8">6DoF PHYSICAL ANCHORS</span>
+        </div>
+        <div class="mini-map-grid">
+          <div class="map-tile map-hero active" data-tab="mechanisms" title="Top Banner: Hero Mechanisms">
+            <span class="map-badge">Anchor 0</span> Hero: One Platform. Two Engagement Architectures
+          </div>
+          <div class="map-tile" data-tab="pipeline" title="Card 1: Longitudinal Data Pipeline">
+            <span class="map-badge">Anchor 1</span> Card 1: Data Pipeline
+          </div>
+          <div class="map-tile" data-tab="saturation" title="Card 4: Engagement Volume & Temporal Saturation">
+            <span class="map-badge">Anchor 4</span> Card 4: Volume &amp; Saturation
+          </div>
+          <div class="map-tile" data-tab="zeroshot" title="Card 2: Zero-Shot Classification Architecture">
+            <span class="map-badge">Anchor 2</span> Card 2: Zero-Shot Classifier
+          </div>
+          <div class="map-tile" data-tab="samples" title="Card 5: Comment Opinion Structure & Discourse Samples">
+            <span class="map-badge">Anchor 5</span> Card 5: Discourse &amp; Samples
+          </div>
+          <div class="map-tile" data-tab="bayesian" title="Card 3: Bayesian Multilevel Models">
+            <span class="map-badge">Anchor 3</span> Card 3: Bayesian Models
+          </div>
+          <div class="map-tile" data-tab="moderation" title="Card 6: Creator Types & Moderation Timing">
+            <span class="map-badge">Anchor 6</span> Card 6: Moderation &amp; Sourcing
+          </div>
+        </div>
+      </div>
 
-    <!-- Scanner Reticle (Visible in AR Camera Mode) -->
-    <div id="scanner-guide">
-      <div class="scan-beam"></div>
-      <div class="scanner-text" id="scanner-status">Align with Top Mechanism Panel</div>
+      <div id="sim-canvas-wrapper">
+        <canvas id="sim-canvas"></canvas>
+      </div>
     </div>
 
     <!-- UI Overlay Layer -->
     <div class="ui-layer">
-      <!-- Top Navigation -->
-      <div class="top-bar interactive">
-        <div class="brand-badge">
-          <div class="brand-dot" id="tracking-dot"></div>
-          <span id="brand-text">Poster AR Engine</span>
+      <!-- Top Navigation Group -->
+      <div class="top-nav-group">
+        <div class="top-bar interactive">
+          <div class="brand-badge">
+            <div class="brand-dot" id="tracking-dot"></div>
+            <span id="brand-text">Poster AR Engine</span>
+          </div>
+
+          <!-- Section Switcher Tabs (7 Spatial Anchors Mapped 1-to-1) -->
+          <div class="section-tabs" id="section-tabs">
+            <button class="tab-btn active" data-tab="mechanisms">0. Hero</button>
+            <button class="tab-btn" data-tab="pipeline">1. Pipeline</button>
+            <button class="tab-btn" data-tab="zeroshot">2. Zero-Shot</button>
+            <button class="tab-btn" data-tab="bayesian">3. Bayesian</button>
+            <button class="tab-btn" data-tab="saturation">4. Saturation</button>
+            <button class="tab-btn" data-tab="samples">5. Samples</button>
+            <button class="tab-btn" data-tab="moderation">6. Moderation</button>
+          </div>
+
+          <div class="mode-pill">
+            <button id="btn-mode-ar" class="mode-btn active">AR Camera</button>
+            <button id="btn-mode-sim" class="mode-btn">Interactive</button>
+          </div>
+
+          <button id="btn-sound" class="sound-btn" title="Toggle Sonification">
+            <svg
+              id="sound-icon"
+              width="16"
+              height="16"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            >
+              <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon>
+              <path d="M15.54 8.46a5 5 0 0 1 0 7.07"></path>
+            </svg>
+          </button>
         </div>
 
-        <!-- Section Switcher Tabs -->
-        <div class="section-tabs" id="section-tabs">
-          <button class="tab-btn active" data-tab="mechanisms">1. Mechanisms</button>
-          <button class="tab-btn" data-tab="pipeline">2. Data Pipeline</button>
-          <button class="tab-btn" data-tab="zeroshot">3. Zero-Shot</button>
-          <button class="tab-btn" data-tab="saturation">4. Saturation</button>
-          <button class="tab-btn" data-tab="samples">5. Labeled Samples</button>
+        <!-- Local Debug Bar (Direct Anchor Simulation in Camera Mode) -->
+        <div id="local-debug-bar" class="interactive">
+          <span class="dbg-label">SIMULATE ANCHOR:</span>
+          <button class="dbg-btn active" data-anchor="0">0: Hero</button>
+          <button class="dbg-btn" data-anchor="1">1: Pipeline</button>
+          <button class="dbg-btn" data-anchor="2">2: Zero-Shot</button>
+          <button class="dbg-btn" data-anchor="3">3: Bayesian</button>
+          <button class="dbg-btn" data-anchor="4">4: Saturation</button>
+          <button class="dbg-btn" data-anchor="5">5: Samples</button>
+          <button class="dbg-btn" data-anchor="6">6: Moderation</button>
+          <button class="dbg-btn dbg-unlock" id="btn-dbg-unlock">Unlock</button>
         </div>
+      </div>
 
-        <div class="mode-pill">
-          <button id="btn-mode-ar" class="mode-btn active">AR Camera</button>
-          <button id="btn-mode-sim" class="mode-btn">Interactive</button>
-        </div>
-
-        <button id="btn-sound" class="sound-btn" title="Toggle Sonification">
-          <svg
-            id="sound-icon"
-            width="16"
-            height="16"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            stroke-width="2"
-            stroke-linecap="round"
-            stroke-linejoin="round"
-          >
-            <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon>
-            <path d="M15.54 8.46a5 5 0 0 1 0 7.07"></path>
-          </svg>
-        </button>
+      <!-- Target Alignment Reticle in Camera Mode -->
+      <div id="scanner-guide">
+        <div class="scan-beam"></div>
+        <div class="scanner-text" id="scanner-status">Align with Poster Section</div>
       </div>
 
       <!-- Bottom HUD & Controls -->
       <div class="bottom-hud interactive">
         <div class="target-preview" id="preview-box">
-          <img src="./target.png" alt="Target: Mechanism Panel" />
-          <div class="target-preview-text">
-            <strong>Spatial Anchor:</strong> Point camera at the top header panel:
+          <img src="./targets/target_0_hero.png" id="target-thumb" alt="Target Thumbnail" />
+          <div class="target-preview-text" id="target-preview-desc">
+            <strong>Spatial Anchor 0:</strong> Point camera at top banner:
             <em>"One Platform. Two Engagement Architectures."</em>
           </div>
         </div>
@@ -611,6 +817,7 @@
       let audioCtx = null;
       let animId = null;
       let activeTab = "mechanisms";
+      let activeAnchorIndex = 0;
 
       // Tab Specific Parameters
       let scrubDay = 18;
@@ -620,6 +827,9 @@
       let conflictIntensity = 1.0;
       let sampleIndex = 0;
       let sampleFilter = "all"; // 'all', 'agree', 'disagree', 'neutral'
+      let bayesianFocusModel = "all"; // 'all', 'beta', 'negbin', 'entropy'
+      let scrubRemovalDay = 14.4;
+      let moderationViewMode = "all";
 
       // Elements
       const arContainer = document.querySelector("#ar-container");
@@ -638,10 +848,6 @@
       const btnModeSim = document.querySelector("#btn-mode-sim");
       const btnSound = document.querySelector("#btn-sound");
       const sectionTabs = document.querySelector("#section-tabs");
-
-      // Load base target for simulation backdrop
-      const targetImg = new Image();
-      targetImg.src = "./target.png";
 
       // -------------------------------------------------------------
       // AUDIO ENGINE (Web Audio API Synthesizer)
@@ -680,15 +886,6 @@
         if (soundEnabled) playTone(580, "triangle", 0.2, 0.1);
       });
 
-      // -------------------------------------------------------------
-      // DYNAMIC OVERLAY CANVAS (Rendered to Three.js Texture & 2D Canvas)
-      // High-Contrast Semi-Transparent Slate Backing Substrate
-      // -------------------------------------------------------------
-      const overlayCanvas = document.createElement("canvas");
-      overlayCanvas.width = 1000;
-      overlayCanvas.height = 360;
-      const ctx = overlayCanvas.getContext("2d");
-
       // Simulation Particles for Tab 1 (Mechanisms)
       const echoParticles = [];
       for (let i = 0; i < 36; i++) {
@@ -711,465 +908,6 @@
       }
 
       let globalTick = 0;
-
-      function renderOverlayGraphics() {
-        ctx.clearRect(0, 0, overlayCanvas.width, overlayCanvas.height);
-        globalTick += 0.03;
-
-        // 1. High-Contrast Semi-Transparent Slate Backing Plate
-        // Accented with subtle teal/orange borders to separate digital layer from white poster substrate
-        ctx.fillStyle = "rgba(22, 32, 38, 0.90)";
-        ctx.strokeStyle = "rgba(255, 91, 4, 0.45)";
-        ctx.lineWidth = 2;
-        ctx.beginPath();
-        ctx.roundRect(8, 8, overlayCanvas.width - 16, overlayCanvas.height - 16, 14);
-        ctx.fill();
-        ctx.stroke();
-
-        // 2. Render Selected Section Visualization
-        if (activeTab === "mechanisms") {
-          renderMechanismsTab();
-        } else if (activeTab === "pipeline") {
-          renderPipelineTab();
-        } else if (activeTab === "zeroshot") {
-          renderZeroShotTab();
-        } else if (activeTab === "saturation") {
-          renderSaturationTab();
-        } else if (activeTab === "samples") {
-          renderSamplesTab();
-        }
-      }
-
-      // --- TAB 1: MECHANISMS (Echo Chamber vs Battleground) ---
-      function renderMechanismsTab() {
-        const cx1 = 180;
-        const cy1 = 180;
-        const cx2 = 330;
-        const cy2 = 180;
-
-        // Left Orbit Tracks
-        ctx.strokeStyle = "rgba(255, 91, 4, 0.45)";
-        ctx.lineWidth = 1.6;
-        ctx.beginPath();
-        ctx.ellipse(cx1, cy1, 68, 54, 0, 0, Math.PI * 2);
-        ctx.stroke();
-
-        ctx.strokeStyle = "rgba(56, 189, 248, 0.45)";
-        ctx.beginPath();
-        ctx.ellipse(cx2, cy2, 68, 54, 0, 0, Math.PI * 2);
-        ctx.stroke();
-
-        // Left Circulating Particles
-        echoParticles.forEach((p, idx) => {
-          p.angle += p.speed;
-          const baseCx = p.cluster === "anti" ? cx1 : cx2;
-          const color = p.cluster === "anti" ? "#FF5B04" : "#38BDF8";
-          const px = baseCx + Math.cos(p.angle) * p.radius;
-          const py = cy1 + Math.sin(p.angle) * (p.radius * 0.78);
-
-          ctx.fillStyle = color;
-          ctx.beginPath();
-          ctx.arc(px, py, 3.5, 0, Math.PI * 2);
-          ctx.fill();
-
-          // Motion Trail
-          const trailX = baseCx + Math.cos(p.angle - 0.18) * p.radius;
-          const trailY = cy1 + Math.sin(p.angle - 0.18) * (p.radius * 0.78);
-          ctx.strokeStyle = color;
-          ctx.lineWidth = 1.4;
-          ctx.beginPath();
-          ctx.moveTo(trailX, trailY);
-          ctx.lineTo(px, py);
-          ctx.stroke();
-        });
-
-        // Left Labels
-        ctx.fillStyle = "#FF5B04";
-        ctx.font = 'bold 14px "Inter", sans-serif';
-        ctx.textAlign = "center";
-        ctx.fillText("IN-GROUP CONSENSUS (ECHO)", (cx1 + cx2) / 2, 45);
-        ctx.fillStyle = "#FDF6E3";
-        ctx.font = '11px "Inter", sans-serif';
-        ctx.fillText("Net Agreement: +21.3% • 2.9x Likes/View", (cx1 + cx2) / 2, 65);
-
-        // Right Collision Network
-        const bx1 = 660;
-        const bx2 = 880;
-        const bCenter = (bx1 + bx2) / 2;
-        const bY = 180;
-
-        ctx.strokeStyle = "rgba(7, 80, 86, 0.6)";
-        ctx.setLineDash([4, 4]);
-        ctx.beginPath();
-        ctx.moveTo(bCenter, 70);
-        ctx.lineTo(bCenter, 290);
-        ctx.stroke();
-        ctx.setLineDash([]);
-
-        battleParticles.forEach((p, idx) => {
-          p.progress += p.speed * conflictIntensity;
-          if (p.progress > 1) {
-            p.progress = 0;
-            p.fromLeft = Math.random() > 0.5;
-          }
-
-          let px, py;
-          if (p.fromLeft) {
-            px = bx1 + p.progress * (bx2 - bx1);
-            py = bY + p.offsetY + Math.sin(p.progress * Math.PI) * 18;
-            ctx.fillStyle = "#FF5B04";
-          } else {
-            px = bx2 - p.progress * (bx2 - bx1);
-            py = bY + p.offsetY - Math.sin(p.progress * Math.PI) * 18;
-            ctx.fillStyle = "#075056";
-          }
-
-          ctx.beginPath();
-          ctx.arc(px, py, 3.8, 0, Math.PI * 2);
-          ctx.fill();
-
-          // Collision wavefront near center
-          if (Math.abs(px - bCenter) < 14) {
-            ctx.strokeStyle = "rgba(225, 29, 72, 0.85)";
-            ctx.lineWidth = 1.8;
-            ctx.beginPath();
-            ctx.arc(bCenter, py, 10 + Math.sin(globalTick * 6) * 5, 0, Math.PI * 2);
-            ctx.stroke();
-
-            if (idx === 0 && Math.random() < 0.04) {
-              playTone(820, "triangle", 0.05, 0.03);
-            }
-          }
-        });
-
-        // Right Labels
-        ctx.fillStyle = "#38BDF8";
-        ctx.font = 'bold 14px "Inter", sans-serif';
-        ctx.textAlign = "center";
-        ctx.fillText("OUT-GROUP CONTENTION (BATTLEGROUND)", bCenter, 45);
-        ctx.fillStyle = "#FDF6E3";
-        ctx.font = '11px "Inter", sans-serif';
-        ctx.fillText("Net Disagreement: -11.5% • Contested Discourse", bCenter, 65);
-
-        // Center Empirical Anchor Badge
-        ctx.fillStyle = "rgba(35, 48, 56, 0.95)";
-        ctx.strokeStyle = "#38BDF8";
-        ctx.lineWidth = 1.4;
-        ctx.beginPath();
-        ctx.roundRect(435, 110, 150, 130, 8);
-        ctx.fill();
-        ctx.stroke();
-
-        ctx.fillStyle = "#FF5B04";
-        ctx.font = 'bold 11px "SF Mono", monospace';
-        ctx.textAlign = "center";
-        ctx.fillText("EMPIRICAL RATIOS", 510, 135);
-        ctx.fillStyle = "#FFFFFF";
-        ctx.font = 'bold 15px "SF Mono", monospace';
-        ctx.fillText("2.41x Odds", 510, 160);
-        ctx.fillStyle = "#38BDF8";
-        ctx.font = '10px "Inter", sans-serif';
-        ctx.fillText("In-Group Consensus", 510, 178);
-        ctx.fillStyle = "#FDF6E3";
-        ctx.fillText("Bayesian 94% HDI", 510, 202);
-        ctx.fillText("[1.95, 2.98]", 510, 218);
-      }
-
-      // --- TAB 2: DATA COLLECTION PIPELINE (Longitudinal Funnel) ---
-      function renderPipelineTab() {
-        ctx.fillStyle = "#38BDF8";
-        ctx.font = 'bold 15px "Inter", sans-serif';
-        ctx.textAlign = "center";
-        ctx.fillText("LONGITUDINAL DATA PIPELINE (6-MONTH SAMPLING WINDOW)", 500, 45);
-
-        const steps = [
-          {
-            num: "7,213",
-            title: "1. Raw Uploads",
-            sub: "Daily tracking via API v3",
-            detail: "Nov 20, 2024 to May 20, 2025",
-          },
-          {
-            num: "6,074",
-            title: "2. Analytical Set",
-            sub: "1-60 min long-form videos",
-            detail: "Shorts excluded (distinct algorithm)",
-          },
-          {
-            num: "3,789",
-            title: "3. Distinct Channels",
-            sub: "Channel categorization",
-            detail: "Institutional vs Independent",
-          },
-          {
-            num: "60,507",
-            title: "4. Annotated Comments",
-            sub: ">=10 comments threshold",
-            detail: "From 911,219 corpus pool",
-          },
-        ];
-
-        const startX = 60;
-        const boxW = 195;
-        const boxH = 180;
-        const gap = 35;
-
-        steps.forEach((s, idx) => {
-          const bx = startX + idx * (boxW + gap);
-          const by = 80;
-          const isSelected = idx === pipelineStep;
-
-          ctx.fillStyle = isSelected ? "rgba(7, 80, 86, 0.85)" : "rgba(35, 48, 56, 0.75)";
-          ctx.strokeStyle = isSelected ? "#FF5B04" : "rgba(255, 255, 255, 0.2)";
-          ctx.lineWidth = isSelected ? 2.5 : 1;
-          ctx.beginPath();
-          ctx.roundRect(bx, by, boxW, boxH, 10);
-          ctx.fill();
-          ctx.stroke();
-
-          // Step count badge
-          ctx.fillStyle = isSelected ? "#FF5B04" : "#38BDF8";
-          ctx.font = 'bold 22px "SF Mono", monospace';
-          ctx.textAlign = "center";
-          ctx.fillText(s.num, bx + boxW / 2, by + 40);
-
-          ctx.fillStyle = "#FFFFFF";
-          ctx.font = 'bold 12px "Inter", sans-serif';
-          ctx.fillText(s.title, bx + boxW / 2, by + 70);
-
-          ctx.fillStyle = "#FDF6E3";
-          ctx.font = '10px "Inter", sans-serif';
-          ctx.fillText(s.sub, bx + boxW / 2, by + 98);
-
-          ctx.fillStyle = "rgba(255, 255, 255, 0.65)";
-          ctx.font = '9px "Inter", sans-serif';
-          ctx.fillText(s.detail, bx + boxW / 2, by + 125);
-
-          // Connecting arrow between stages
-          if (idx < steps.length - 1) {
-            ctx.fillStyle = "#FF5B04";
-            ctx.beginPath();
-            const arrX = bx + boxW + 12;
-            const arrY = by + boxH / 2;
-            ctx.moveTo(arrX, arrY - 6);
-            ctx.lineTo(arrX + 10, arrY);
-            ctx.lineTo(arrX, arrY + 6);
-            ctx.fill();
-          }
-        });
-
-        // Bottom timeline bar
-        ctx.fillStyle = "rgba(255, 255, 255, 0.1)";
-        ctx.fillRect(80, 285, 840, 6);
-        ctx.fillStyle = "#FF5B04";
-        const progressX = 80 + (pipelineStep / 3) * 840;
-        ctx.fillRect(80, 285, progressX - 80, 6);
-
-        ctx.fillStyle = "#38BDF8";
-        ctx.beginPath();
-        ctx.arc(progressX, 288, 8, 0, Math.PI * 2);
-        ctx.fill();
-
-        ctx.fillStyle = "#FDF6E3";
-        ctx.font = 'bold 10px "SF Mono", monospace';
-        ctx.fillText(`Stage ${pipelineStep + 1} of 4 Active • Tap below to step`, 500, 318);
-      }
-
-      // --- TAB 3: ZERO-SHOT CLASSIFICATION & BAYESIAN MODELING ---
-      function renderZeroShotTab() {
-        ctx.fillStyle = "#FF5B04";
-        ctx.font = 'bold 15px "Inter", sans-serif';
-        ctx.textAlign = "center";
-        ctx.fillText("ZERO-SHOT LLM CLASSIFICATION & BAYESIAN INFERENCE", 500, 45);
-
-        // Left Panel: Stance Spectrum
-        const stances = [
-          { code: "SA", label: "Strongly Against", color: "#DC2626", pct: "18.2%" },
-          { code: "A", label: "Against", color: "#EA580C", pct: "12.4%" },
-          { code: "Neutral", label: "Neutral / Ambiguous", color: "#64748B", pct: "22.1%" },
-          { code: "IF", label: "In Favor", color: "#3B82F6", pct: "26.8%" },
-          { code: "SIF", label: "Strongly In Favor", color: "#1D4ED8", pct: "20.5%" },
-        ];
-
-        const barX = 70;
-        const barY = 85;
-        const barW = 380;
-
-        stances.forEach((st, idx) => {
-          const sy = barY + idx * 36;
-          const isInspected = st.code === zeroShotInspectStance;
-
-          ctx.fillStyle = isInspected ? "rgba(255, 255, 255, 0.15)" : "transparent";
-          ctx.roundRect(barX - 8, sy - 6, barW + 16, 32, 6);
-          ctx.fill();
-
-          ctx.fillStyle = st.color;
-          ctx.beginPath();
-          ctx.arc(barX + 8, sy + 10, 7, 0, Math.PI * 2);
-          ctx.fill();
-
-          ctx.fillStyle = "#FFFFFF";
-          ctx.font = 'bold 11px "Inter", sans-serif';
-          ctx.textAlign = "left";
-          ctx.fillText(`${st.code}: ${st.label}`, barX + 24, sy + 14);
-
-          ctx.fillStyle = "#FDF6E3";
-          ctx.font = 'bold 11px "SF Mono", monospace';
-          ctx.textAlign = "right";
-          ctx.fillText(st.pct, barX + barW, sy + 14);
-        });
-
-        // Right Panel: Validation Matrix & Multilevel Model Odds
-        const rx = 520;
-        const ry = 80;
-
-        ctx.fillStyle = "rgba(35, 48, 56, 0.85)";
-        ctx.strokeStyle = "#38BDF8";
-        ctx.lineWidth = 1.5;
-        ctx.beginPath();
-        ctx.roundRect(rx, ry, 410, 190, 10);
-        ctx.fill();
-        ctx.stroke();
-
-        ctx.fillStyle = "#38BDF8";
-        ctx.font = 'bold 13px "Inter", sans-serif';
-        ctx.textAlign = "center";
-        ctx.fillText("VALIDATION & INFERENCE SPECIFICATION", rx + 205, ry + 28);
-
-        ctx.fillStyle = "#FFFFFF";
-        ctx.font = '11px "Inter", sans-serif';
-        ctx.textAlign = "left";
-        ctx.fillText("• Model: GPT-4o-mini Zero-Shot Prompt Formulation", rx + 24, ry + 60);
-        ctx.fillText("• Inter-Rater Reliability: 82.5% Human Concordance", rx + 24, ry + 84);
-        ctx.fillText("• Agreement Metric: Cohen's kappa = 0.94 (Near-Perfect)", rx + 24, ry + 108);
-
-        ctx.fillStyle = "#FF5B04";
-        ctx.font = 'bold 11px "Inter", sans-serif';
-        ctx.fillText("• Bayesian Model: Multilevel Logistic Regression", rx + 24, ry + 134);
-        ctx.fillStyle = "#FDF6E3";
-        ctx.font = '10px "Inter", sans-serif';
-        ctx.fillText("  Random creator intercepts: y_ij ~ Bernoulli(p_ij)", rx + 24, ry + 152);
-        ctx.fillText("  Odds Ratio: OR = 2.41 (94% HDI [1.95, 2.98])", rx + 24, ry + 170);
-
-        ctx.fillStyle = "rgba(255, 255, 255, 0.5)";
-        ctx.font = '9px "Inter", sans-serif';
-        ctx.textAlign = "center";
-        ctx.fillText("Tap stance badges below to inspect posterior estimates", 500, 310);
-      }
-
-      // --- TAB 4: TEMPORAL SATURATION DYNAMICS (P90 View Accumulation) ---
-      function renderSaturationTab() {
-        ctx.fillStyle = "#FF5B04";
-        ctx.font = 'bold 15px "Inter", sans-serif';
-        ctx.textAlign = "center";
-        const titleSuffix = modelMode === "descriptive" ? "DESCRIPTIVE ACCELERATION" : "VOLUME-CONTROLLED ATTENUATION";
-        ctx.fillText(`LIFECYCLE SATURATION CURVES (${titleSuffix})`, 500, 42);
-
-        // Coordinate axes
-        const ox = 120;
-        const oy = 260;
-        const gw = 760;
-        const gh = 180;
-
-        ctx.strokeStyle = "rgba(255, 255, 255, 0.25)";
-        ctx.lineWidth = 1.2;
-        ctx.beginPath();
-        ctx.moveTo(ox, oy);
-        ctx.lineTo(ox + gw, oy);
-        ctx.moveTo(ox, oy);
-        ctx.lineTo(ox, oy - gh);
-        ctx.stroke();
-
-        // 90% horizontal reference line
-        const p90Y = oy - gh * 0.9;
-        ctx.strokeStyle = "rgba(255, 255, 255, 0.35)";
-        ctx.setLineDash([4, 4]);
-        ctx.beginPath();
-        ctx.moveTo(ox, p90Y);
-        ctx.lineTo(ox + gw, p90Y);
-        ctx.stroke();
-        ctx.setLineDash([]);
-
-        ctx.fillStyle = "#FDF6E3";
-        ctx.font = '10px "SF Mono", monospace';
-        ctx.textAlign = "right";
-        ctx.fillText("90% Saturation (P90)", ox - 10, p90Y + 4);
-
-        // Decay constants
-        // Descriptive: Anti-vaccine tau = 8.0 (reaches 90% at d18), Pro tau = 14.5 (reaches 90% at d32)
-        // Controlled: Anti tau = 9.8, Pro tau = 12.2 (attenuated ~20% differential)
-        const tauAnti = modelMode === "descriptive" ? 7.8 : 9.5;
-        const tauPro = modelMode === "descriptive" ? 14.2 : 12.5;
-
-        // Draw Anti-Vaccine Curve (Orange)
-        ctx.strokeStyle = "#FF5B04";
-        ctx.lineWidth = 2.8;
-        ctx.beginPath();
-        for (let d = 0; d <= 60; d += 0.5) {
-          const val = 1 - Math.exp(-d / tauAnti);
-          const px = ox + (d / 60) * gw;
-          const py = oy - val * gh;
-          if (d === 0) ctx.moveTo(px, py);
-          else ctx.lineTo(px, py);
-        }
-        ctx.stroke();
-
-        // Draw Pro-Vaccine Curve (Teal/Blue)
-        ctx.strokeStyle = "#38BDF8";
-        ctx.lineWidth = 2.8;
-        ctx.beginPath();
-        for (let d = 0; d <= 60; d += 0.5) {
-          const val = 1 - Math.exp(-d / tauPro);
-          const px = ox + (d / 60) * gw;
-          const py = oy - val * gh;
-          if (d === 0) ctx.moveTo(px, py);
-          else ctx.lineTo(px, py);
-        }
-        ctx.stroke();
-
-        // Marker for P90 days
-        const dAntiP90 = modelMode === "descriptive" ? 18 : 22;
-        const dProP90 = modelMode === "descriptive" ? 32 : 28;
-
-        const pAntiX = ox + (dAntiP90 / 60) * gw;
-        ctx.fillStyle = "#FF5B04";
-        ctx.beginPath();
-        ctx.arc(pAntiX, p90Y, 6, 0, Math.PI * 2);
-        ctx.fill();
-        ctx.fillText(`${dAntiP90}d`, pAntiX, p90Y - 12);
-
-        const pProX = ox + (dProP90 / 60) * gw;
-        ctx.fillStyle = "#38BDF8";
-        ctx.beginPath();
-        ctx.arc(pProX, p90Y, 6, 0, Math.PI * 2);
-        ctx.fill();
-        ctx.fillText(`${dProP90}d`, pProX, p90Y - 12);
-
-        // Interactive Scrubber Needle (Day scrubDay)
-        const scrubX = ox + (scrubDay / 60) * gw;
-        ctx.strokeStyle = "#FDF6E3";
-        ctx.lineWidth = 1.5;
-        ctx.beginPath();
-        ctx.moveTo(scrubX, oy);
-        ctx.lineTo(scrubX, oy - gh);
-        ctx.stroke();
-
-        const curAnti = Math.min(100, Math.round((1 - Math.exp(-scrubDay / tauAnti)) * 100));
-        const curPro = Math.min(100, Math.round((1 - Math.exp(-scrubDay / tauPro)) * 100));
-
-        ctx.fillStyle = "#FDF6E3";
-        ctx.font = 'bold 11px "SF Mono", monospace';
-        ctx.textAlign = "center";
-        ctx.fillText(`Day ${scrubDay} : Anti ${curAnti}% vs Pro ${curPro}%`, scrubX, oy + 22);
-
-        // Axes ticks
-        ctx.fillStyle = "rgba(255, 255, 255, 0.6)";
-        ctx.font = '9px "SF Mono", monospace';
-        for (let t = 0; t <= 60; t += 10) {
-          const tx = ox + (t / 60) * gw;
-          ctx.fillText(`${t}d`, tx, oy + 14);
-        }
-      }
 
       // --- TEXT WRAPPING HELPER FOR CANVAS 2D ---
       function drawWrappedText(context, text, x, y, maxWidth, lineHeight, maxLines = 4) {
@@ -1334,8 +1072,834 @@
         },
       ];
 
-      // --- TAB 5: EMPIRICAL LABELED SAMPLES & ZERO-SHOT AUDIT ---
-      function renderSamplesTab() {
+      // -------------------------------------------------------------
+      // 2D CANVAS RENDER FUNCTIONS (ONE PER SPATIAL ANCHOR)
+      // -------------------------------------------------------------
+
+      // --- ANCHOR 0: MECHANISMS (Echo Chamber vs Battleground) ---
+      function renderMechanismsTab(ctx, w, h) {
+        ctx.clearRect(0, 0, w, h);
+
+        // Slate Backing Plate
+        ctx.fillStyle = "rgba(22, 32, 38, 0.94)";
+        ctx.strokeStyle = "rgba(255, 91, 4, 0.55)";
+        ctx.lineWidth = 2;
+        ctx.beginPath();
+        ctx.roundRect(8, 8, w - 16, h - 16, 12);
+        ctx.fill();
+        ctx.stroke();
+
+        const midY = h * 0.54;
+        const cx1 = w * 0.16;
+        const cx2 = w * 0.32;
+        const orbitR = Math.min(68, h * 0.28);
+
+        // Left Orbit Tracks (In-Group Homophilic Recirculation)
+        ctx.strokeStyle = "rgba(255, 91, 4, 0.45)";
+        ctx.lineWidth = 1.6;
+        ctx.beginPath();
+        ctx.ellipse(cx1, midY, orbitR, orbitR * 0.78, 0, 0, Math.PI * 2);
+        ctx.stroke();
+
+        ctx.strokeStyle = "rgba(56, 189, 248, 0.45)";
+        ctx.beginPath();
+        ctx.ellipse(cx2, midY, orbitR, orbitR * 0.78, 0, 0, Math.PI * 2);
+        ctx.stroke();
+
+        // Left Circulating Particles
+        echoParticles.forEach((p) => {
+          p.angle += p.speed;
+          const baseCx = p.cluster === "anti" ? cx1 : cx2;
+          const color = p.cluster === "anti" ? "#FF5B04" : "#38BDF8";
+          const px = baseCx + Math.cos(p.angle) * (p.radius * (orbitR / 68));
+          const py = midY + Math.sin(p.angle) * (p.radius * 0.78 * (orbitR / 68));
+
+          ctx.fillStyle = color;
+          ctx.beginPath();
+          ctx.arc(px, py, 3.5, 0, Math.PI * 2);
+          ctx.fill();
+
+          // Motion Trail
+          const trailX = baseCx + Math.cos(p.angle - 0.18) * (p.radius * (orbitR / 68));
+          const trailY = midY + Math.sin(p.angle - 0.18) * (p.radius * 0.78 * (orbitR / 68));
+          ctx.strokeStyle = color;
+          ctx.lineWidth = 1.4;
+          ctx.beginPath();
+          ctx.moveTo(trailX, trailY);
+          ctx.lineTo(px, py);
+          ctx.stroke();
+        });
+
+        // Left Labels
+        ctx.fillStyle = "#FF5B04";
+        ctx.font = 'bold 13px "Inter", sans-serif';
+        ctx.textAlign = "center";
+        ctx.fillText("IN-GROUP CONSENSUS (ECHO)", (cx1 + cx2) / 2, Math.max(26, h * 0.16));
+        ctx.fillStyle = "#FDF6E3";
+        ctx.font = '10.5px "Inter", sans-serif';
+        ctx.fillText("Net Agreement: +21.3% • 2.9x Likes/View", (cx1 + cx2) / 2, Math.max(42, h * 0.26));
+
+        // Right Collision Network (Out-Group Contention)
+        const bx1 = w * 0.66;
+        const bx2 = w * 0.88;
+        const bCenter = (bx1 + bx2) / 2;
+
+        ctx.strokeStyle = "rgba(7, 80, 86, 0.6)";
+        ctx.setLineDash([4, 4]);
+        ctx.beginPath();
+        ctx.moveTo(bCenter, midY - orbitR * 1.2);
+        ctx.lineTo(bCenter, midY + orbitR * 1.2);
+        ctx.stroke();
+        ctx.setLineDash([]);
+
+        battleParticles.forEach((p, idx) => {
+          p.progress += p.speed * conflictIntensity;
+          if (p.progress > 1) {
+            p.progress = 0;
+            p.fromLeft = Math.random() > 0.5;
+          }
+
+          let px, py;
+          if (p.fromLeft) {
+            px = bx1 + p.progress * (bx2 - bx1);
+            py = midY + p.offsetY * (orbitR / 68) + Math.sin(p.progress * Math.PI) * 16;
+            ctx.fillStyle = "#FF5B04";
+          } else {
+            px = bx2 - p.progress * (bx2 - bx1);
+            py = midY + p.offsetY * (orbitR / 68) - Math.sin(p.progress * Math.PI) * 16;
+            ctx.fillStyle = "#075056";
+          }
+
+          ctx.beginPath();
+          ctx.arc(px, py, 3.8, 0, Math.PI * 2);
+          ctx.fill();
+
+          // Collision wavefront near center
+          if (Math.abs(px - bCenter) < 14) {
+            ctx.strokeStyle = "rgba(225, 29, 72, 0.85)";
+            ctx.lineWidth = 1.8;
+            ctx.beginPath();
+            ctx.arc(bCenter, py, 8 + Math.sin(globalTick * 6) * 4, 0, Math.PI * 2);
+            ctx.stroke();
+
+            if (idx === 0 && Math.random() < 0.04) {
+              playTone(820, "triangle", 0.05, 0.03);
+            }
+          }
+        });
+
+        // Right Labels
+        ctx.fillStyle = "#38BDF8";
+        ctx.font = 'bold 13px "Inter", sans-serif';
+        ctx.textAlign = "center";
+        ctx.fillText("OUT-GROUP CONTENTION (BATTLEGROUND)", bCenter, Math.max(26, h * 0.16));
+        ctx.fillStyle = "#FDF6E3";
+        ctx.font = '10.5px "Inter", sans-serif';
+        ctx.fillText("Net Disagreement: -11.5% • Contested Discourse", bCenter, Math.max(42, h * 0.26));
+
+        // Center Empirical Anchor Badge
+        const cBadgeW = Math.min(160, w * 0.16);
+        const cBadgeH = Math.min(130, h * 0.65);
+        const cBadgeX = (w - cBadgeW) / 2;
+        const cBadgeY = (h - cBadgeH) / 2;
+
+        ctx.fillStyle = "rgba(35, 48, 56, 0.95)";
+        ctx.strokeStyle = "#38BDF8";
+        ctx.lineWidth = 1.4;
+        ctx.beginPath();
+        ctx.roundRect(cBadgeX, cBadgeY, cBadgeW, cBadgeH, 8);
+        ctx.fill();
+        ctx.stroke();
+
+        const badgeMidX = cBadgeX + cBadgeW / 2;
+        ctx.fillStyle = "#FF5B04";
+        ctx.font = 'bold 10.5px "SF Mono", monospace';
+        ctx.textAlign = "center";
+        ctx.fillText("EMPIRICAL RATIOS", badgeMidX, cBadgeY + cBadgeH * 0.22);
+        ctx.fillStyle = "#FFFFFF";
+        ctx.font = 'bold 14px "SF Mono", monospace';
+        ctx.fillText("2.41x Odds", badgeMidX, cBadgeY + cBadgeH * 0.45);
+        ctx.fillStyle = "#38BDF8";
+        ctx.font = '9.5px "Inter", sans-serif';
+        ctx.fillText("In-Group Consensus", badgeMidX, cBadgeY + cBadgeH * 0.62);
+        ctx.fillStyle = "#FDF6E3";
+        ctx.fillText("94% HDI [1.95, 2.98]", badgeMidX, cBadgeY + cBadgeH * 0.82);
+      }
+
+      // --- ANCHOR 1: DATA PIPELINE FUNNEL (Card 1: 1000 x 710) ---
+      function renderPipelineTab(ctx, w, h) {
+        ctx.clearRect(0, 0, w, h);
+
+        // Slate Backing Plate
+        ctx.fillStyle = "rgba(22, 32, 38, 0.94)";
+        ctx.strokeStyle = "rgba(7, 80, 86, 0.65)";
+        ctx.lineWidth = 2;
+        ctx.beginPath();
+        ctx.roundRect(8, 8, w - 16, h - 16, 14);
+        ctx.fill();
+        ctx.stroke();
+
+        // Header
+        ctx.fillStyle = "#38BDF8";
+        ctx.font = 'bold 16px "Inter", sans-serif';
+        ctx.textAlign = "center";
+        ctx.fillText("1. LONGITUDINAL DATA PIPELINE & SAMPLING PROTOCOL", w / 2, 45);
+
+        ctx.fillStyle = "#FDF6E3";
+        ctx.font = '11px "Inter", sans-serif';
+        ctx.fillText("6-Month Longitudinal Tracking: Nov 20, 2024 to May 20, 2025 via YouTube Data API v3", w / 2, 68);
+
+        // 4 Funnel Stages
+        const steps = [
+          {
+            num: "7,213",
+            title: "1. Raw Uploads",
+            sub: "Daily tracking via API v3",
+            detail: "Continuous monitoring pool across search and recommendation seeds",
+            pct: "100%",
+          },
+          {
+            num: "6,074",
+            title: "2. Analytical Set",
+            sub: "1-60 min long-form videos",
+            detail: "Shorts excluded due to distinct recommendation swipe mechanics",
+            pct: "84.2%",
+          },
+          {
+            num: "3,789",
+            title: "3. Distinct Channels",
+            sub: "Creator categorizations",
+            detail: "Institutional health accounts vs independent creator vloggers",
+            pct: "52.5%",
+          },
+          {
+            num: "60,507",
+            title: "4. Annotated Comments",
+            sub: ">=10 comments threshold",
+            detail: "Stratified pool annotated via zero-shot prompt formulation",
+            pct: "Pool",
+          },
+        ];
+
+        const startX = 40;
+        const boxW = 205;
+        const boxH = 240;
+        const gap = 32;
+        const by = 100;
+
+        steps.forEach((s, idx) => {
+          const bx = startX + idx * (boxW + gap);
+          const isSelected = idx === pipelineStep;
+
+          ctx.fillStyle = isSelected ? "rgba(7, 80, 86, 0.9)" : "rgba(35, 48, 56, 0.8)";
+          ctx.strokeStyle = isSelected ? "#FF5B04" : "rgba(255, 255, 255, 0.2)";
+          ctx.lineWidth = isSelected ? 2.5 : 1.2;
+          ctx.beginPath();
+          ctx.roundRect(bx, by, boxW, boxH, 10);
+          ctx.fill();
+          ctx.stroke();
+
+          // Percentage badge
+          ctx.fillStyle = isSelected ? "#FF5B04" : "#38BDF8";
+          ctx.font = 'bold 11px "SF Mono", monospace';
+          ctx.textAlign = "right";
+          ctx.fillText(s.pct, bx + boxW - 14, by + 26);
+
+          // Big Metric Number
+          ctx.fillStyle = isSelected ? "#FF5B04" : "#38BDF8";
+          ctx.font = 'bold 24px "SF Mono", monospace';
+          ctx.textAlign = "left";
+          ctx.fillText(s.num, bx + 16, by + 48);
+
+          // Title
+          ctx.fillStyle = "#FFFFFF";
+          ctx.font = 'bold 13px "Inter", sans-serif';
+          ctx.fillText(s.title, bx + 16, by + 82);
+
+          // Subtitle
+          ctx.fillStyle = "#FDF6E3";
+          ctx.font = 'bold 10.5px "Inter", sans-serif';
+          ctx.fillText(s.sub, bx + 16, by + 108);
+
+          // Divider
+          ctx.strokeStyle = "rgba(255, 255, 255, 0.15)";
+          ctx.lineWidth = 1;
+          ctx.beginPath();
+          ctx.moveTo(bx + 16, by + 124);
+          ctx.lineTo(bx + boxW - 16, by + 124);
+          ctx.stroke();
+
+          // Detail text wrapped
+          ctx.fillStyle = "rgba(255, 255, 255, 0.75)";
+          ctx.font = '10px "Inter", sans-serif';
+          drawWrappedText(ctx, s.detail, bx + 16, by + 146, boxW - 32, 14, 5);
+
+          // Connecting flow arrow
+          if (idx < steps.length - 1) {
+            ctx.fillStyle = "#FF5B04";
+            ctx.beginPath();
+            const arrX = bx + boxW + 10;
+            const arrY = by + boxH / 2;
+            ctx.moveTo(arrX, arrY - 8);
+            ctx.lineTo(arrX + 12, arrY);
+            ctx.lineTo(arrX, arrY + 8);
+            ctx.fill();
+          }
+        });
+
+        // Lower Analytical Panel: Exclusion Rationale & Longitudinal Timeline
+        const panelY = 370;
+        const panelH = 300;
+
+        ctx.fillStyle = "rgba(35, 48, 56, 0.85)";
+        ctx.strokeStyle = "rgba(255, 255, 255, 0.15)";
+        ctx.lineWidth = 1.2;
+        ctx.beginPath();
+        ctx.roundRect(startX, panelY, w - startX * 2, panelH, 10);
+        ctx.fill();
+        ctx.stroke();
+
+        ctx.fillStyle = "#FF5B04";
+        ctx.font = 'bold 13px "Inter", sans-serif';
+        ctx.textAlign = "left";
+        ctx.fillText("METHODOLOGICAL CONTROLS & EXCLUSION PROTOCOL", startX + 24, panelY + 34);
+
+        const proseItems = [
+          "• Exclusion of YouTube Shorts: Shorts operate on distinct swipe-based algorithmic mechanics with compressed viewer retention that confound standard organic comment accumulation.",
+          "• Minimum Comment Threshold: Restricting comment analysis to videos with >=10 comments prevents sparse denominator distortion when computing engagement entropy.",
+          "• Channel Stratification: Segregating institutional accounts (health agencies, hospital networks) from personal creator vloggers isolates baseline source credibility effects.",
+          "• Temporal Tracking: Daily API polling captured the complete trajectory from initial publication through the critical 18-day and 32-day P90 saturation plateaus.",
+        ];
+
+        let proseY = panelY + 66;
+        ctx.fillStyle = "#FFFFFF";
+        ctx.font = '11.5px "Inter", sans-serif';
+        proseItems.forEach((p) => {
+          proseY = drawWrappedText(ctx, p, startX + 24, proseY, w - startX * 2 - 48, 17, 3);
+          proseY += 4;
+        });
+
+        // Stage progress bar at the bottom
+        ctx.fillStyle = "rgba(255, 255, 255, 0.1)";
+        ctx.fillRect(startX + 24, panelY + panelH - 35, w - startX * 2 - 48, 6);
+        ctx.fillStyle = "#FF5B04";
+        const progressX = startX + 24 + (pipelineStep / 3) * (w - startX * 2 - 48);
+        ctx.fillRect(startX + 24, panelY + panelH - 35, progressX - (startX + 24), 6);
+
+        ctx.fillStyle = "#38BDF8";
+        ctx.beginPath();
+        ctx.arc(progressX, panelY + panelH - 32, 7, 0, Math.PI * 2);
+        ctx.fill();
+
+        ctx.fillStyle = "#FDF6E3";
+        ctx.font = 'bold 10.5px "SF Mono", monospace';
+        ctx.textAlign = "center";
+        ctx.fillText(`Active Stage ${pipelineStep + 1} of 4: ${steps[pipelineStep].title}`, w / 2, panelY + panelH - 12);
+      }
+
+      // --- ANCHOR 2: ZERO-SHOT CLASSIFICATION (Card 2: 1000 x 330) ---
+      function renderZeroShotTab(ctx, w, h) {
+        ctx.clearRect(0, 0, w, h);
+
+        // Slate Backing Plate
+        ctx.fillStyle = "rgba(22, 32, 38, 0.94)";
+        ctx.strokeStyle = "rgba(56, 189, 248, 0.55)";
+        ctx.lineWidth = 2;
+        ctx.beginPath();
+        ctx.roundRect(8, 8, w - 16, h - 16, 14);
+        ctx.fill();
+        ctx.stroke();
+
+        // Header
+        ctx.fillStyle = "#38BDF8";
+        ctx.font = 'bold 15px "Inter", sans-serif';
+        ctx.textAlign = "center";
+        ctx.fillText("2. ZERO-SHOT DUAL-STREAM CLASSIFICATION ARCHITECTURE", w / 2, 36);
+
+        // Left Panel: 5-Point Ordinal Video Stance
+        const stances = [
+          { code: "SA", label: "Strongly Against", color: "#DC2626", count: "812", pct: "13.4%" },
+          { code: "A", label: "Against", color: "#EA580C", count: "602", pct: "9.9%" },
+          { code: "N", label: "Neutral", color: "#64748B", count: "996", pct: "16.4%" },
+          { code: "IF", label: "In Favor", color: "#3B82F6", count: "1,172", pct: "19.3%" },
+          { code: "SIF", label: "Strongly Fav.", color: "#1D4ED8", count: "2,492", pct: "41.0%" },
+        ];
+
+        const leftX = 40;
+        const leftW = 430;
+        const topY = 65;
+
+        ctx.fillStyle = "rgba(35, 48, 56, 0.85)";
+        ctx.strokeStyle = "rgba(255, 255, 255, 0.15)";
+        ctx.lineWidth = 1;
+        ctx.beginPath();
+        ctx.roundRect(leftX, topY, leftW, 235, 8);
+        ctx.fill();
+        ctx.stroke();
+
+        ctx.fillStyle = "#38BDF8";
+        ctx.font = 'bold 11px "SF Mono", monospace';
+        ctx.textAlign = "left";
+        ctx.fillText("STREAM 1: VIDEO STANCE (5-POINT ORDINAL)", leftX + 16, topY + 24);
+
+        stances.forEach((st, idx) => {
+          const sy = topY + 44 + idx * 36;
+          const isInspected = st.code === zeroShotInspectStance;
+
+          if (isInspected) {
+            ctx.fillStyle = "rgba(255, 255, 255, 0.12)";
+            ctx.beginPath();
+            ctx.roundRect(leftX + 10, sy - 6, leftW - 20, 30, 6);
+            ctx.fill();
+          }
+
+          ctx.fillStyle = st.color;
+          ctx.beginPath();
+          ctx.arc(leftX + 24, sy + 8, 6, 0, Math.PI * 2);
+          ctx.fill();
+
+          ctx.fillStyle = "#FFFFFF";
+          ctx.font = 'bold 11px "Inter", sans-serif';
+          ctx.fillText(`${st.code}: ${st.label}`, leftX + 38, sy + 12);
+
+          ctx.fillStyle = "#FDF6E3";
+          ctx.font = 'bold 11px "SF Mono", monospace';
+          ctx.textAlign = "right";
+          ctx.fillText(`${st.count} (${st.pct})`, leftX + leftW - 20, sy + 12);
+          ctx.textAlign = "left";
+        });
+
+        // Right Panel: Comment Stream & Validation Metrics
+        const rightX = 500;
+        const rightW = 460;
+
+        ctx.fillStyle = "rgba(35, 48, 56, 0.85)";
+        ctx.strokeStyle = "rgba(255, 255, 255, 0.15)";
+        ctx.lineWidth = 1;
+        ctx.beginPath();
+        ctx.roundRect(rightX, topY, rightW, 235, 8);
+        ctx.fill();
+        ctx.stroke();
+
+        ctx.fillStyle = "#FF5B04";
+        ctx.font = 'bold 11px "SF Mono", monospace';
+        ctx.fillText("STREAM 2: COMMENT AGREEMENT & VALIDATION", rightX + 16, topY + 24);
+
+        // 3-way comment breakdown
+        const commentsBreakdown = [
+          { label: "Agree (Consensus)", count: "62.4%", color: "#10B981" },
+          { label: "Disagree (Contention)", count: "24.1%", color: "#E11D48" },
+          { label: "Neutral (Unrelated)", count: "13.5%", color: "#94A3B8" },
+        ];
+
+        let cy = topY + 54;
+        commentsBreakdown.forEach((c) => {
+          ctx.fillStyle = c.color;
+          ctx.beginPath();
+          ctx.arc(rightX + 24, cy, 6, 0, Math.PI * 2);
+          ctx.fill();
+
+          ctx.fillStyle = "#FFFFFF";
+          ctx.font = 'bold 11px "Inter", sans-serif';
+          ctx.fillText(c.label, rightX + 38, cy + 4);
+
+          ctx.fillStyle = c.color;
+          ctx.font = 'bold 11px "SF Mono", monospace';
+          ctx.textAlign = "right";
+          ctx.fillText(c.count, rightX + rightW - 20, cy + 4);
+          ctx.textAlign = "left";
+          cy += 26;
+        });
+
+        // Validation Box
+        ctx.strokeStyle = "rgba(56, 189, 248, 0.4)";
+        ctx.lineWidth = 1;
+        ctx.strokeRect(rightX + 16, topY + 138, rightW - 32, 82);
+
+        ctx.fillStyle = "#38BDF8";
+        ctx.font = 'bold 10px "SF Mono", monospace';
+        ctx.fillText("INTER-RATER RELIABILITY BENCHMARK", rightX + 26, topY + 156);
+
+        ctx.fillStyle = "#FFFFFF";
+        ctx.font = '10.5px "Inter", sans-serif';
+        ctx.fillText("• Video Stance Human Accuracy: 82.5% (Agreement 96.7%)", rightX + 26, topY + 176);
+        ctx.fillText("• Cohen kappa = 0.94 (Near-Perfect Inter-Rater Reliability)", rightX + 26, topY + 194);
+        ctx.fillText("• Comment Agreement Accuracy: 90.0% (73% exact, 17% adjacent)", rightX + 26, topY + 212);
+      }
+
+      // --- ANCHOR 3: BAYESIAN MULTILEVEL MODELS (Card 3: 1000 x 715) ---
+      function renderBayesianTab(ctx, w, h) {
+        ctx.clearRect(0, 0, w, h);
+
+        // Slate Backing Plate
+        ctx.fillStyle = "rgba(22, 32, 38, 0.94)";
+        ctx.strokeStyle = "rgba(245, 158, 11, 0.55)";
+        ctx.lineWidth = 2;
+        ctx.beginPath();
+        ctx.roundRect(8, 8, w - 16, h - 16, 14);
+        ctx.fill();
+        ctx.stroke();
+
+        // Header
+        ctx.fillStyle = "#F59E0B";
+        ctx.font = 'bold 16px "Inter", sans-serif';
+        ctx.textAlign = "center";
+        ctx.fillText("3. BAYESIAN MULTILEVEL MODELING OF ENGAGEMENT DYNAMICS", w / 2, 40);
+
+        ctx.fillStyle = "#FDF6E3";
+        ctx.font = '11px "Inter", sans-serif';
+        ctx.fillText("Volume Controls Attenuate the Observed Velocity Gap by 55%", w / 2, 62);
+
+        // Left Column: 3 Mathematical Model Specification Cards
+        const colW = 440;
+        const leftX = 35;
+        let curY = 85;
+
+        // Model A: Like Rate (Beta Regression)
+        ctx.fillStyle = "rgba(35, 48, 56, 0.85)";
+        ctx.strokeStyle = "rgba(255, 91, 4, 0.5)";
+        ctx.lineWidth = 1.4;
+        ctx.beginPath();
+        ctx.roundRect(leftX, curY, colW, 170, 8);
+        ctx.fill();
+        ctx.stroke();
+
+        ctx.fillStyle = "#FF5B04";
+        ctx.font = 'bold 11px "SF Mono", monospace';
+        ctx.textAlign = "left";
+        ctx.fillText("MODEL 1: ENGAGEMENT LIKE RATE (BETA)", leftX + 16, curY + 24);
+
+        ctx.fillStyle = "#FFFFFF";
+        ctx.font = '10.5px "SF Mono", monospace';
+        ctx.fillText("y_i ~ Beta(μ_i · κ, (1 - μ_i) · κ)", leftX + 16, curY + 48);
+        ctx.fillText("logit(μ_i) = β_0 + β_label + β_sub·LogSub + β_chv·CHV", leftX + 16, curY + 68);
+
+        ctx.fillStyle = "#38BDF8";
+        ctx.font = 'bold 11px "Inter", sans-serif';
+        ctx.fillText("SA Like Odds: OR = 1.018 (94% HDI [1.012, 1.024])", leftX + 16, curY + 98);
+
+        ctx.fillStyle = "#FDF6E3";
+        ctx.font = '10px "Inter", sans-serif';
+        ctx.fillText("Raw Normalized Like Rate: 0.058 (SA) vs 0.020 (SIF)", leftX + 16, curY + 120);
+        ctx.fillText("Hesitant uploads trigger 2.9x higher like reinforcement.", leftX + 16, curY + 142);
+
+        // Model B: Temporality Saturation (Negative Binomial)
+        curY += 185;
+        ctx.fillStyle = "rgba(35, 48, 56, 0.85)";
+        ctx.strokeStyle = "rgba(56, 189, 248, 0.5)";
+        ctx.lineWidth = 1.4;
+        ctx.beginPath();
+        ctx.roundRect(leftX, curY, colW, 180, 8);
+        ctx.fill();
+        ctx.stroke();
+
+        ctx.fillStyle = "#38BDF8";
+        ctx.font = 'bold 11px "SF Mono", monospace';
+        ctx.fillText("MODEL 2: TEMPORAL SATURATION (NEG-BINOMIAL)", leftX + 16, curY + 24);
+
+        ctx.fillStyle = "#FFFFFF";
+        ctx.font = '10.5px "SF Mono", monospace';
+        ctx.fillText("d_i ~ NegativeBinomial(μ_i, α)", leftX + 16, curY + 48);
+        ctx.fillText("log(μ_i) = β_0 + β_label + β_sub·LogSub + β_chv·CHV", leftX + 16, curY + 68);
+
+        ctx.fillStyle = "#10B981";
+        ctx.font = 'bold 11px "Inter", sans-serif';
+        ctx.fillText("Volume-Controlled: IRR = 0.80 (94% HDI [0.70, 0.90])", leftX + 16, curY + 98);
+
+        ctx.fillStyle = "#FF5B04";
+        ctx.font = '10px "Inter", sans-serif';
+        ctx.fillText("Unadjusted Descriptive IRR = 0.56 (44% faster velocity)", leftX + 16, curY + 120);
+        ctx.fillStyle = "#FDF6E3";
+        ctx.fillText("P90 median: 18 days (SA) vs 32 days (SIF).", leftX + 16, curY + 142);
+        ctx.fillText("Total view volume accounts for over half the speed gap.", leftX + 16, curY + 162);
+
+        // Model C: Disagreement & Controversy Score
+        curY += 195;
+        ctx.fillStyle = "rgba(35, 48, 56, 0.85)";
+        ctx.strokeStyle = "rgba(16, 185, 129, 0.5)";
+        ctx.lineWidth = 1.4;
+        ctx.beginPath();
+        ctx.roundRect(leftX, curY, colW, 170, 8);
+        ctx.fill();
+        ctx.stroke();
+
+        ctx.fillStyle = "#10B981";
+        ctx.font = 'bold 11px "SF Mono", monospace';
+        ctx.fillText("MODEL 3: CONTROVERSY & DISAGREEMENT", leftX + 16, curY + 24);
+
+        ctx.fillStyle = "#FFFFFF";
+        ctx.font = '10.5px "SF Mono", monospace';
+        ctx.fillText("CS_v = -Σ p_c · log_2(p_c) / log_2(3)", leftX + 16, curY + 48);
+        ctx.fillText("logit(prop_disagree) = β_0 + β_label + Controls", leftX + 16, curY + 68);
+
+        ctx.fillStyle = "#F59E0B";
+        ctx.font = 'bold 11px "Inter", sans-serif';
+        ctx.fillText("SIF Pro-Vaccine Disagreement: OR = 1.05 [1.003, 1.094]", leftX + 16, curY + 98);
+        ctx.fillStyle = "#FDF6E3";
+        ctx.font = '10px "Inter", sans-serif';
+        ctx.fillText("SA Hesitant Disagreement: OR = 0.93 [0.898, 0.972]", leftX + 16, curY + 120);
+        ctx.fillText("Reflects tight in-group consensus on hesitant channels.", leftX + 16, curY + 142);
+
+        // Right Column: Bayesian Forest Plot & Posterior Intervals
+        const rightX = 505;
+        const rightW = 460;
+        const forestY = 85;
+        const forestH = 550;
+
+        ctx.fillStyle = "rgba(35, 48, 56, 0.85)";
+        ctx.strokeStyle = "rgba(255, 255, 255, 0.2)";
+        ctx.lineWidth = 1.4;
+        ctx.beginPath();
+        ctx.roundRect(rightX, forestY, rightW, forestH, 10);
+        ctx.fill();
+        ctx.stroke();
+
+        ctx.fillStyle = "#F59E0B";
+        ctx.font = 'bold 12px "Inter", sans-serif';
+        ctx.textAlign = "center";
+        ctx.fillText("POSTERIOR ESTIMATES & 94% HDI INTERVALS", rightX + rightW / 2, forestY + 28);
+
+        // Vertical reference line (Null effect at x = 1.0)
+        const plotLeft = rightX + 165;
+        const plotRight = rightX + rightW - 35;
+        const plotWidth = plotRight - plotLeft;
+        const nullX = plotLeft + plotWidth * 0.45;
+
+        ctx.strokeStyle = "rgba(255, 255, 255, 0.25)";
+        ctx.setLineDash([4, 4]);
+        ctx.beginPath();
+        ctx.moveTo(nullX, forestY + 50);
+        ctx.lineTo(nullX, forestY + forestH - 65);
+        ctx.stroke();
+        ctx.setLineDash([]);
+
+        ctx.fillStyle = "rgba(255, 255, 255, 0.5)";
+        ctx.font = '9px "SF Mono", monospace';
+        ctx.fillText("Null (1.0)", nullX, forestY + 45);
+
+        // Forest items
+        const forestItems = [
+          { label: "Beta Like Rate (OR)", val: 1.018, low: 1.012, high: 1.024, text: "OR = 1.018 [1.012, 1.024]", color: "#FF5B04" },
+          { label: "Beta Comment Rate (OR)", val: 1.007, low: 1.003, high: 1.011, text: "OR = 1.007 [1.003, 1.011]", color: "#FF5B04" },
+          { label: "Unadjusted P90 Speed (IRR)", val: 0.56, low: 0.49, high: 0.64, text: "IRR = 0.56 [0.49, 0.64]", color: "#EA580C" },
+          { label: "Adjusted P90 Speed (IRR)", val: 0.8, low: 0.7, high: 0.9, text: "IRR = 0.80 [0.70, 0.90]", color: "#10B981", highlight: true },
+          { label: "SIF Disagreement Odds (OR)", val: 1.05, low: 1.003, high: 1.094, text: "OR = 1.050 [1.003, 1.094]", color: "#38BDF8" },
+          { label: "SA Disagreement Odds (OR)", val: 0.93, low: 0.898, high: 0.972, text: "OR = 0.930 [0.898, 0.972]", color: "#38BDF8" },
+          { label: "Controversy Entropy Score", val: 1.14, low: 1.08, high: 1.2, text: "β = +0.14 [0.08, 0.20]", color: "#F59E0B" },
+        ];
+
+        function mapValToX(v) {
+          return plotLeft + ((v - 0.4) / (1.3 - 0.4)) * plotWidth;
+        }
+
+        forestItems.forEach((item, idx) => {
+          const itemY = forestY + 80 + idx * 56;
+
+          if (item.highlight) {
+            ctx.fillStyle = "rgba(16, 185, 129, 0.14)";
+            ctx.strokeStyle = "rgba(16, 185, 129, 0.45)";
+            ctx.beginPath();
+            ctx.roundRect(rightX + 8, itemY - 18, rightW - 16, 44, 6);
+            ctx.fill();
+            ctx.stroke();
+          }
+
+          // Label
+          ctx.fillStyle = "#FFFFFF";
+          ctx.font = 'bold 10px "Inter", sans-serif';
+          ctx.textAlign = "left";
+          ctx.fillText(item.label, rightX + 16, itemY - 4);
+
+          ctx.fillStyle = item.color;
+          ctx.font = '9px "SF Mono", monospace';
+          ctx.fillText(item.text, rightX + 16, itemY + 12);
+
+          // Interval line
+          const xLow = mapValToX(item.low);
+          const xHigh = mapValToX(item.high);
+          const xMid = mapValToX(item.val);
+
+          ctx.strokeStyle = item.color;
+          ctx.lineWidth = item.highlight ? 2.5 : 1.8;
+          ctx.beginPath();
+          ctx.moveTo(xLow, itemY);
+          ctx.lineTo(xHigh, itemY);
+          ctx.stroke();
+
+          // End caps
+          ctx.beginPath();
+          ctx.moveTo(xLow, itemY - 4);
+          ctx.lineTo(xLow, itemY + 4);
+          ctx.moveTo(xHigh, itemY - 4);
+          ctx.lineTo(xHigh, itemY + 4);
+          ctx.stroke();
+
+          // Point estimate dot
+          ctx.fillStyle = item.color;
+          ctx.beginPath();
+          ctx.arc(xMid, itemY, item.highlight ? 4.5 : 3.5, 0, Math.PI * 2);
+          ctx.fill();
+        });
+
+        // Bottom annotation in forest card
+        ctx.fillStyle = "rgba(255, 255, 255, 0.7)";
+        ctx.font = '9.5px "Inter", sans-serif';
+        ctx.textAlign = "center";
+        ctx.fillText(
+          "Green highlight confirms volume conditioning accounts for more than half the velocity gap.",
+          rightX + rightW / 2,
+          forestY + forestH - 22
+        );
+
+        // Footer note
+        ctx.fillStyle = "#FDF6E3";
+        ctx.font = '10px "Inter", sans-serif';
+        ctx.fillText("MCMC Specification: Stan / brms • 4 chains, 4,000 warm-up, 4,000 sampling • All R-hat < 1.01, ESS > 2,000", w / 2, h - 22);
+      }
+
+      // --- ANCHOR 4: TEMPORAL SATURATION (Card 4: 1000 x 572) ---
+      function renderSaturationTab(ctx, w, h) {
+        ctx.clearRect(0, 0, w, h);
+
+        // Slate Backing Plate
+        ctx.fillStyle = "rgba(22, 32, 38, 0.94)";
+        ctx.strokeStyle = "rgba(255, 91, 4, 0.55)";
+        ctx.lineWidth = 2;
+        ctx.beginPath();
+        ctx.roundRect(8, 8, w - 16, h - 16, 14);
+        ctx.fill();
+        ctx.stroke();
+
+        ctx.fillStyle = "#FF5B04";
+        ctx.font = 'bold 15px "Inter", sans-serif';
+        ctx.textAlign = "center";
+        const titleSuffix = modelMode === "descriptive" ? "DESCRIPTIVE ACCELERATION (44% GAP)" : "VOLUME-CONTROLLED ATTENUATION (~20% GAP)";
+        ctx.fillText(`4. LIFECYCLE SATURATION CURVES (${titleSuffix})`, w / 2, 42);
+
+        // Coordinate axes
+        const ox = 110;
+        const oy = h - 90;
+        const gw = w - ox - 90;
+        const gh = oy - 90;
+
+        ctx.strokeStyle = "rgba(255, 255, 255, 0.25)";
+        ctx.lineWidth = 1.2;
+        ctx.beginPath();
+        ctx.moveTo(ox, oy);
+        ctx.lineTo(ox + gw, oy);
+        ctx.moveTo(ox, oy);
+        ctx.lineTo(ox, oy - gh);
+        ctx.stroke();
+
+        // 90% horizontal reference line
+        const p90Y = oy - gh * 0.9;
+        ctx.strokeStyle = "rgba(255, 255, 255, 0.35)";
+        ctx.setLineDash([4, 4]);
+        ctx.beginPath();
+        ctx.moveTo(ox, p90Y);
+        ctx.lineTo(ox + gw, p90Y);
+        ctx.stroke();
+        ctx.setLineDash([]);
+
+        ctx.fillStyle = "#FDF6E3";
+        ctx.font = '10px "SF Mono", monospace';
+        ctx.textAlign = "right";
+        ctx.fillText("90% Saturation (P90)", ox - 10, p90Y + 4);
+
+        // Decay constants
+        const tauAnti = modelMode === "descriptive" ? 8.0 : 9.8;
+        const tauPro = modelMode === "descriptive" ? 14.5 : 12.2;
+
+        // Draw Curves
+        function drawCurve(tau, color, isDashed = false) {
+          ctx.strokeStyle = color;
+          ctx.lineWidth = 2.4;
+          if (isDashed) ctx.setLineDash([5, 3]);
+          ctx.beginPath();
+          for (let day = 0; day <= 60; day += 0.5) {
+            const fraction = 1 - Math.exp(-day / tau);
+            const px = ox + (day / 60) * gw;
+            const py = oy - fraction * gh;
+            if (day === 0) ctx.moveTo(px, py);
+            else ctx.lineTo(px, py);
+          }
+          ctx.stroke();
+          ctx.setLineDash([]);
+        }
+
+        drawCurve(tauAnti, "#FF5B04");
+        drawCurve(tauPro, "#38BDF8");
+
+        // P90 marker points
+        const antiP90Day = modelMode === "descriptive" ? 18 : 22;
+        const proP90Day = modelMode === "descriptive" ? 32 : 28;
+
+        const p90AntiX = ox + (antiP90Day / 60) * gw;
+        const p90ProX = ox + (proP90Day / 60) * gw;
+
+        ctx.fillStyle = "#FF5B04";
+        ctx.beginPath();
+        ctx.arc(p90AntiX, p90Y, 6, 0, Math.PI * 2);
+        ctx.fill();
+
+        ctx.fillStyle = "#38BDF8";
+        ctx.beginPath();
+        ctx.arc(p90ProX, p90Y, 6, 0, Math.PI * 2);
+        ctx.fill();
+
+        // Marker labels
+        ctx.fillStyle = "#FF5B04";
+        ctx.font = 'bold 11px "SF Mono", monospace';
+        ctx.textAlign = "center";
+        ctx.fillText(`Anti P90: ${antiP90Day}d`, p90AntiX, p90Y - 14);
+
+        ctx.fillStyle = "#38BDF8";
+        ctx.fillText(`Pro P90: ${proP90Day}d`, p90ProX, p90Y - 14);
+
+        // Vertical Scrubber Line
+        const scrubX = ox + (scrubDay / 60) * gw;
+        ctx.strokeStyle = "#FDF6E3";
+        ctx.lineWidth = 1.5;
+        ctx.beginPath();
+        ctx.moveTo(scrubX, oy);
+        ctx.lineTo(scrubX, oy - gh);
+        ctx.stroke();
+
+        const curAnti = Math.min(100, Math.round((1 - Math.exp(-scrubDay / tauAnti)) * 100));
+        const curPro = Math.min(100, Math.round((1 - Math.exp(-scrubDay / tauPro)) * 100));
+
+        ctx.fillStyle = "#FDF6E3";
+        ctx.font = 'bold 11px "SF Mono", monospace';
+        ctx.fillText(`Day ${scrubDay} : Anti ${curAnti}% vs Pro ${curPro}%`, scrubX, oy + 24);
+
+        // Axes ticks
+        ctx.fillStyle = "rgba(255, 255, 255, 0.6)";
+        ctx.font = '9px "SF Mono", monospace';
+        for (let t = 0; t <= 60; t += 10) {
+          const tx = ox + (t / 60) * gw;
+          ctx.fillText(`${t}d`, tx, oy + 14);
+        }
+
+        // Bottom annotation
+        ctx.fillStyle = "#FDF6E3";
+        ctx.font = '10px "Inter", sans-serif';
+        ctx.textAlign = "center";
+        ctx.fillText("Parametric Negative Binomial Fit • Conditioning on Engagement Volume Attenuates Velocity Gap by 55%", w / 2, h - 18);
+      }
+
+      // --- ANCHOR 5: DISCOURSE & QUALITATIVE SAMPLES (Card 5: 1000 x 950) ---
+      function renderSamplesTab(ctx, w, h) {
+        ctx.clearRect(0, 0, w, h);
+
+        // Slate Backing Plate
+        ctx.fillStyle = "rgba(22, 32, 38, 0.94)";
+        ctx.strokeStyle = "rgba(16, 185, 129, 0.55)";
+        ctx.lineWidth = 2;
+        ctx.beginPath();
+        ctx.roundRect(8, 8, w - 16, h - 16, 14);
+        ctx.fill();
+        ctx.stroke();
+
         const filtered = empiricalSamples.filter((s) => {
           if (sampleFilter === "all") return true;
           if (sampleFilter === "agree") return s.agreement === "Agree";
@@ -1347,165 +1911,577 @@
 
         // 1. Header Banner
         ctx.fillStyle = "#FF5B04";
-        ctx.font = 'bold 13px "Inter", sans-serif';
+        ctx.font = 'bold 15px "Inter", sans-serif';
         ctx.textAlign = "center";
-        ctx.fillText("5. EMPIRICAL SAMPLES: VIDEOS, COMMENTS & LLM REASONING", 500, 34);
+        ctx.fillText("5. QUALITATIVE DISCOURSE & ZERO-SHOT CLASSIFICATION AUDIT", w / 2, 42);
 
         ctx.fillStyle = "#FDF6E3";
-        ctx.font = '10px "Inter", sans-serif';
-        ctx.fillText(`Sample ${sampleIndex + 1} of ${filtered.length} [${current.category}] • Video ID: ${current.id}`, 500, 50);
+        ctx.font = '11px "Inter", sans-serif';
+        ctx.fillText(
+          `Sample ${(sampleIndex % filtered.length) + 1} of ${filtered.length} (Filter: ${sampleFilter.toUpperCase()}) • Ground Truth from data/labeled/`,
+          w / 2,
+          65
+        );
 
-        // 2. Left Top: Video Title & Transcript Excerpt
-        const leftX = 25;
-        const leftW = 460;
-        ctx.fillStyle = "rgba(35, 48, 56, 0.88)";
-        ctx.strokeStyle = "rgba(56, 189, 248, 0.45)";
-        ctx.lineWidth = 1.4;
+        // 2. Left Column: Video Context & Metadata (w = 440)
+        const leftX = 35;
+        const leftW = 440;
+        const leftY = 90;
+        const leftH = 780;
+
+        ctx.fillStyle = "rgba(35, 48, 56, 0.85)";
+        ctx.strokeStyle = "rgba(255, 255, 255, 0.15)";
+        ctx.lineWidth = 1;
         ctx.beginPath();
-        ctx.roundRect(leftX, 60, leftW, 136, 8);
+        ctx.roundRect(leftX, leftY, leftW, leftH, 10);
         ctx.fill();
         ctx.stroke();
 
+        // Stance Badge
         ctx.fillStyle = "#38BDF8";
-        ctx.font = 'bold 9.5px "Inter", sans-serif';
+        ctx.font = 'bold 11px "SF Mono", monospace';
         ctx.textAlign = "left";
-        ctx.fillText("SOURCE VIDEO & TRANSCRIPT EXCERPT", leftX + 12, 78);
+        ctx.fillText(`VIDEO CONTEXT [ID: ${current.id}]`, leftX + 18, leftY + 28);
 
+        ctx.fillStyle = "#FF5B04";
+        ctx.font = 'bold 10px "SF Mono", monospace';
+        ctx.textAlign = "right";
+        ctx.fillText(current.category.toUpperCase(), leftX + leftW - 18, leftY + 28);
+        ctx.textAlign = "left";
+
+        // Video Title
         ctx.fillStyle = "#FFFFFF";
-        ctx.font = 'bold 10.5px "Inter", sans-serif';
-        drawWrappedText(ctx, current.video_title, leftX + 12, 94, leftW - 24, 13, 2);
+        ctx.font = 'bold 12.5px "Inter", sans-serif';
+        let vty = drawWrappedText(ctx, current.video_title, leftX + 18, leftY + 54, leftW - 36, 16, 3);
 
-        // Transcript quote box inside left card
-        ctx.fillStyle = "rgba(7, 80, 86, 0.35)";
+        // Transcript Box
+        ctx.fillStyle = "rgba(15, 23, 28, 0.75)";
         ctx.beginPath();
-        ctx.roundRect(leftX + 10, 124, leftW - 20, 64, 5);
+        ctx.roundRect(leftX + 14, vty + 10, leftW - 28, 260, 6);
         ctx.fill();
 
-        ctx.fillStyle = "#CBD5E1";
-        ctx.font = 'italic 9px "Inter", sans-serif';
-        drawWrappedText(ctx, `"${current.video_transcript}"`, leftX + 18, 138, leftW - 36, 12, 3);
+        ctx.fillStyle = "#38BDF8";
+        ctx.font = 'bold 10px "SF Mono", monospace';
+        ctx.fillText("TRANSCRIPT EXCERPT (KEYWORD CONTEXT WINDOW):", leftX + 24, vty + 30);
 
-        // 3. Left Bottom: Observed Comment
-        ctx.fillStyle = "rgba(35, 48, 56, 0.88)";
-        ctx.strokeStyle = "rgba(255, 91, 4, 0.45)";
-        ctx.lineWidth = 1.4;
+        ctx.fillStyle = "#CBD5E1";
+        ctx.font = '10.5px "Inter", sans-serif';
+        drawWrappedText(ctx, `"${current.video_transcript}"`, leftX + 24, vty + 50, leftW - 48, 15, 13);
+
+        // User Comment Box
+        const cmtY = vty + 285;
+        ctx.fillStyle = "rgba(255, 91, 4, 0.12)";
+        ctx.strokeStyle = "rgba(255, 91, 4, 0.5)";
         ctx.beginPath();
-        ctx.roundRect(leftX, 204, leftW, 138, 8);
+        ctx.roundRect(leftX + 14, cmtY, leftW - 28, 240, 8);
         ctx.fill();
         ctx.stroke();
 
         ctx.fillStyle = "#FF5B04";
-        ctx.font = 'bold 9.5px "Inter", sans-serif';
-        ctx.textAlign = "left";
-        ctx.fillText("OBSERVED AUDIENCE COMMENT", leftX + 12, 222);
-
-        // Sentiment tag on top right
-        const sentColor = current.sentiment === "Positive" ? "#10B981" : current.sentiment === "Negative" ? "#E11D48" : "#94A3B8";
-        ctx.fillStyle = sentColor;
-        ctx.font = 'bold 9px "SF Mono", monospace';
-        ctx.textAlign = "right";
-        ctx.fillText(`SENTIMENT: ${current.sentiment.toUpperCase()}`, leftX + leftW - 12, 222);
+        ctx.font = 'bold 10.5px "SF Mono", monospace';
+        ctx.fillText("USER COMMENT TEXT:", leftX + 24, cmtY + 24);
 
         ctx.fillStyle = "#FFFFFF";
-        ctx.font = '10px "Inter", sans-serif';
-        ctx.textAlign = "left";
-        drawWrappedText(ctx, `"${current.comment}"`, leftX + 12, 240, leftW - 24, 13, 4);
+        ctx.font = 'italic 12px "Inter", sans-serif';
+        drawWrappedText(ctx, `"${current.comment}"`, leftX + 24, cmtY + 48, leftW - 48, 16, 8);
 
-        // 4. Right Card: Zero-Shot Classification & Dual Reasonings
+        // 3. Right Column: LLM Reasoning Pathways & Mechanism
         const rightX = 505;
-        const rightW = 470;
+        const rightW = 460;
+        const rightY = 90;
+        const rightH = 780;
+
+        ctx.fillStyle = "rgba(35, 48, 56, 0.85)";
+        ctx.strokeStyle = "rgba(255, 255, 255, 0.15)";
+        ctx.lineWidth = 1;
+        ctx.beginPath();
+        ctx.roundRect(rightX, rightY, rightW, rightH, 10);
+        ctx.fill();
+        ctx.stroke();
+
+        // Agreement Classification Header
         const isAgree = current.agreement === "Agree";
         const isDisagree = current.agreement === "Disagree";
         const agreeColor = isAgree ? "#10B981" : isDisagree ? "#E11D48" : "#94A3B8";
 
-        ctx.fillStyle = "rgba(35, 48, 56, 0.92)";
-        ctx.strokeStyle = agreeColor;
-        ctx.lineWidth = 1.6;
+        ctx.fillStyle = agreeColor;
+        ctx.font = 'bold 13px "SF Mono", monospace';
+        ctx.fillText(`CLASSIFICATION: ${current.agreement.toUpperCase()}`, rightX + 18, rightY + 30);
+
+        ctx.fillStyle = current.sentiment === "Positive" ? "#10B981" : current.sentiment === "Negative" ? "#E11D48" : "#94A3B8";
+        ctx.font = 'bold 11px "SF Mono", monospace';
+        ctx.textAlign = "right";
+        ctx.fillText(`SENTIMENT: ${current.sentiment.toUpperCase()}`, rightX + rightW - 18, rightY + 30);
+        ctx.textAlign = "left";
+
+        // Agreement Reasoning Box
+        ctx.fillStyle = "rgba(15, 23, 28, 0.8)";
         ctx.beginPath();
-        ctx.roundRect(rightX, 60, rightW, 282, 8);
+        ctx.roundRect(rightX + 14, rightY + 50, rightW - 28, 280, 8);
+        ctx.fill();
+
+        ctx.fillStyle = "#FF5B04";
+        ctx.font = 'bold 10.5px "SF Mono", monospace';
+        ctx.fillText("CHAIN-OF-THOUGHT AGREEMENT REASONING:", rightX + 24, rightY + 74);
+
+        ctx.fillStyle = "#FDF6E3";
+        ctx.font = '11px "Inter", sans-serif';
+        drawWrappedText(ctx, current.agreement_reasoning, rightX + 24, rightY + 98, rightW - 48, 16, 14);
+
+        // Sentiment Reasoning Box
+        ctx.fillStyle = "rgba(15, 23, 28, 0.8)";
+        ctx.beginPath();
+        ctx.roundRect(rightX + 14, rightY + 345, rightW - 28, 230, 8);
+        ctx.fill();
+
+        ctx.fillStyle = "#38BDF8";
+        ctx.font = 'bold 10.5px "SF Mono", monospace';
+        ctx.fillText("SENTIMENT & AFFECTIVE TONE REASONING:", rightX + 24, rightY + 368);
+
+        ctx.fillStyle = "#E2E8F0";
+        ctx.font = '11px "Inter", sans-serif';
+        drawWrappedText(ctx, current.sentiment_reasoning, rightX + 24, rightY + 392, rightW - 48, 16, 11);
+
+        // Theoretical Mechanism Box
+        ctx.fillStyle = "rgba(16, 185, 129, 0.15)";
+        ctx.strokeStyle = "rgba(16, 185, 129, 0.5)";
+        ctx.beginPath();
+        ctx.roundRect(rightX + 14, rightY + 590, rightW - 28, 160, 8);
         ctx.fill();
         ctx.stroke();
 
-        // Right Header
-        ctx.fillStyle = agreeColor;
-        ctx.font = 'bold 11px "SF Mono", monospace';
-        ctx.textAlign = "left";
-        ctx.fillText(`CLASSIFICATION: [${current.agreement.toUpperCase()}]`, rightX + 14, 82);
-
-        ctx.fillStyle = "#FDF6E3";
-        ctx.font = '9.5px "Inter", sans-serif';
-        ctx.textAlign = "right";
-        ctx.fillText("GPT-4o-mini Zero-Shot Prompt", rightX + rightW - 14, 82);
-
-        // Agreement Reasoning Box
-        ctx.fillStyle = "#FF5B04";
-        ctx.font = 'bold 9.5px "Inter", sans-serif';
-        ctx.textAlign = "left";
-        ctx.fillText("AGREEMENT REASONING (EVALUATION VS VIDEO CLAIMS):", rightX + 14, 104);
-
-        ctx.fillStyle = "rgba(22, 32, 38, 0.85)";
-        ctx.beginPath();
-        ctx.roundRect(rightX + 10, 112, rightW - 20, 78, 6);
-        ctx.fill();
-
-        ctx.fillStyle = "#FDF6E3";
-        ctx.font = '9.5px "Inter", sans-serif';
-        drawWrappedText(ctx, current.agreement_reasoning, rightX + 18, 128, rightW - 36, 12.5, 4);
-
-        // Sentiment Reasoning Box
-        ctx.fillStyle = "#38BDF8";
-        ctx.font = 'bold 9.5px "Inter", sans-serif';
-        ctx.fillText("SENTIMENT REASONING (TONE & AFFECT):", rightX + 14, 206);
-
-        ctx.fillStyle = "rgba(22, 32, 38, 0.85)";
-        ctx.beginPath();
-        ctx.roundRect(rightX + 10, 214, rightW - 20, 68, 6);
-        ctx.fill();
-
-        ctx.fillStyle = "#E2E8F0";
-        ctx.font = '9px "Inter", sans-serif';
-        drawWrappedText(ctx, current.sentiment_reasoning, rightX + 18, 228, rightW - 36, 12, 3);
-
-        // Footer Theoretical Mechanism
         ctx.fillStyle = "#10B981";
-        ctx.font = 'bold 9px "Inter", sans-serif';
+        ctx.font = 'bold 11px "SF Mono", monospace';
+        ctx.fillText("EMPIRICAL / THEORETICAL MECHANISM:", rightX + 24, rightY + 616);
+
+        ctx.fillStyle = "#FFFFFF";
+        ctx.font = 'bold 11px "Inter", sans-serif';
+        drawWrappedText(ctx, current.mechanism, rightX + 24, rightY + 638, rightW - 48, 16, 6);
+
+        // Footer Instructions
+        ctx.fillStyle = "#FDF6E3";
+        ctx.font = '10px "Inter", sans-serif';
         ctx.textAlign = "center";
-        drawWrappedText(ctx, `Theoretical Mechanism: ${current.mechanism}`, rightX + rightW / 2, 304, rightW - 28, 11, 2);
+        ctx.fillText("Tap Next/Prev or Shuffle in the bottom panel to cycle empirical examples.", w / 2, h - 22);
       }
+
+      // Tab 6: Creator Types & Moderation Timing
+      function renderModerationTab(ctx, w, h) {
+        ctx.clearRect(0, 0, w, h);
+
+        // Slate Backing Plate
+        ctx.fillStyle = "rgba(22, 32, 38, 0.94)";
+        ctx.strokeStyle = "rgba(255, 91, 4, 0.55)";
+        ctx.lineWidth = 2;
+        ctx.beginPath();
+        ctx.roundRect(8, 8, w - 16, h - 16, 12);
+        ctx.fill();
+        ctx.stroke();
+
+        // Top Section: Creator Sourcing Divide (Figure 7C from paper)
+        ctx.fillStyle = "var(--design-orange)";
+        ctx.font = 'bold 12px "SF Mono", monospace';
+        ctx.textAlign = "left";
+        ctx.fillText("CREATOR SOURCING DIVIDE (FIGURE 7C)", 24, 30);
+
+        // Legend
+        ctx.font = '9.5px "Inter", sans-serif';
+        ctx.fillStyle = "#94A3B8";
+        ctx.textAlign = "right";
+        ctx.fillText("■ SIF (Strong In Favor)  ■ IF  ■ Neutral  ■ Against  ■ SA (Strong Against)", w - 24, 30);
+        ctx.textAlign = "left";
+
+        const barX = 24;
+        const barW = w - 48;
+
+        // Bar 1: Organizations (News & Health Institutions)
+        ctx.fillStyle = "#FFFFFF";
+        ctx.font = 'bold 11px "Inter", sans-serif';
+        ctx.fillText("Organizations (News & Health Institutions)", barX, 52);
+        ctx.fillStyle = "#38BDF8";
+        ctx.textAlign = "right";
+        ctx.font = 'bold 11px "SF Mono", monospace';
+        ctx.fillText("69.0% Pro-Vaccine (47.4% Comment Disagreement)", barX + barW, 52);
+        ctx.textAlign = "left";
+
+        const barY1 = 60;
+        const barH = 16;
+        ctx.fillStyle = "#1D4ED8";
+        ctx.fillRect(barX, barY1, barW * 0.5, barH);
+        ctx.fillStyle = "#3B82F6";
+        ctx.fillRect(barX + barW * 0.5, barY1, barW * 0.19, barH);
+        ctx.fillStyle = "#64748B";
+        ctx.fillRect(barX + barW * 0.69, barY1, barW * 0.13, barH);
+        ctx.fillStyle = "#F97316";
+        ctx.fillRect(barX + barW * 0.82, barY1, barW * 0.07, barH);
+        ctx.fillStyle = "#E11D48";
+        ctx.fillRect(barX + barW * 0.89, barY1, barW * 0.11, barH);
+
+        // Bar 2: Individual Creators (Influencers & Vloggers)
+        const barY2 = 98;
+        ctx.fillStyle = "#FFFFFF";
+        ctx.font = 'bold 11px "Inter", sans-serif';
+        ctx.fillText("Individual Creators (Influencers & Vloggers)", barX, barY2 - 6);
+        ctx.fillStyle = "#10B981";
+        ctx.textAlign = "right";
+        ctx.font = 'bold 11px "SF Mono", monospace';
+        ctx.fillText("25.1% SA vs 18.6% SIF (Healthcare Vloggers: 51.5% Agreement)", barX + barW, barY2 - 6);
+        ctx.textAlign = "left";
+
+        ctx.fillStyle = "#1D4ED8";
+        ctx.fillRect(barX, barY2, barW * 0.19, barH);
+        ctx.fillStyle = "#3B82F6";
+        ctx.fillRect(barX + barW * 0.19, barY2, barW * 0.15, barH);
+        ctx.fillStyle = "#64748B";
+        ctx.fillRect(barX + barW * 0.34, barY2, barW * 0.17, barH);
+        ctx.fillStyle = "#F97316";
+        ctx.fillRect(barX + barW * 0.51, barY2, barW * 0.24, barH);
+        ctx.fillStyle = "#E11D48";
+        ctx.fillRect(barX + barW * 0.75, barY2, barW * 0.25, barH);
+
+        // Divider
+        ctx.strokeStyle = "rgba(7, 80, 86, 0.45)";
+        ctx.lineWidth = 1;
+        ctx.beginPath();
+        ctx.moveTo(24, 128);
+        ctx.lineTo(w - 24, 128);
+        ctx.stroke();
+
+        // Bottom Section: Moderation Enforcement Timing Lag
+        ctx.fillStyle = "#FF5B04";
+        ctx.font = 'bold 12px "SF Mono", monospace';
+        ctx.fillText("MODERATION TIMING LAG: ENFORCEMENT VS SATURATION LIFECYCLE", 24, 150);
+
+        // Timeline Coordinates
+        const tlLeft = 64;
+        const tlRight = w - 64;
+        const tlW = tlRight - tlLeft;
+        const tlY = 260;
+        const maxDays = 60;
+
+        const dayToX = (d) => tlLeft + (Math.min(d, maxDays) / maxDays) * tlW;
+
+        // Draw Impact Window (Day 0 to Day 18)
+        const x0 = dayToX(0);
+        const x18 = dayToX(18);
+        const grad = ctx.createLinearGradient(x0, 0, x18, 0);
+        grad.addColorStop(0, "rgba(225, 29, 72, 0.24)");
+        grad.addColorStop(1, "rgba(255, 91, 4, 0.08)");
+        ctx.fillStyle = grad;
+        ctx.fillRect(x0, tlY - 78, x18 - x0, 90);
+
+        ctx.strokeStyle = "rgba(225, 29, 72, 0.65)";
+        ctx.setLineDash([3, 3]);
+        ctx.strokeRect(x0, tlY - 78, x18 - x0, 90);
+        ctx.setLineDash([]);
+
+        ctx.fillStyle = "#FDA4AF";
+        ctx.font = 'bold 10px "SF Mono", monospace';
+        ctx.textAlign = "center";
+        ctx.fillText("IMPACT WINDOW (0 TO 18 DAYS): 90% EXPOSURE", (x0 + x18) / 2, tlY - 62);
+
+        // Kinetic Cumulative View Curve (Vaccine-Hesitant Saturation Trajectory)
+        ctx.beginPath();
+        for (let d = 0; d <= maxDays; d += 0.5) {
+          const dx = dayToX(d);
+          const pct = Math.min(1.0, Math.pow(d, 1.6) / (Math.pow(d, 1.6) + Math.pow(7.5, 1.6)));
+          const dy = tlY - 8 - pct * 60;
+          if (d === 0) ctx.moveTo(dx, dy);
+          else ctx.lineTo(dx, dy);
+        }
+        ctx.strokeStyle = "rgba(255, 91, 4, 0.95)";
+        ctx.lineWidth = 2.4;
+        ctx.stroke();
+
+        // Timeline Baseline
+        ctx.strokeStyle = "#475569";
+        ctx.lineWidth = 2;
+        ctx.beginPath();
+        ctx.moveTo(tlLeft, tlY);
+        ctx.lineTo(tlRight, tlY);
+        ctx.stroke();
+
+        // Ticks: 0, 14.4, 18, 30, 45, 60
+        const ticks = [
+          { day: 0, label: "Day 0 (Upload)" },
+          { day: 14.4, label: "Day 14.4 (Median Removal)", color: "#BE123C", highlight: true },
+          { day: 18, label: "Day 18 (P90 Saturation)", color: "#FF5B04" },
+          { day: 30, label: "Day 30" },
+          { day: 45, label: "Day 45" },
+          { day: 60, label: "Day 60" },
+        ];
+
+        ticks.forEach((t) => {
+          const tx = dayToX(t.day);
+          ctx.strokeStyle = t.color || "#64748B";
+          ctx.lineWidth = t.highlight ? 2 : 1;
+          ctx.beginPath();
+          ctx.moveTo(tx, tlY - 4);
+          ctx.lineTo(tx, tlY + 6);
+          ctx.stroke();
+
+          ctx.fillStyle = t.color || "#94A3B8";
+          ctx.font = t.highlight ? 'bold 10px "SF Mono", monospace' : '9px "Inter", sans-serif';
+          ctx.textAlign = "center";
+          ctx.fillText(t.label, tx, tlY + (t.day === 14.4 ? 30 : 18));
+        });
+
+        // Removal Marker Pin (Interactive at scrubRemovalDay)
+        const rx = dayToX(scrubRemovalDay);
+        ctx.strokeStyle = "#E11D48";
+        ctx.lineWidth = 2.4;
+        ctx.beginPath();
+        ctx.moveTo(rx, tlY - 72);
+        ctx.lineTo(rx, tlY + 8);
+        ctx.stroke();
+
+        ctx.fillStyle = "#BE123C";
+        ctx.beginPath();
+        ctx.arc(rx, tlY - 72, 6, 0, Math.PI * 2);
+        ctx.fill();
+
+        ctx.strokeStyle = "rgba(225, 29, 72, 0.7)";
+        ctx.lineWidth = 1.5;
+        const pulse = Math.sin(globalTick * 5) * 4;
+        ctx.beginPath();
+        ctx.arc(rx, tlY - 72, 8 + pulse, 0, Math.PI * 2);
+        ctx.stroke();
+
+        // Percent exposed calculation
+        const exposedPct = Math.round(Math.min(100, (Math.pow(scrubRemovalDay, 1.6) / (Math.pow(scrubRemovalDay, 1.6) + Math.pow(7.5, 1.6))) * 100));
+
+        ctx.fillStyle = "rgba(190, 18, 60, 0.95)";
+        ctx.strokeStyle = "#FECDD3";
+        ctx.lineWidth = 1;
+        ctx.beginPath();
+        ctx.roundRect(rx - 85, tlY - 114, 170, 36, 6);
+        ctx.fill();
+        ctx.stroke();
+
+        ctx.fillStyle = "#FFFFFF";
+        ctx.font = 'bold 10.5px "SF Mono", monospace';
+        ctx.textAlign = "center";
+        ctx.fillText(`REMOVAL: DAY ${scrubRemovalDay.toFixed(1)}`, rx, tlY - 98);
+        ctx.fillStyle = "#FDE047";
+        ctx.font = 'bold 9.5px "Inter", sans-serif';
+        ctx.fillText(`${exposedPct}% of Views Already Reached`, rx, tlY - 84);
+
+        // Empirical Summary Box
+        ctx.fillStyle = "rgba(35, 48, 56, 0.85)";
+        ctx.strokeStyle = "rgba(56, 189, 248, 0.4)";
+        ctx.lineWidth = 1;
+        ctx.beginPath();
+        ctx.roundRect(24, h - 68, w - 48, 54, 8);
+        ctx.fill();
+        ctx.stroke();
+
+        ctx.fillStyle = "#38BDF8";
+        ctx.font = 'bold 10.5px "SF Mono", monospace';
+        ctx.textAlign = "left";
+        ctx.fillText("EMPIRICAL POLICY ASYMMETRY:", 38, h - 48);
+
+        ctx.fillStyle = "#FDF6E3";
+        ctx.font = '10px "Inter", sans-serif';
+        ctx.fillText("All guideline removals targeted hesitant uploads, but median enforcement occurred at 14.4 days (IQR 4.9-35.8d).", 38, h - 33);
+        ctx.fillText("Because P90 saturation occurs at 18 days, >80% of total lifetime views occur prior to moderation enforcement.", 38, h - 18);
+      }
+
+      // -------------------------------------------------------------
+      // 7 SPATIAL ANCHOR CONFIGURATIONS (MAPPED 1-TO-1 TO POSTER)
+      // -------------------------------------------------------------
+      const ANCHORS_CONFIG = [
+        {
+          targetIndex: 0,
+          tab: "mechanisms",
+          name: "Hero Architecture",
+          title: "Hero: One Platform. Two Engagement Architectures",
+          aspect: 101 / 800,
+          canvasW: 1600,
+          canvasH: 202,
+          meshW: 1.02,
+          meshH: 0.129,
+          draw: (ctx, w, h) => renderMechanismsTab(ctx, w, h),
+          targetThumb: "./targets/target_0_hero.png",
+          guideAspect: "800 / 101",
+          guideText: "Align with Hero Panel: One Platform. Two Engagement Architectures.",
+        },
+        {
+          targetIndex: 1,
+          tab: "pipeline",
+          name: "Card 1: Data Pipeline",
+          title: "1. Longitudinal Data Ingestion Pipeline",
+          aspect: 568 / 800,
+          canvasW: 1000,
+          canvasH: 710,
+          meshW: 1.02,
+          meshH: 0.724,
+          draw: (ctx, w, h) => renderPipelineTab(ctx, w, h),
+          targetThumb: "./targets/target_1_pipeline.png",
+          guideAspect: "800 / 568",
+          guideText: "Align with Card 1: Data Collection Pipeline",
+        },
+        {
+          targetIndex: 2,
+          tab: "zeroshot",
+          name: "Card 2: Zero-Shot",
+          title: "2. Zero-Shot Classification Architecture",
+          aspect: 264 / 800,
+          canvasW: 1000,
+          canvasH: 330,
+          meshW: 1.02,
+          meshH: 0.337,
+          draw: (ctx, w, h) => renderZeroShotTab(ctx, w, h),
+          targetThumb: "./targets/target_2_zeroshot.png",
+          guideAspect: "800 / 264",
+          guideText: "Align with Card 2: Zero-Shot Classification Architecture",
+        },
+        {
+          targetIndex: 3,
+          tab: "bayesian",
+          name: "Card 3: Bayesian Models",
+          title: "3. Bayesian Modeling of Engagement Dynamics",
+          aspect: 572 / 800,
+          canvasW: 1000,
+          canvasH: 715,
+          meshW: 1.02,
+          meshH: 0.729,
+          draw: (ctx, w, h) => renderBayesianTab(ctx, w, h),
+          targetThumb: "./targets/target_3_bayesian.png",
+          guideAspect: "800 / 572",
+          guideText: "Align with Card 3: Bayesian Multilevel Models",
+        },
+        {
+          targetIndex: 4,
+          tab: "saturation",
+          name: "Card 4: Temporal Saturation",
+          title: "4. Engagement Volume & Temporal Saturation",
+          aspect: 458 / 800,
+          canvasW: 1000,
+          canvasH: 572,
+          meshW: 1.02,
+          meshH: 0.584,
+          draw: (ctx, w, h) => renderSaturationTab(ctx, w, h),
+          targetThumb: "./targets/target_4_saturation.png",
+          guideAspect: "800 / 458",
+          guideText: "Align with Card 4: Volume & Saturation Trajectory",
+        },
+        {
+          targetIndex: 5,
+          tab: "samples",
+          name: "Card 5: Discourse & Samples",
+          title: "5. Comment Opinion Structure & Discourse Samples",
+          aspect: 760 / 800,
+          canvasW: 1000,
+          canvasH: 950,
+          meshW: 1.02,
+          meshH: 0.969,
+          draw: (ctx, w, h) => renderSamplesTab(ctx, w, h),
+          targetThumb: "./targets/target_5_samples.png",
+          guideAspect: "800 / 760",
+          guideText: "Align with Card 5: Discourse Architecture & Ternary Simplex",
+        },
+        {
+          targetIndex: 6,
+          tab: "moderation",
+          name: "Card 6: Moderation & Sourcing",
+          title: "6. Creator Types & Moderation Timing",
+          aspect: 350 / 800,
+          canvasW: 1000,
+          canvasH: 438,
+          meshW: 1.02,
+          meshH: 0.446,
+          draw: (ctx, w, h) => renderModerationTab(ctx, w, h),
+          targetThumb: "./targets/target_6_moderation.png",
+          guideAspect: "800 / 350",
+          guideText: "Align with Card 6: Creator Types & Moderation Timing",
+        },
+      ];
+
+      // Pre-create canvas and texture for each anchor
+      ANCHORS_CONFIG.forEach((cfg) => {
+        const c = document.createElement("canvas");
+        c.width = cfg.canvasW;
+        c.height = cfg.canvasH;
+        cfg.canvas = c;
+        cfg.ctx = c.getContext("2d");
+        cfg.texture = new THREE.CanvasTexture(c);
+        cfg.texture.minFilter = THREE.LinearFilter;
+        cfg.texture.magFilter = THREE.LinearFilter;
+        cfg.isFound = false;
+      });
 
       // -------------------------------------------------------------
       // UI SYNC & TAB CONTENT MANAGER
       // -------------------------------------------------------------
+      function switchTab(tabName) {
+        activeTab = tabName;
+        sectionTabs.querySelectorAll(".tab-btn").forEach((b) => {
+          b.classList.toggle("active", b.dataset.tab === tabName);
+        });
+
+        // Sync Mini-Map tiles in simulation mode
+        document.querySelectorAll(".map-tile").forEach((tile) => {
+          tile.classList.toggle("active", tile.dataset.tab === tabName);
+        });
+
+        const activeCfg = ANCHORS_CONFIG.find((c) => c.tab === tabName) || ANCHORS_CONFIG[0];
+        activeAnchorIndex = activeCfg.targetIndex;
+
+        // Sync Debug bar in AR mode
+        document.querySelectorAll(".dbg-btn").forEach((btn) => {
+          if (btn.dataset.anchor) {
+            btn.classList.toggle("active", btn.dataset.anchor === String(activeAnchorIndex));
+          }
+        });
+        const unlk = document.querySelector("#btn-dbg-unlock");
+        if (unlk) unlk.classList.remove("active");
+
+        // Update target thumbnail and prompt in HUD
+        const targetThumb = document.querySelector("#target-thumb");
+        const targetDesc = document.querySelector("#target-preview-desc");
+        if (targetThumb) targetThumb.src = activeCfg.targetThumb;
+        if (targetDesc) {
+          targetDesc.innerHTML = `<strong>Spatial Anchor ${activeCfg.targetIndex}:</strong> ${activeCfg.guideText}`;
+        }
+
+        // Update scanner guide reticle aspect ratio to match the card
+        if (scannerGuide) {
+          scannerGuide.style.aspectRatio = activeCfg.guideAspect;
+        }
+
+        updateHUDContent();
+      }
+
       function updateHUDContent() {
         if (activeTab === "mechanisms") {
-          hudTitle.textContent = "1. Mechanisms: Echo Chamber vs Battleground";
+          hudTitle.textContent = "Hero: One Platform. Two Engagement Architectures";
           hudDesc.textContent =
             "Under identical recommendation algorithms, vaccine-hesitant content forms dense in-group consensus with rapid view saturation, whereas pro-vaccine broadcasts face sustained cross-ideological contention.";
 
           interactiveControls.innerHTML = `
-          <span style="font-size: 10px; font-weight: 700; color: var(--design-orange); text-transform: uppercase;">Friction:</span>
-          <input type="range" id="conflict-slider" class="interactive-slider" min="0.2" max="2.5" step="0.1" value="${conflictIntensity}">
-          <span id="friction-val" style="font-size: 11px; font-family: var(--font-mono); font-weight: 700; min-width: 40px;">${conflictIntensity}x</span>
-        `;
+            <span style="font-size: 10px; font-weight: 700; color: var(--design-orange); text-transform: uppercase;">Friction:</span>
+            <input type="range" id="conflict-slider" class="interactive-slider" min="0.2" max="2.5" step="0.1" value="${conflictIntensity}">
+            <span id="friction-val" style="font-size: 11px; font-family: var(--font-mono); font-weight: 700; min-width: 40px;">${conflictIntensity.toFixed(1)}x</span>
+          `;
 
           metricsRow.innerHTML = `
-          <div class="metric-item">
-            <div class="metric-lbl">Hesitant Net Consensus</div>
-            <div class="metric-val" style="color: #FF5B04;">+21.3% Agree</div>
-          </div>
-          <div class="metric-item">
-            <div class="metric-lbl">Pro Net Contention</div>
-            <div class="metric-val" style="color: #38BDF8;">-11.5% Disagree</div>
-          </div>
-          <div class="metric-item">
-            <div class="metric-lbl">Likes / View Ratio</div>
-            <div class="metric-val" style="color: #10B981;">2.9x Higher (SA)</div>
-          </div>
-          <div class="metric-item">
-            <div class="metric-lbl">Bayesian Odds Ratio</div>
-            <div class="metric-val" style="color: #F59E0B;">OR = 2.41 [1.95, 2.98]</div>
-          </div>
-        `;
+            <div class="metric-item">
+              <div class="metric-lbl">Hesitant Net Consensus</div>
+              <div class="metric-val" style="color: #FF5B04;">+21.3% Agree</div>
+            </div>
+            <div class="metric-item">
+              <div class="metric-lbl">Pro Net Contention</div>
+              <div class="metric-val" style="color: #38BDF8;">-11.5% Disagree</div>
+            </div>
+            <div class="metric-item">
+              <div class="metric-lbl">Likes / View Ratio</div>
+              <div class="metric-val" style="color: #10B981;">2.9x Higher (SA)</div>
+            </div>
+            <div class="metric-item">
+              <div class="metric-lbl">Bayesian Odds Ratio</div>
+              <div class="metric-val" style="color: #F59E0B;">OR = 2.41 [1.95, 2.98]</div>
+            </div>
+          `;
 
           document.querySelector("#conflict-slider").addEventListener("input", (e) => {
             conflictIntensity = parseFloat(e.target.value);
@@ -1513,36 +2489,36 @@
             if (soundEnabled) playTone(480 * conflictIntensity, "sine", 0.08, 0.04);
           });
         } else if (activeTab === "pipeline") {
-          hudTitle.textContent = "2. Data Pipeline: Daily Longitudinal Attrition";
+          hudTitle.textContent = "1. Data Pipeline: Daily Longitudinal Ingestion";
           hudDesc.textContent =
             "Sampling 7,213 uploads over 6 months (Nov 20, 2024 to May 20, 2025) via YouTube Data API v3. Deliberately excluding Shorts to eliminate confounding swipe-feed mechanics.";
 
           interactiveControls.innerHTML = `
-          <span style="font-size: 10px; font-weight: 700; color: #38BDF8; text-transform: uppercase;">Pipeline Stage:</span>
-          <button class="ctrl-btn ${pipelineStep === 0 ? "active" : ""}" data-step="0">1. Uploads</button>
-          <button class="ctrl-btn ${pipelineStep === 1 ? "active" : ""}" data-step="1">2. Duration</button>
-          <button class="ctrl-btn ${pipelineStep === 2 ? "active" : ""}" data-step="2">3. Channels</button>
-          <button class="ctrl-btn ${pipelineStep === 3 ? "active" : ""}" data-step="3">4. Comments</button>
-        `;
+            <span style="font-size: 10px; font-weight: 700; color: #38BDF8; text-transform: uppercase;">Pipeline Stage:</span>
+            <button class="ctrl-btn ${pipelineStep === 0 ? "active" : ""}" data-step="0">1. Uploads</button>
+            <button class="ctrl-btn ${pipelineStep === 1 ? "active" : ""}" data-step="1">2. Duration</button>
+            <button class="ctrl-btn ${pipelineStep === 2 ? "active" : ""}" data-step="2">3. Channels</button>
+            <button class="ctrl-btn ${pipelineStep === 3 ? "active" : ""}" data-step="3">4. Comments</button>
+          `;
 
           metricsRow.innerHTML = `
-          <div class="metric-item">
-            <div class="metric-lbl">Collected Corpus</div>
-            <div class="metric-val">7,213 Videos</div>
-          </div>
-          <div class="metric-item">
-            <div class="metric-lbl">Analytical Dataset</div>
-            <div class="metric-val" style="color: #10B981;">6,074 Videos</div>
-          </div>
-          <div class="metric-item">
-            <div class="metric-lbl">Unique Channels</div>
-            <div class="metric-val" style="color: #38BDF8;">3,789 Channels</div>
-          </div>
-          <div class="metric-item">
-            <div class="metric-lbl">Annotated Comments</div>
-            <div class="metric-val" style="color: #FF5B04;">60,507 Comments</div>
-          </div>
-        `;
+            <div class="metric-item">
+              <div class="metric-lbl">Collected Corpus</div>
+              <div class="metric-val">7,213 Videos</div>
+            </div>
+            <div class="metric-item">
+              <div class="metric-lbl">Analytical Dataset</div>
+              <div class="metric-val" style="color: #10B981;">6,074 Videos</div>
+            </div>
+            <div class="metric-item">
+              <div class="metric-lbl">Unique Channels</div>
+              <div class="metric-val" style="color: #38BDF8;">3,789 Channels</div>
+            </div>
+            <div class="metric-item">
+              <div class="metric-lbl">Annotated Comments</div>
+              <div class="metric-val" style="color: #FF5B04;">60,507 Comments</div>
+            </div>
+          `;
 
           interactiveControls.querySelectorAll(".ctrl-btn").forEach((btn) => {
             btn.addEventListener("click", () => {
@@ -1552,37 +2528,37 @@
             });
           });
         } else if (activeTab === "zeroshot") {
-          hudTitle.textContent = "3. Zero-Shot Stance & Bayesian Logistic Validation";
+          hudTitle.textContent = "2. Zero-Shot Stance & Dual-Stream Architecture";
           hudDesc.textContent =
-            "GPT-4o-mini zero-shot classification achieves 82.5% accuracy against human ground truth with Cohen kappa = 0.94. Bayesian multilevel modeling controls for channel clustering.";
+            "GPT-4o-mini zero-shot classification achieves 82.5% accuracy against human ground truth with Cohen kappa = 0.94. Comments classified in context of video keyword windows.";
 
           interactiveControls.innerHTML = `
-          <span style="font-size: 10px; font-weight: 700; color: #38BDF8; text-transform: uppercase;">Inspect Stance:</span>
-          <button class="ctrl-btn ${zeroShotInspectStance === "SA" ? "active" : ""}" data-stance="SA">SA</button>
-          <button class="ctrl-btn ${zeroShotInspectStance === "A" ? "active" : ""}" data-stance="A">A</button>
-          <button class="ctrl-btn ${zeroShotInspectStance === "Neutral" ? "active" : ""}" data-stance="Neutral">Neutral</button>
-          <button class="ctrl-btn ${zeroShotInspectStance === "IF" ? "active" : ""}" data-stance="IF">IF</button>
-          <button class="ctrl-btn ${zeroShotInspectStance === "SIF" ? "active" : ""}" data-stance="SIF">SIF</button>
-        `;
+            <span style="font-size: 10px; font-weight: 700; color: #38BDF8; text-transform: uppercase;">Inspect Stance:</span>
+            <button class="ctrl-btn ${zeroShotInspectStance === "SA" ? "active" : ""}" data-stance="SA">SA (812)</button>
+            <button class="ctrl-btn ${zeroShotInspectStance === "A" ? "active" : ""}" data-stance="A">A (602)</button>
+            <button class="ctrl-btn ${zeroShotInspectStance === "Neutral" ? "active" : ""}" data-stance="Neutral">Neutral (996)</button>
+            <button class="ctrl-btn ${zeroShotInspectStance === "IF" ? "active" : ""}" data-stance="IF">IF (1,172)</button>
+            <button class="ctrl-btn ${zeroShotInspectStance === "SIF" ? "active" : ""}" data-stance="SIF">SIF (2,492)</button>
+          `;
 
           metricsRow.innerHTML = `
-          <div class="metric-item">
-            <div class="metric-lbl">Human Agreement</div>
-            <div class="metric-val" style="color: #10B981;">82.5% Accuracy</div>
-          </div>
-          <div class="metric-item">
-            <div class="metric-lbl">Inter-Rater Reliability</div>
-            <div class="metric-val" style="color: #38BDF8;">Cohen κ = 0.94</div>
-          </div>
-          <div class="metric-item">
-            <div class="metric-lbl">Stance Categories</div>
-            <div class="metric-val">5 Ordinal Classes</div>
-          </div>
-          <div class="metric-item">
-            <div class="metric-lbl">Model Architecture</div>
-            <div class="metric-val" style="color: #FF5B04;">GPT-4o-mini Zero-Shot</div>
-          </div>
-        `;
+            <div class="metric-item">
+              <div class="metric-lbl">Human Agreement</div>
+              <div class="metric-val" style="color: #10B981;">82.5% Accuracy</div>
+            </div>
+            <div class="metric-item">
+              <div class="metric-lbl">Inter-Rater Reliability</div>
+              <div class="metric-val" style="color: #38BDF8;">Cohen κ = 0.94</div>
+            </div>
+            <div class="metric-item">
+              <div class="metric-lbl">Comment Accuracy</div>
+              <div class="metric-val" style="color: #F59E0B;">90.0% Concordance</div>
+            </div>
+            <div class="metric-item">
+              <div class="metric-lbl">Model Architecture</div>
+              <div class="metric-val" style="color: #FF5B04;">GPT-4o-mini Dual-Stream</div>
+            </div>
+          `;
 
           interactiveControls.querySelectorAll(".ctrl-btn").forEach((btn) => {
             btn.addEventListener("click", () => {
@@ -1591,42 +2567,84 @@
               if (soundEnabled) playTone(400, "sine", 0.08, 0.05);
             });
           });
+        } else if (activeTab === "bayesian") {
+          hudTitle.textContent = "3. Bayesian Multilevel Models: Volume Controls Velocity";
+          hudDesc.textContent =
+            "Hierarchical Beta and Negative Binomial regressions isolate the true ideological dynamics. After adjusting for engagement volume, hesitant uploads reach P90 view saturation ~20% faster (IRR = 0.80, 94% HDI [0.70, 0.90]), attenuating over half of the unadjusted 44% descriptive gap.";
+
+          interactiveControls.innerHTML = `
+            <span style="font-size: 10px; font-weight: 700; color: #F59E0B; text-transform: uppercase;">Volume Conditioning:</span>
+            <button id="btn-bayesian-toggle" class="ctrl-btn active">
+              ${modelMode === "descriptive" ? "Show Volume-Controlled (~20%)" : "Show Unadjusted (44%)"}
+            </button>
+            <span style="font-size: 11px; font-family: var(--font-mono); color: #10B981; font-weight: 700; margin-left: 8px;">
+              Attenuates 55% of Gap
+            </span>
+          `;
+
+          const irrVal = modelMode === "descriptive" ? "IRR = 0.56 [0.49, 0.64]" : "IRR = 0.80 [0.70, 0.90]";
+          const velGapText = modelMode === "descriptive" ? "44% Faster (Raw)" : "20% Faster (Controlled)";
+
+          metricsRow.innerHTML = `
+            <div class="metric-item">
+              <div class="metric-lbl">Like Rate OR</div>
+              <div class="metric-val" style="color: #FF5B04;">OR = 1.018</div>
+            </div>
+            <div class="metric-item">
+              <div class="metric-lbl">Saturation IRR</div>
+              <div class="metric-val" style="color: #10B981;">${irrVal}</div>
+            </div>
+            <div class="metric-item">
+              <div class="metric-lbl">Speed Differential</div>
+              <div class="metric-val" style="color: #F59E0B;">${velGapText}</div>
+            </div>
+            <div class="metric-item">
+              <div class="metric-lbl">MCMC Diagnostics</div>
+              <div class="metric-val" style="color: #38BDF8;">R-hat < 1.01</div>
+            </div>
+          `;
+
+          document.querySelector("#btn-bayesian-toggle").addEventListener("click", () => {
+            modelMode = modelMode === "descriptive" ? "controlled" : "descriptive";
+            updateHUDContent();
+            if (soundEnabled) playTone(modelMode === "descriptive" ? 640 : 520, "sine", 0.12, 0.07);
+          });
         } else if (activeTab === "saturation") {
           hudTitle.textContent = "4. Temporal Saturation: 18 vs 32 Day Velocities";
           hudDesc.textContent =
-            "Anti-vaccine uploads reach 90% cumulative views in 18 days vs 32 days for pro-vaccine (44% faster descriptive velocity, IRR = 0.80). Conditioning on total volume attenuates the gap to ~20%.";
+            "Anti-vaccine uploads reach 90% cumulative views in 18 days vs 32 days for pro-vaccine (44% faster descriptive velocity, IRR = 0.56). Conditioning on total volume attenuates the gap to ~20% (IRR = 0.80).";
 
           interactiveControls.innerHTML = `
-          <div style="display:flex; align-items:center; gap:8px; width:100%;">
-            <span style="font-size: 10px; font-weight: 700; color: var(--design-orange); text-transform: uppercase;">Scrub:</span>
-            <input type="range" id="time-slider" class="interactive-slider" min="0" max="60" value="${scrubDay}">
-            <span id="time-display" style="font-size: 11px; font-family: var(--font-mono); font-weight: 700; min-width: 48px;">Day ${scrubDay}</span>
-            <button id="btn-model-toggle" class="ctrl-btn active" style="margin-left:auto;">${modelMode === "descriptive" ? "Descriptive (44%)" : "Controlled (~20%)"}</button>
-          </div>
-        `;
+            <div style="display:flex; align-items:center; gap:8px; width:100%;">
+              <span style="font-size: 10px; font-weight: 700; color: var(--design-orange); text-transform: uppercase;">Scrub:</span>
+              <input type="range" id="time-slider" class="interactive-slider" min="0" max="60" value="${scrubDay}">
+              <span id="time-display" style="font-size: 11px; font-family: var(--font-mono); font-weight: 700; min-width: 48px;">Day ${scrubDay}</span>
+              <button id="btn-model-toggle" class="ctrl-btn active" style="margin-left:auto;">${modelMode === "descriptive" ? "Descriptive (44%)" : "Controlled (~20%)"}</button>
+            </div>
+          `;
 
           const antiP90 = modelMode === "descriptive" ? "18 Days" : "22 Days";
           const proP90 = modelMode === "descriptive" ? "32 Days" : "28 Days";
           const velGap = modelMode === "descriptive" ? "+44% Faster" : "~20% Residual";
 
           metricsRow.innerHTML = `
-          <div class="metric-item">
-            <div class="metric-lbl">Anti-Vaccine (P90)</div>
-            <div class="metric-val" style="color: #FF5B04;">${antiP90}</div>
-          </div>
-          <div class="metric-item">
-            <div class="metric-lbl">Pro-Vaccine (P90)</div>
-            <div class="metric-val" style="color: #38BDF8;">${proP90}</div>
-          </div>
-          <div class="metric-item">
-            <div class="metric-lbl">Saturation Velocity</div>
-            <div class="metric-val" style="color: #F59E0B;">${velGap}</div>
-          </div>
-          <div class="metric-item">
-            <div class="metric-lbl">Bayesian Hazard Ratio</div>
-            <div class="metric-val" style="color: #10B981;">IRR = 0.80 [0.70, 0.90]</div>
-          </div>
-        `;
+            <div class="metric-item">
+              <div class="metric-lbl">Anti-Vaccine (P90)</div>
+              <div class="metric-val" style="color: #FF5B04;">${antiP90}</div>
+            </div>
+            <div class="metric-item">
+              <div class="metric-lbl">Pro-Vaccine (P90)</div>
+              <div class="metric-val" style="color: #38BDF8;">${proP90}</div>
+            </div>
+            <div class="metric-item">
+              <div class="metric-lbl">Saturation Velocity</div>
+              <div class="metric-val" style="color: #F59E0B;">${velGap}</div>
+            </div>
+            <div class="metric-item">
+              <div class="metric-lbl">Bayesian Hazard Ratio</div>
+              <div class="metric-val" style="color: #10B981;">IRR = 0.80 [0.70, 0.90]</div>
+            </div>
+          `;
 
           document.querySelector("#time-slider").addEventListener("input", (e) => {
             scrubDay = parseInt(e.target.value);
@@ -1642,7 +2660,7 @@
             if (soundEnabled) playTone(modelMode === "descriptive" ? 640 : 520, "sine", 0.12, 0.07);
           });
         } else if (activeTab === "samples") {
-          hudTitle.textContent = "5. Empirical Data: Comments, Videos & Zero-Shot Reasoning";
+          hudTitle.textContent = "5. Empirical Discourse: Comments, Videos & Zero-Shot Reasoning";
 
           const filtered = empiricalSamples.filter((s) => {
             if (sampleFilter === "all") return true;
@@ -1737,7 +2755,6 @@
             </div>
           `;
 
-          // Event bindings
           document.querySelector("#btn-prev-sample").addEventListener("click", () => {
             sampleIndex = (sampleIndex - 1 + filtered.length) % filtered.length;
             updateHUDContent();
@@ -1756,48 +2773,157 @@
             if (soundEnabled) playTone(600, "triangle", 0.1, 0.06);
           });
 
-          interactiveControls.querySelectorAll("button[data-filter]").forEach((btn) => {
-            btn.addEventListener("click", () => {
-              sampleFilter = btn.dataset.filter;
+          interactiveControls.querySelectorAll("[data-filter]").forEach((fBtn) => {
+            fBtn.addEventListener("click", () => {
+              sampleFilter = fBtn.dataset.filter;
               sampleIndex = 0;
               updateHUDContent();
-              if (soundEnabled) playTone(480, "triangle", 0.08, 0.05);
+              if (soundEnabled) playTone(480, "sine", 0.08, 0.05);
             });
           });
+        } else if (activeTab === "moderation") {
+          hudTitle.textContent = "6. Creator Types & Moderation Timing";
+          hudDesc.textContent =
+            "Institutional health communications trigger hostile audience sorting (47.4% opposition), whereas individual practitioners establish parasocial trust (51.5% agreement). Guideline removals occurred at a median 14.4 days, after >80% of audience exposure had already accumulated (P90 = 18 days).";
+
+          interactiveControls.innerHTML = `
+            <div style="display:flex; align-items:center; gap:8px; width:100%;">
+              <span style="font-size: 10px; font-weight: 700; color: #BE123C; text-transform: uppercase;">Enforcement Delay:</span>
+              <input type="range" id="removal-slider" class="interactive-slider" min="1" max="40" step="0.5" value="${scrubRemovalDay}">
+              <span id="removal-display" style="font-size: 11px; font-family: var(--font-mono); font-weight: 700; min-width: 52px; color: #BE123C;">
+                Day ${scrubRemovalDay.toFixed(1)}
+              </span>
+              <button class="ctrl-btn ${scrubRemovalDay === 14.4 ? "active" : ""}" id="btn-preset-med" style="margin-left:auto;">14.4d Median</button>
+              <button class="ctrl-btn ${scrubRemovalDay === 5 ? "active" : ""}" id="btn-preset-early">5d Early</button>
+            </div>
+          `;
+
+          const exposedPct = Math.round(
+            Math.min(100, (Math.pow(scrubRemovalDay, 1.6) / (Math.pow(scrubRemovalDay, 1.6) + Math.pow(7.5, 1.6))) * 100)
+          );
+
+          metricsRow.innerHTML = `
+            <div class="metric-item">
+              <div class="metric-lbl">Median Removal</div>
+              <div class="metric-val" style="color: #BE123C;">14.4 Days (IQR 4.9-35.8)</div>
+            </div>
+            <div class="metric-item">
+              <div class="metric-lbl">Audience Exposure</div>
+              <div class="metric-val" style="color: #F59E0B;">${exposedPct}% Views Pre-Removal</div>
+            </div>
+            <div class="metric-item">
+              <div class="metric-lbl">Institutional Divide</div>
+              <div class="metric-val" style="color: #38BDF8;">47.4% Disagreement</div>
+            </div>
+            <div class="metric-item">
+              <div class="metric-lbl">Practitioner Vloggers</div>
+              <div class="metric-val" style="color: #10B981;">51.5% Agreement</div>
+            </div>
+          `;
+
+          const sl = document.querySelector("#removal-slider");
+          if (sl) {
+            sl.addEventListener("input", (e) => {
+              scrubRemovalDay = parseFloat(e.target.value);
+              document.querySelector("#removal-display").textContent = `Day ${scrubRemovalDay.toFixed(1)}`;
+              updateHUDContent();
+              if (soundEnabled) playTone(500 + scrubRemovalDay * 10, "triangle", 0.08, 0.04);
+            });
+          }
+          const bMed = document.querySelector("#btn-preset-med");
+          if (bMed) {
+            bMed.addEventListener("click", () => {
+              scrubRemovalDay = 14.4;
+              updateHUDContent();
+            });
+          }
+          const bEarly = document.querySelector("#btn-preset-early");
+          if (bEarly) {
+            bEarly.addEventListener("click", () => {
+              scrubRemovalDay = 5.0;
+              updateHUDContent();
+            });
+          }
         }
       }
 
       // Tab click binding
       sectionTabs.querySelectorAll(".tab-btn").forEach((btn) => {
         btn.addEventListener("click", () => {
-          sectionTabs.querySelectorAll(".tab-btn").forEach((b) => b.classList.remove("active"));
-          btn.classList.add("active");
-          activeTab = btn.dataset.tab;
-          updateHUDContent();
+          switchTab(btn.dataset.tab);
           if (soundEnabled) playTone(540, "triangle", 0.1, 0.08);
         });
       });
+
+      // Mini-Map tile click binding
+      document.querySelectorAll(".map-tile").forEach((tile) => {
+        tile.addEventListener("click", () => {
+          switchTab(tile.dataset.tab);
+          if (soundEnabled) playTone(580, "sine", 0.1, 0.06);
+        });
+      });
+
+      // Local Debug Bar simulate target bindings
+      function simulateAnchor(idx) {
+        const cfg = ANCHORS_CONFIG[idx];
+        if (!cfg) return;
+        if (cfg.anchor && cfg.anchor.onTargetFound) {
+          cfg.anchor.onTargetFound();
+        } else {
+          switchTab(cfg.tab);
+        }
+      }
+
+      function simulateUnlock() {
+        ANCHORS_CONFIG.forEach((cfg) => {
+          if (cfg.anchor && cfg.anchor.onTargetLost) {
+            cfg.anchor.onTargetLost();
+          }
+        });
+        targetLocked = false;
+        scannerGuide.classList.remove("locked");
+        scannerStatus.textContent = "Scan Any Poster Section or Card";
+        trackingDot.style.background = "var(--design-orange)";
+        hudStatus.textContent = "SCANNING...";
+        hudStatus.style.color = "#38BDF8";
+        document.querySelectorAll(".dbg-btn").forEach((b) => b.classList.remove("active"));
+        const unlk = document.querySelector("#btn-dbg-unlock");
+        if (unlk) unlk.classList.add("active");
+      }
+
+      document.querySelectorAll(".dbg-btn[data-anchor]").forEach((btn) => {
+        btn.addEventListener("click", () => {
+          const idx = parseInt(btn.dataset.anchor);
+          simulateAnchor(idx);
+        });
+      });
+      const unlkBtn = document.querySelector("#btn-dbg-unlock");
+      if (unlkBtn) {
+        unlkBtn.addEventListener("click", simulateUnlock);
+      }
 
       // -------------------------------------------------------------
       // DIRECT 2D SIMULATION LOOP (Zero-Camera Fallback)
       // -------------------------------------------------------------
       function directSimLoop() {
         if (!isARMode) {
-          simCtx.clearRect(0, 0, simCanvas.width, simCanvas.height);
+          globalTick += 0.03;
+          const activeCfg = ANCHORS_CONFIG.find((c) => c.tab === activeTab) || ANCHORS_CONFIG[0];
+          activeCfg.draw(activeCfg.ctx, activeCfg.canvasW, activeCfg.canvasH);
 
-          // Render Dynamic Layer
-          renderOverlayGraphics();
-          simCtx.drawImage(overlayCanvas, 0, 0, simCanvas.width, simCanvas.height);
+          simCanvas.width = activeCfg.canvasW;
+          simCanvas.height = activeCfg.canvasH;
+          simCtx.clearRect(0, 0, simCanvas.width, simCanvas.height);
+          simCtx.drawImage(activeCfg.canvas, 0, 0);
 
           animId = requestAnimationFrame(directSimLoop);
         }
       }
 
       // -------------------------------------------------------------
-      // WEBAR IMAGE TRACKING (MindAR + Three.js)
+      // WEBAR MULTI-IMAGE TRACKING (MindAR + Three.js)
       // -------------------------------------------------------------
       let mindarThree = null;
-      let canvasTexture = null;
 
       async function initAR() {
         try {
@@ -1805,61 +2931,76 @@
           mindarThree = new MindARThree({
             container: arContainer,
             imageTargetSrc: "./targets.mind",
+            maxTrack: 2,
             filterMinCF: 0.0005,
             filterBeta: 1000,
           });
 
           const { renderer, scene, camera } = mindarThree;
 
-          // Anchor 0: Hero Mechanisms Panel
-          const anchor = mindarThree.addAnchor(0);
+          // Register all 6 anchors with their matching aspect ratios
+          ANCHORS_CONFIG.forEach((cfg) => {
+            const anchor = mindarThree.addAnchor(cfg.targetIndex);
+            cfg.anchor = anchor;
 
-          // Geometry matching 1000 x 360 overlay aspect ratio over 800 x 141 target
-          // Width = 1.0, Height = 0.36
-          const planeGeo = new THREE.PlaneGeometry(1.04, 0.38);
-          canvasTexture = new THREE.CanvasTexture(overlayCanvas);
-          canvasTexture.minFilter = THREE.LinearFilter;
-          canvasTexture.magFilter = THREE.LinearFilter;
+            const planeGeo = new THREE.PlaneGeometry(cfg.meshW, cfg.meshH);
+            const planeMat = new THREE.MeshBasicMaterial({
+              map: cfg.texture,
+              transparent: true,
+              opacity: 0.98,
+              side: THREE.DoubleSide,
+            });
 
-          const planeMat = new THREE.MeshBasicMaterial({
-            map: canvasTexture,
-            transparent: true,
-            opacity: 0.98,
-            side: THREE.DoubleSide,
+            const overlayMesh = new THREE.Mesh(planeGeo, planeMat);
+            overlayMesh.position.set(0, 0, 0.02); // 2cm offset to avoid z-fighting with paper
+            anchor.group.add(overlayMesh);
+            cfg.mesh = overlayMesh;
+
+            // Target Found Callback
+            anchor.onTargetFound = () => {
+              cfg.isFound = true;
+              targetLocked = true;
+              activeAnchorIndex = cfg.targetIndex;
+              scannerGuide.classList.add("locked");
+              scannerStatus.textContent = `ANCHOR LOCKED: ${cfg.title.toUpperCase()}`;
+              trackingDot.style.background = "#10B981";
+              trackingDot.style.boxShadow = "0 0 12px #10B981";
+              hudStatus.textContent = `LOCKED: ${cfg.name}`;
+              hudStatus.style.color = "#10B981";
+
+              // Automatically switch active tab and HUD content to detected section!
+              switchTab(cfg.tab);
+              playTone(520 + cfg.targetIndex * 70, "sine", 0.18, 0.08);
+            };
+
+            // Target Lost Callback
+            anchor.onTargetLost = () => {
+              cfg.isFound = false;
+              const anyFound = ANCHORS_CONFIG.some((a) => a.isFound);
+              if (!anyFound) {
+                targetLocked = false;
+                scannerGuide.classList.remove("locked");
+                scannerStatus.textContent = "Scan Any Poster Section or Card";
+                trackingDot.style.background = "var(--design-orange)";
+                trackingDot.style.boxShadow = "0 0 10px var(--design-orange)";
+                hudStatus.textContent = "SCANNING...";
+                hudStatus.style.color = "#38BDF8";
+              }
+            };
           });
-
-          const overlayMesh = new THREE.Mesh(planeGeo, planeMat);
-          overlayMesh.position.set(0, 0, 0.02); // Slightly raised above paper
-          anchor.group.add(overlayMesh);
-
-          // Anchor Status Callbacks
-          anchor.onTargetFound = () => {
-            targetLocked = true;
-            scannerGuide.classList.add("locked");
-            scannerStatus.textContent = "ANCHOR LOCKED : SCIENTIFIC DYNAMICS ACTIVE";
-            trackingDot.style.background = "#10B981";
-            trackingDot.style.boxShadow = "0 0 12px #10B981";
-            hudStatus.textContent = "LOCKED";
-            hudStatus.style.color = "#10B981";
-            playTone(520, "sine", 0.2, 0.1);
-          };
-
-          anchor.onTargetLost = () => {
-            targetLocked = false;
-            scannerGuide.classList.remove("locked");
-            scannerStatus.textContent = "Align with Top Mechanism Panel";
-            trackingDot.style.background = "var(--design-orange)";
-            trackingDot.style.boxShadow = "0 0 10px var(--design-orange)";
-            hudStatus.textContent = "SEARCHING";
-            hudStatus.style.color = "#38BDF8";
-          };
 
           await mindarThree.start();
           hudStatus.textContent = "SCANNING...";
 
           renderer.setAnimationLoop(() => {
-            renderOverlayGraphics();
-            if (canvasTexture) canvasTexture.needsUpdate = true;
+            globalTick += 0.03;
+            // Redraw textures for visible or active anchors
+            ANCHORS_CONFIG.forEach((cfg) => {
+              if (cfg.anchor.group.visible || cfg.tab === activeTab) {
+                cfg.draw(cfg.ctx, cfg.canvasW, cfg.canvasH);
+                cfg.texture.needsUpdate = true;
+              }
+            });
             renderer.render(scene, camera);
           });
         } catch (err) {
@@ -1878,6 +3019,8 @@
         arContainer.style.display = "block";
         simContainer.style.display = "none";
         scannerGuide.style.display = "flex";
+        const dbgBar = document.querySelector("#local-debug-bar");
+        if (dbgBar) dbgBar.style.display = "flex";
         cancelAnimationFrame(animId);
         if (!mindarThree) {
           initAR();
@@ -1891,6 +3034,8 @@
         arContainer.style.display = "none";
         simContainer.style.display = "flex";
         scannerGuide.style.display = "none";
+        const dbgBar = document.querySelector("#local-debug-bar");
+        if (dbgBar) dbgBar.style.display = "none";
         trackingDot.style.background = "#38BDF8";
         trackingDot.style.boxShadow = "0 0 10px #38BDF8";
         hudStatus.textContent = "SIMULATION ACTIVE";
@@ -1901,11 +3046,26 @@
       btnModeAR.addEventListener("click", switchToARMode);
       btnModeSim.addEventListener("click", switchToSimMode);
 
-      // Initialize HUD and start
-      window.addEventListener("DOMContentLoaded", () => {
-        updateHUDContent();
-        initAR();
-      });
+      // Robust Bootstrap Routine
+      function boot() {
+        const params = new URLSearchParams(window.location.search);
+        const reqTab = params.get("tab") || "mechanisms";
+        const reqMode = params.get("mode");
+
+        switchTab(reqTab);
+
+        if (reqMode === "sim") {
+          switchToSimMode();
+        } else {
+          switchToARMode();
+        }
+      }
+
+      if (document.readyState === "loading") {
+        window.addEventListener("DOMContentLoaded", boot);
+      } else {
+        boot();
+      }
     </script>
   </body>
 </html>
