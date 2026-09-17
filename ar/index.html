@@ -338,6 +338,78 @@
         line-height: 1.45;
       }
 
+      /* Sample Viewer Styling in HUD */
+      .sample-meta-row {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 6px;
+        flex-wrap: wrap;
+        gap: 6px;
+      }
+
+      .sample-badge {
+        display: inline-block;
+        padding: 2px 7px;
+        border-radius: 10px;
+        font-size: 9px;
+        font-weight: 700;
+        font-family: var(--font-mono);
+        text-transform: uppercase;
+        letter-spacing: 0.04em;
+      }
+
+      .badge-agree {
+        background: rgba(16, 185, 129, 0.2);
+        color: #10b981;
+        border: 1px solid #10b981;
+      }
+
+      .badge-disagree {
+        background: rgba(225, 29, 72, 0.2);
+        color: #f43f5e;
+        border: 1px solid #f43f5e;
+      }
+
+      .badge-neutral {
+        background: rgba(148, 163, 184, 0.2);
+        color: #94a3b8;
+        border: 1px solid #94a3b8;
+      }
+
+      .badge-positive {
+        background: rgba(16, 185, 129, 0.2);
+        color: #34d399;
+      }
+
+      .badge-negative {
+        background: rgba(225, 29, 72, 0.2);
+        color: #fb7185;
+      }
+
+      .sample-quote {
+        background: rgba(15, 23, 28, 0.85);
+        border-left: 3px solid var(--design-orange);
+        padding: 8px 10px;
+        border-radius: 0 6px 6px 0;
+        margin: 6px 0;
+        font-size: 11px;
+        color: #ffffff;
+        line-height: 1.45;
+        font-style: italic;
+      }
+
+      .sample-reasoning-box {
+        background: rgba(7, 80, 86, 0.22);
+        border: 1px solid rgba(7, 80, 86, 0.6);
+        border-radius: 6px;
+        padding: 7px 10px;
+        margin: 6px 0;
+        font-size: 10.5px;
+        color: #fdf6e3;
+        line-height: 1.4;
+      }
+
       /* Metrics Grid */
       .metrics-row {
         display: flex;
@@ -469,6 +541,7 @@
           <button class="tab-btn" data-tab="pipeline">2. Data Pipeline</button>
           <button class="tab-btn" data-tab="zeroshot">3. Zero-Shot</button>
           <button class="tab-btn" data-tab="saturation">4. Saturation</button>
+          <button class="tab-btn" data-tab="samples">5. Labeled Samples</button>
         </div>
 
         <div class="mode-pill">
@@ -545,6 +618,8 @@
       let pipelineStep = 0; // 0 to 3
       let zeroShotInspectStance = "SA"; // 'SIF', 'IF', 'Neutral', 'A', 'SA'
       let conflictIntensity = 1.0;
+      let sampleIndex = 0;
+      let sampleFilter = "all"; // 'all', 'agree', 'disagree', 'neutral'
 
       // Elements
       const arContainer = document.querySelector("#ar-container");
@@ -660,6 +735,8 @@
           renderZeroShotTab();
         } else if (activeTab === "saturation") {
           renderSaturationTab();
+        } else if (activeTab === "samples") {
+          renderSamplesTab();
         }
       }
 
@@ -1094,6 +1171,308 @@
         }
       }
 
+      // --- TEXT WRAPPING HELPER FOR CANVAS 2D ---
+      function drawWrappedText(context, text, x, y, maxWidth, lineHeight, maxLines = 4) {
+        const words = (text || "").split(" ");
+        let line = "";
+        let linesDrawn = 0;
+
+        for (let n = 0; n < words.length; n++) {
+          const testLine = line + (line ? " " : "") + words[n];
+          const metrics = context.measureText(testLine);
+          if (metrics.width > maxWidth && n > 0) {
+            context.fillText(line, x, y);
+            line = words[n];
+            y += lineHeight;
+            linesDrawn++;
+            if (linesDrawn >= maxLines - 1 && n < words.length - 1) {
+              let rest = line;
+              while (context.measureText(rest + "...").width > maxWidth && rest.length > 0) {
+                rest = rest.slice(0, -1);
+              }
+              context.fillText(rest + "...", x, y);
+              return y + lineHeight;
+            }
+          } else {
+            line = testLine;
+          }
+        }
+        context.fillText(line, x, y);
+        return y + lineHeight;
+      }
+
+      // --- CURATED EMPIRICAL SAMPLES FROM data/labeled/comments_classified_sentiment_100.csv ---
+      const empiricalSamples = [
+        {
+          id: "9r1PFuVWX1U",
+          video_title: 'Child Dies from Measles in Texas as Disease "Comes Roaring Back" Amid Anti-Vaccine Disinformation',
+          video_transcript:
+            "democracy depends on a free press please support our independent journalism at democracynow.org We Begin Today's Show in Texas where an unvaccinated child has died of measles it's the first reported measles death in the United States in a decade...",
+          comment:
+            "Sadly, it takes an innocent child dying or going deaf before these stupid Trumpers wake up and welcome back science into their lives. Drug addict RFK Jr nonchalantly writing off these deaths is DISGUSTING.",
+          agreement: "Agree",
+          agreement_reasoning:
+            "The comment agrees with the video's key message on the importance of vaccination by condemning those who spread anti-vaccine disinformation, which aligns with the video's message about the resurgence of measles due to decreased vaccinations.",
+          sentiment: "Negative",
+          sentiment_reasoning:
+            "The comment expresses strong negative emotions, describing anti-vaccine actions and certain individuals as 'stupid' and 'DISGUSTING,' indicating a negative sentiment.",
+          category: "Echo Consensus",
+          mechanism:
+            "Echo Chamber: Pro-vaccine broadcast elicits within-group moral condemnation of anti-vaccine figures with strong shared consensus.",
+        },
+        {
+          id: "1199cr2IiC8",
+          video_title: "Dr. Suzanne Humphries Explains What Actually Happened to Polio",
+          video_transcript:
+            'the joe rogan experience and so first i had to go down the flu the flu vaccine bunny trail and every time i went down that flu vaccine bunny trail guess what i was asked "what about polio?" right so i thought all right even though this has zero to do with polio...',
+          comment:
+            'My 80 year old father believes in all vaccines because of polio which I saw as a child in his "farming" community. Sounds like all vaccines are BS??',
+          agreement: "Disagree",
+          agreement_reasoning:
+            "The comment implies skepticism about vaccines, suggesting they are 'BS', which contradicts the video's claim that polio's decline was due not solely to vaccines but also due to changes in diagnostic criteria and other factors.",
+          sentiment: "Negative",
+          sentiment_reasoning:
+            "The sentiment in the comment is negative because it dismisses all vaccines as 'BS', indicating skepticism and disbelief.",
+          category: "Battleground Contention",
+          mechanism:
+            "Battleground Contention: Alternative medical history video triggers cross-generational skepticism questioning all vaccine efficacy.",
+        },
+        {
+          id: "3pcCHqxhBa4",
+          video_title: "Flu Shot Makes You MORE LIKELY To Get The Flu!",
+          video_transcript:
+            "Cleveland consistent with data on the COVID vaccine from um Quebec in Canada and now negative efficacy for the influenza vaccine from the Cleveland Clinic Now my concern here is I've just put a note there My concern is here people will say...",
+          comment: "Dr. John Campbell has been very transparent and when he's wrong guess what he admits it. (what a charlatan)",
+          agreement: "Disagree",
+          agreement_reasoning:
+            "The comment sarcastically refers to Dr. John Campbell as a 'charlatan,' implying a distrust of his findings and conclusions, which aligns with disagreement towards the video's assertion that the flu vaccine increases infection risk.",
+          sentiment: "Negative",
+          sentiment_reasoning:
+            "The sentiment is negative due to the sarcastic and critical use of 'charlatan' to describe Dr. John Campbell, indicating disapproval or distrust.",
+          category: "Battleground Contention",
+          mechanism:
+            "Battleground Contention: Contrarian medical influencer video triggers direct skepticism and accusations of charlatanism in comment section.",
+        },
+        {
+          id: "6XerZmxcx6c",
+          video_title: "New study determines shingles vaccine could reduce dementia risk",
+          video_transcript:
+            "well according to a new study the vaccine to treat Shing the shingles virus could reduce the risk of Dementia by 20% more than 280,000 people in Wales were involved in the study by a Stanford University team joining us now live from California is lea...",
+          comment: "BS!people still get vaccines after covid?",
+          agreement: "Disagree",
+          agreement_reasoning:
+            "The comment expresses skepticism towards vaccines, which contradicts the video's positive claims about the benefits of the shingles vaccine in potentially reducing dementia risk.",
+          sentiment: "Negative",
+          sentiment_reasoning:
+            "The language used in the comment, including 'BS!' and skepticism about getting vaccines post-COVID, conveys a negative sentiment.",
+          category: "Battleground Contention",
+          mechanism: "Spillover Cynicism: Mainstream health reporting on shingles/dementia meets generalized post-COVID vaccine skepticism.",
+        },
+        {
+          id: "7g38Mf9UY7w",
+          video_title: "Definitive vaccine myocarditis paper",
+          video_transcript:
+            "published in the International Journal of Cardiovascular Research and Innovation as I understand it. Tell us about the scope of this research and really your top findings from it. So, it's a compilation of studies that really have been out there sinc...",
+          comment:
+            "Dr. Campbell I wish there were studies on the effect of the vaccine on the brain. I just read an MRI brain report from 2023 for an acoustic neuroma I didn't have, not dedicated to an examination of anything else, where scattered white foci were seen... Have you seen any mention of brain vascular damage from the virus or vaccine?",
+          agreement: "Agree",
+          agreement_reasoning:
+            "The comment shares personal observations of potential post-vaccination and post-COVID symptoms, suggesting concern about vaccine-related effects similar to those discussed in the video regarding myocarditis and potential adverse reactions to mRNA vaccines.",
+          sentiment: "Neutral",
+          sentiment_reasoning:
+            "The comment neutrally seeks information, sharing personal experiences without expressing overt criticism or endorsement of the vaccine.",
+          category: "Echo Consensus",
+          mechanism:
+            "Echo Chamber Somatic Validation: Peer discussion of myocarditis risks and self-reported neurological symptoms seeking community validation.",
+        },
+        {
+          id: "0HE98kE2sJc",
+          video_title: "DOGE DIVIDEND CHECK UPDATE! TRUMP EXECUTES MASSIVE PAYDAY FOR ALL AMERICANS *HOST ON THE VIEW FIGHT*",
+          video_transcript:
+            "is that my service and valued um they don't care about how this impacts me or people like me so I don't know if you guys heard but today president Trump is going to sign an executive order to allow all military members that were kicked out...",
+          comment: "GOD gave us this man that is our HERO to save this Country . Our HERO President Trump !!!",
+          agreement: "Agree",
+          agreement_reasoning:
+            "The comment refers to Trump as a 'HERO' and expresses support, which aligns with the video's positive depiction of Trump's actions to reinstate military members expelled due to vaccine mandates.",
+          sentiment: "Positive",
+          sentiment_reasoning:
+            "The comment uses reverent and supportive language, describing Trump as a 'HERO' given by 'GOD', indicating strong positive sentiment.",
+          category: "Echo Consensus",
+          mechanism:
+            "Identity Politics Alignment: Anti-mandate military reinstatement celebrated as heroic governance in partisan political framing.",
+        },
+        {
+          id: "j0HPGI0lEm8",
+          video_title: "Trump Admin FAST TACKS New mRNA Vaccine For Bird Flu, Harvard Warns A PANDEMIC May Be Coming",
+          video_transcript:
+            "deep concerns over a potential bird flu outbreak as the Trump administration's FDA has fasttracked the designation for a potential bird flu vaccine that's right ladies and gentlemen as the media continually reports that we are on the verge...",
+          comment: "so we've been betrayed by HHS, Also known as democrat turncoat; RFK",
+          agreement: "Disagree",
+          agreement_reasoning:
+            "The comment expresses distrust towards RFK and the HHS, implying a belief that these entities have not acted in the public's best interests, which disagrees with the video's somewhat neutral to positive portrayal of the development of mRNA vaccines for bird flu as a preparatory measure.",
+          sentiment: "Negative",
+          sentiment_reasoning:
+            "The language in the comment indicates a sense of betrayal, which is inherently negative as it conveys feelings of disappointment and distrust towards HHS and RFK.",
+          category: "Battleground Contention",
+          mechanism: "Institutional Fragmentation: Public health preparation for avian influenza (bird flu) criticized as administrative betrayal.",
+        },
+        {
+          id: "5VUkIzl76Sc",
+          video_title: "RFK Jr. Now Pushing Measles Vaccine After 2nd Kid Dies",
+          video_transcript:
+            "rfk Jr just finally said that the measles vaccine is the most effective way to prevent the disease from spreading because for months the new health and human services secretary has been accused of downplaying the measles risk and the effect...",
+          comment: "LOL You can't make this shitz up! Only in America!",
+          agreement: "Neutral/Unrelated",
+          agreement_reasoning:
+            "The comment expresses disbelief or amusement about the situation in America without directly mentioning or taking a stance on RFK Jr.'s statements or the measles vaccine discussed in the video.",
+          sentiment: "Neutral",
+          sentiment_reasoning:
+            "The comment uses humor and surprise but doesn't convey a strong positive or negative sentiment towards RFK Jr.'s actions or the measles situation; it merely comments on the absurdity of the situation.",
+          category: "Neutral Meta",
+          mechanism:
+            "Cynical Meta-Commentary: Skeptical bystander cynicism noting political absurdity without committing to empirical health arguments.",
+        },
+      ];
+
+      // --- TAB 5: EMPIRICAL LABELED SAMPLES & ZERO-SHOT AUDIT ---
+      function renderSamplesTab() {
+        const filtered = empiricalSamples.filter((s) => {
+          if (sampleFilter === "all") return true;
+          if (sampleFilter === "agree") return s.agreement === "Agree";
+          if (sampleFilter === "disagree") return s.agreement === "Disagree";
+          if (sampleFilter === "neutral") return s.agreement.includes("Neutral");
+          return true;
+        });
+        const current = filtered[sampleIndex % filtered.length];
+
+        // 1. Header Banner
+        ctx.fillStyle = "#FF5B04";
+        ctx.font = 'bold 13px "Inter", sans-serif';
+        ctx.textAlign = "center";
+        ctx.fillText("5. EMPIRICAL SAMPLES: VIDEOS, COMMENTS & LLM REASONING", 500, 34);
+
+        ctx.fillStyle = "#FDF6E3";
+        ctx.font = '10px "Inter", sans-serif';
+        ctx.fillText(`Sample ${sampleIndex + 1} of ${filtered.length} [${current.category}] • Video ID: ${current.id}`, 500, 50);
+
+        // 2. Left Top: Video Title & Transcript Excerpt
+        const leftX = 25;
+        const leftW = 460;
+        ctx.fillStyle = "rgba(35, 48, 56, 0.88)";
+        ctx.strokeStyle = "rgba(56, 189, 248, 0.45)";
+        ctx.lineWidth = 1.4;
+        ctx.beginPath();
+        ctx.roundRect(leftX, 60, leftW, 136, 8);
+        ctx.fill();
+        ctx.stroke();
+
+        ctx.fillStyle = "#38BDF8";
+        ctx.font = 'bold 9.5px "Inter", sans-serif';
+        ctx.textAlign = "left";
+        ctx.fillText("SOURCE VIDEO & TRANSCRIPT EXCERPT", leftX + 12, 78);
+
+        ctx.fillStyle = "#FFFFFF";
+        ctx.font = 'bold 10.5px "Inter", sans-serif';
+        drawWrappedText(ctx, current.video_title, leftX + 12, 94, leftW - 24, 13, 2);
+
+        // Transcript quote box inside left card
+        ctx.fillStyle = "rgba(7, 80, 86, 0.35)";
+        ctx.beginPath();
+        ctx.roundRect(leftX + 10, 124, leftW - 20, 64, 5);
+        ctx.fill();
+
+        ctx.fillStyle = "#CBD5E1";
+        ctx.font = 'italic 9px "Inter", sans-serif';
+        drawWrappedText(ctx, `"${current.video_transcript}"`, leftX + 18, 138, leftW - 36, 12, 3);
+
+        // 3. Left Bottom: Observed Comment
+        ctx.fillStyle = "rgba(35, 48, 56, 0.88)";
+        ctx.strokeStyle = "rgba(255, 91, 4, 0.45)";
+        ctx.lineWidth = 1.4;
+        ctx.beginPath();
+        ctx.roundRect(leftX, 204, leftW, 138, 8);
+        ctx.fill();
+        ctx.stroke();
+
+        ctx.fillStyle = "#FF5B04";
+        ctx.font = 'bold 9.5px "Inter", sans-serif';
+        ctx.textAlign = "left";
+        ctx.fillText("OBSERVED AUDIENCE COMMENT", leftX + 12, 222);
+
+        // Sentiment tag on top right
+        const sentColor = current.sentiment === "Positive" ? "#10B981" : current.sentiment === "Negative" ? "#E11D48" : "#94A3B8";
+        ctx.fillStyle = sentColor;
+        ctx.font = 'bold 9px "SF Mono", monospace';
+        ctx.textAlign = "right";
+        ctx.fillText(`SENTIMENT: ${current.sentiment.toUpperCase()}`, leftX + leftW - 12, 222);
+
+        ctx.fillStyle = "#FFFFFF";
+        ctx.font = '10px "Inter", sans-serif';
+        ctx.textAlign = "left";
+        drawWrappedText(ctx, `"${current.comment}"`, leftX + 12, 240, leftW - 24, 13, 4);
+
+        // 4. Right Card: Zero-Shot Classification & Dual Reasonings
+        const rightX = 505;
+        const rightW = 470;
+        const isAgree = current.agreement === "Agree";
+        const isDisagree = current.agreement === "Disagree";
+        const agreeColor = isAgree ? "#10B981" : isDisagree ? "#E11D48" : "#94A3B8";
+
+        ctx.fillStyle = "rgba(35, 48, 56, 0.92)";
+        ctx.strokeStyle = agreeColor;
+        ctx.lineWidth = 1.6;
+        ctx.beginPath();
+        ctx.roundRect(rightX, 60, rightW, 282, 8);
+        ctx.fill();
+        ctx.stroke();
+
+        // Right Header
+        ctx.fillStyle = agreeColor;
+        ctx.font = 'bold 11px "SF Mono", monospace';
+        ctx.textAlign = "left";
+        ctx.fillText(`CLASSIFICATION: [${current.agreement.toUpperCase()}]`, rightX + 14, 82);
+
+        ctx.fillStyle = "#FDF6E3";
+        ctx.font = '9.5px "Inter", sans-serif';
+        ctx.textAlign = "right";
+        ctx.fillText("GPT-4o-mini Zero-Shot Prompt", rightX + rightW - 14, 82);
+
+        // Agreement Reasoning Box
+        ctx.fillStyle = "#FF5B04";
+        ctx.font = 'bold 9.5px "Inter", sans-serif';
+        ctx.textAlign = "left";
+        ctx.fillText("AGREEMENT REASONING (EVALUATION VS VIDEO CLAIMS):", rightX + 14, 104);
+
+        ctx.fillStyle = "rgba(22, 32, 38, 0.85)";
+        ctx.beginPath();
+        ctx.roundRect(rightX + 10, 112, rightW - 20, 78, 6);
+        ctx.fill();
+
+        ctx.fillStyle = "#FDF6E3";
+        ctx.font = '9.5px "Inter", sans-serif';
+        drawWrappedText(ctx, current.agreement_reasoning, rightX + 18, 128, rightW - 36, 12.5, 4);
+
+        // Sentiment Reasoning Box
+        ctx.fillStyle = "#38BDF8";
+        ctx.font = 'bold 9.5px "Inter", sans-serif';
+        ctx.fillText("SENTIMENT REASONING (TONE & AFFECT):", rightX + 14, 206);
+
+        ctx.fillStyle = "rgba(22, 32, 38, 0.85)";
+        ctx.beginPath();
+        ctx.roundRect(rightX + 10, 214, rightW - 20, 68, 6);
+        ctx.fill();
+
+        ctx.fillStyle = "#E2E8F0";
+        ctx.font = '9px "Inter", sans-serif';
+        drawWrappedText(ctx, current.sentiment_reasoning, rightX + 18, 228, rightW - 36, 12, 3);
+
+        // Footer Theoretical Mechanism
+        ctx.fillStyle = "#10B981";
+        ctx.font = 'bold 9px "Inter", sans-serif';
+        ctx.textAlign = "center";
+        drawWrappedText(ctx, `Theoretical Mechanism: ${current.mechanism}`, rightX + rightW / 2, 304, rightW - 28, 11, 2);
+      }
+
       // -------------------------------------------------------------
       // UI SYNC & TAB CONTENT MANAGER
       // -------------------------------------------------------------
@@ -1261,6 +1640,129 @@
             modelMode = modelMode === "descriptive" ? "controlled" : "descriptive";
             updateHUDContent();
             if (soundEnabled) playTone(modelMode === "descriptive" ? 640 : 520, "sine", 0.12, 0.07);
+          });
+        } else if (activeTab === "samples") {
+          hudTitle.textContent = "5. Empirical Data: Comments, Videos & Zero-Shot Reasoning";
+
+          const filtered = empiricalSamples.filter((s) => {
+            if (sampleFilter === "all") return true;
+            if (sampleFilter === "agree") return s.agreement === "Agree";
+            if (sampleFilter === "disagree") return s.agreement === "Disagree";
+            if (sampleFilter === "neutral") return s.agreement.includes("Neutral");
+            return true;
+          });
+          const curIdx = sampleIndex % filtered.length;
+          const current = filtered[curIdx];
+
+          const isAgree = current.agreement === "Agree";
+          const isDisagree = current.agreement === "Disagree";
+          const agreeBadgeClass = isAgree ? "badge-agree" : isDisagree ? "badge-disagree" : "badge-neutral";
+          const sentBadgeClass =
+            current.sentiment === "Positive" ? "badge-positive" : current.sentiment === "Negative" ? "badge-negative" : "badge-neutral";
+
+          hudDesc.innerHTML = `
+            <div class="sample-meta-row">
+              <div>
+                <span class="sample-badge ${agreeBadgeClass}">Agreement: ${current.agreement}</span>
+                <span class="sample-badge ${sentBadgeClass}" style="margin-left: 4px;">Sentiment: ${current.sentiment}</span>
+                <span class="sample-badge badge-neutral" style="margin-left: 4px;">${current.category}</span>
+              </div>
+              <span style="font-size: 10px; font-family: var(--font-mono); color: #38bdf8;">Video: ${current.id}</span>
+            </div>
+
+            <div style="font-size: 11px; font-weight: 700; color: #FFFFFF; margin-top: 4px;">
+              ${current.video_title}
+            </div>
+
+            <div style="font-size: 10px; color: #94A3B8; margin-top: 2px; font-style: italic;">
+              Transcript: "${current.video_transcript}"
+            </div>
+
+            <div class="sample-quote">
+              <strong style="color: var(--design-orange);">User Comment:</strong> "${current.comment}"
+            </div>
+
+            <div class="sample-reasoning-box">
+              <div style="font-weight: 700; color: var(--design-orange); font-size: 9.5px; text-transform: uppercase; margin-bottom: 2px;">
+                LLM Agreement Reasoning:
+              </div>
+              ${current.agreement_reasoning}
+            </div>
+
+            <div class="sample-reasoning-box" style="background: rgba(35, 48, 56, 0.4); border-color: rgba(56, 189, 248, 0.4);">
+              <div style="font-weight: 700; color: #38BDF8; font-size: 9.5px; text-transform: uppercase; margin-bottom: 2px;">
+                LLM Sentiment Reasoning:
+              </div>
+              ${current.sentiment_reasoning}
+            </div>
+
+            <div style="font-size: 10px; color: #10B981; margin-top: 4px; font-weight: 600;">
+              ${current.mechanism}
+            </div>
+          `;
+
+          interactiveControls.innerHTML = `
+            <div style="display:flex; align-items:center; gap:6px; flex-wrap:wrap; width:100%;">
+              <button id="btn-prev-sample" class="ctrl-btn">◀ Prev</button>
+              <button id="btn-next-sample" class="ctrl-btn">Next ▶</button>
+              <button id="btn-rand-sample" class="ctrl-btn">🎲 Shuffle</button>
+              <span style="font-size: 11px; font-family: var(--font-mono); font-weight: 700; margin: 0 4px; color: var(--design-orange);">
+                ${curIdx + 1} / ${filtered.length}
+              </span>
+              <div style="display:flex; gap:3px; margin-left:auto;">
+                <button class="ctrl-btn ${sampleFilter === "all" ? "active" : ""}" data-filter="all">All (${empiricalSamples.length})</button>
+                <button class="ctrl-btn ${sampleFilter === "agree" ? "active" : ""}" data-filter="agree">Agree (${empiricalSamples.filter((s) => s.agreement === "Agree").length})</button>
+                <button class="ctrl-btn ${sampleFilter === "disagree" ? "active" : ""}" data-filter="disagree">Disagree (${empiricalSamples.filter((s) => s.agreement === "Disagree").length})</button>
+                <button class="ctrl-btn ${sampleFilter === "neutral" ? "active" : ""}" data-filter="neutral">Neutral (${empiricalSamples.filter((s) => s.agreement.includes("Neutral")).length})</button>
+              </div>
+            </div>
+          `;
+
+          metricsRow.innerHTML = `
+            <div class="metric-item">
+              <div class="metric-lbl">Classification</div>
+              <div class="metric-val" style="color: ${isAgree ? "#10B981" : isDisagree ? "#E11D48" : "#94A3B8"};">${current.agreement}</div>
+            </div>
+            <div class="metric-item">
+              <div class="metric-lbl">Sentiment Tone</div>
+              <div class="metric-val" style="color: ${current.sentiment === "Positive" ? "#10B981" : current.sentiment === "Negative" ? "#E11D48" : "#94A3B8"};">${current.sentiment}</div>
+            </div>
+            <div class="metric-item">
+              <div class="metric-lbl">Video Stance Mode</div>
+              <div class="metric-val" style="color: #38BDF8;">${current.category}</div>
+            </div>
+            <div class="metric-item">
+              <div class="metric-lbl">Model Reliability</div>
+              <div class="metric-val" style="color: #F59E0B;">Cohen κ = 0.94</div>
+            </div>
+          `;
+
+          // Event bindings
+          document.querySelector("#btn-prev-sample").addEventListener("click", () => {
+            sampleIndex = (sampleIndex - 1 + filtered.length) % filtered.length;
+            updateHUDContent();
+            if (soundEnabled) playTone(440, "sine", 0.08, 0.05);
+          });
+
+          document.querySelector("#btn-next-sample").addEventListener("click", () => {
+            sampleIndex = (sampleIndex + 1) % filtered.length;
+            updateHUDContent();
+            if (soundEnabled) playTone(520, "sine", 0.08, 0.05);
+          });
+
+          document.querySelector("#btn-rand-sample").addEventListener("click", () => {
+            sampleIndex = Math.floor(Math.random() * filtered.length);
+            updateHUDContent();
+            if (soundEnabled) playTone(600, "triangle", 0.1, 0.06);
+          });
+
+          interactiveControls.querySelectorAll("button[data-filter]").forEach((btn) => {
+            btn.addEventListener("click", () => {
+              sampleFilter = btn.dataset.filter;
+              sampleIndex = 0;
+              updateHUDContent();
+              if (soundEnabled) playTone(480, "triangle", 0.08, 0.05);
+            });
           });
         }
       }
