@@ -1,17 +1,6 @@
-import React, { useState } from 'react';
-import {
-  Globe,
-  Plus,
-  Lock,
-  Settings,
-  Calendar,
-  Clock,
-  Layers,
-  Sparkles,
-  ChevronDown,
-  Trash2,
-} from 'lucide-react';
-import type { StudyEnvironment, VaultData } from './types';
+import React, { useState } from "react";
+import { Globe, Plus, Lock, Settings, Calendar, Clock, Layers, Sparkles, ChevronDown, Trash2 } from "lucide-react";
+import type { StudyEnvironment, VaultData } from "./types";
 
 interface EnvironmentSelectorProps {
   vaultData: VaultData;
@@ -36,22 +25,16 @@ export const EnvironmentSelector: React.FC<EnvironmentSelectorProps> = ({
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
 
   // Form state for new environment
-  const [title, setTitle] = useState('');
-  const [targetLanguage, setTargetLanguage] = useState('');
-  const [nativeLanguage, setNativeLanguage] = useState('Italian');
-  const [bridgeLanguages, setBridgeLanguages] = useState('English');
-  const [targetLevel, setTargetLevel] = useState('CEFR B1 (DU3 Module 4)');
+  const [title, setTitle] = useState("");
+  const [targetLanguage, setTargetLanguage] = useState("");
+  const [nativeLanguage, setNativeLanguage] = useState("Italian");
+  const [bridgeLanguages, setBridgeLanguages] = useState("English");
+  const [targetLevel, setTargetLevel] = useState("CEFR B1 (DU3 Module 4)");
   const [dailyMinutes, setDailyMinutes] = useState(25);
-  const [targetDate, setTargetDate] = useState('2026-11-10');
+  const [targetDate, setTargetDate] = useState("2026-11-10");
 
   // Compute days left
-  const daysLeft = Math.max(
-    0,
-    Math.ceil(
-      (new Date(activeEnvironment.profile.targetDate).getTime() - new Date().getTime()) /
-        (1000 * 60 * 60 * 24)
-    )
-  );
+  const daysLeft = Math.max(0, Math.ceil((new Date(activeEnvironment.profile.targetDate).getTime() - new Date().getTime()) / (1000 * 60 * 60 * 24)));
 
   const handleCreateSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -63,11 +46,14 @@ export const EnvironmentSelector: React.FC<EnvironmentSelectorProps> = ({
       profile: {
         targetLanguage: targetLanguage.trim(),
         nativeLanguage: nativeLanguage.trim(),
-        bridgeLanguages: bridgeLanguages.split(',').map((s) => s.trim()).filter(Boolean),
-        currentLevel: 'A0 Beginner',
+        bridgeLanguages: bridgeLanguages
+          .split(",")
+          .map((s) => s.trim())
+          .filter(Boolean),
+        currentLevel: "A0 Beginner",
         targetLevel: targetLevel.trim(),
         dailyMinutes: Number(dailyMinutes) || 20,
-        targetDate: targetDate || '2026-12-31',
+        targetDate: targetDate || "2026-12-31",
         startDate: new Date().toISOString().slice(0, 10),
         totalStudyHours: 0,
       },
@@ -79,8 +65,8 @@ export const EnvironmentSelector: React.FC<EnvironmentSelectorProps> = ({
 
     onCreateEnvironment(newEnv);
     setIsCreateModalOpen(false);
-    setTitle('');
-    setTargetLanguage('');
+    setTitle("");
+    setTargetLanguage("");
   };
 
   return (
@@ -109,7 +95,7 @@ export const EnvironmentSelector: React.FC<EnvironmentSelectorProps> = ({
                 <div
                   key={env.id}
                   className={`flex items-center justify-between px-3 py-2 text-xs transition-colors hover:bg-[var(--bg-secondary)] ${
-                    env.id === activeEnvironment.id ? 'text-[var(--accent-color)] font-bold' : ''
+                    env.id === activeEnvironment.id ? "text-[var(--accent-color)] font-bold" : ""
                   }`}
                 >
                   <button
@@ -161,7 +147,7 @@ export const EnvironmentSelector: React.FC<EnvironmentSelectorProps> = ({
             L1: <b className="text-[var(--heading-color)]">{activeEnvironment.profile.nativeLanguage}</b>
           </span>
           <span className="px-2 py-0.5 rounded-md bg-[var(--bg-color)] border border-[var(--border-color)] opacity-80">
-            Bridge: <b className="text-[var(--heading-color)]">{activeEnvironment.profile.bridgeLanguages.join(', ')}</b>
+            Bridge: <b className="text-[var(--heading-color)]">{activeEnvironment.profile.bridgeLanguages.join(", ")}</b>
           </span>
         </div>
       </div>
@@ -207,9 +193,7 @@ export const EnvironmentSelector: React.FC<EnvironmentSelectorProps> = ({
             </h3>
             <form onSubmit={handleCreateSubmit} className="space-y-3 text-xs">
               <div>
-                <label className="block font-mono uppercase tracking-wider mb-1 opacity-80">
-                  Notebook Title
-                </label>
+                <label className="block font-mono uppercase tracking-wider mb-1 opacity-80">Notebook Title</label>
                 <input
                   type="text"
                   value={title}
@@ -222,9 +206,7 @@ export const EnvironmentSelector: React.FC<EnvironmentSelectorProps> = ({
 
               <div className="grid grid-cols-2 gap-2">
                 <div>
-                  <label className="block font-mono uppercase tracking-wider mb-1 opacity-80">
-                    Target Language
-                  </label>
+                  <label className="block font-mono uppercase tracking-wider mb-1 opacity-80">Target Language</label>
                   <input
                     type="text"
                     value={targetLanguage}
@@ -235,9 +217,7 @@ export const EnvironmentSelector: React.FC<EnvironmentSelectorProps> = ({
                   />
                 </div>
                 <div>
-                  <label className="block font-mono uppercase tracking-wider mb-1 opacity-80">
-                    Native (L1)
-                  </label>
+                  <label className="block font-mono uppercase tracking-wider mb-1 opacity-80">Native (L1)</label>
                   <input
                     type="text"
                     value={nativeLanguage}
@@ -249,9 +229,7 @@ export const EnvironmentSelector: React.FC<EnvironmentSelectorProps> = ({
               </div>
 
               <div>
-                <label className="block font-mono uppercase tracking-wider mb-1 opacity-80">
-                  Bridge Languages (L2 / L3)
-                </label>
+                <label className="block font-mono uppercase tracking-wider mb-1 opacity-80">Bridge Languages (L2 / L3)</label>
                 <input
                   type="text"
                   value={bridgeLanguages}
@@ -263,9 +241,7 @@ export const EnvironmentSelector: React.FC<EnvironmentSelectorProps> = ({
 
               <div className="grid grid-cols-2 gap-2">
                 <div>
-                  <label className="block font-mono uppercase tracking-wider mb-1 opacity-80">
-                    Target Level
-                  </label>
+                  <label className="block font-mono uppercase tracking-wider mb-1 opacity-80">Target Level</label>
                   <input
                     type="text"
                     value={targetLevel}
@@ -275,9 +251,7 @@ export const EnvironmentSelector: React.FC<EnvironmentSelectorProps> = ({
                   />
                 </div>
                 <div>
-                  <label className="block font-mono uppercase tracking-wider mb-1 opacity-80">
-                    Daily Minutes
-                  </label>
+                  <label className="block font-mono uppercase tracking-wider mb-1 opacity-80">Daily Minutes</label>
                   <input
                     type="number"
                     value={dailyMinutes}
@@ -290,9 +264,7 @@ export const EnvironmentSelector: React.FC<EnvironmentSelectorProps> = ({
               </div>
 
               <div>
-                <label className="block font-mono uppercase tracking-wider mb-1 opacity-80">
-                  Target Deadline
-                </label>
+                <label className="block font-mono uppercase tracking-wider mb-1 opacity-80">Target Deadline</label>
                 <input
                   type="date"
                   value={targetDate}

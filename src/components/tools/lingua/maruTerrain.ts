@@ -27,11 +27,32 @@ export function makeTerrain(tiers: readonly Tier[], stairs: readonly Stair[]): T
   const walkable = (x: number, z: number, margin = 0) => {
     if (groundY(x, z) === null) return false;
     if (margin <= 0) return true;
-    for (const [dx, dz] of [[1, 0], [-1, 0], [0, 1], [0, -1], [0.7, 0.7], [-0.7, 0.7], [0.7, -0.7], [-0.7, -0.7]]) if (groundY(x + dx * margin, z + dz * margin) === null) return false;
+    for (const [dx, dz] of [
+      [1, 0],
+      [-1, 0],
+      [0, 1],
+      [0, -1],
+      [0.7, 0.7],
+      [-0.7, 0.7],
+      [0.7, -0.7],
+      [-0.7, -0.7],
+    ])
+      if (groundY(x + dx * margin, z + dz * margin) === null) return false;
     return true;
   };
   const xs = [...tiers.flatMap((t) => t.x), ...stairs.flatMap((s) => s.x)];
   const zs = [...tiers.flatMap((t) => t.z), ...stairs.flatMap((s) => s.z)];
   const ys = [...tiers.map((t) => t.y), ...stairs.flatMap((s) => [s.y0, s.y1])];
-  return { groundY, walkable, bounds: { minX: Math.min(...xs), maxX: Math.max(...xs), minZ: Math.min(...zs), maxZ: Math.max(...zs), maxY: Math.max(...ys), minY: Math.min(...ys) } };
+  return {
+    groundY,
+    walkable,
+    bounds: {
+      minX: Math.min(...xs),
+      maxX: Math.max(...xs),
+      minZ: Math.min(...zs),
+      maxZ: Math.max(...zs),
+      maxY: Math.max(...ys),
+      minY: Math.min(...ys),
+    },
+  };
 }

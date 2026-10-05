@@ -23,21 +23,21 @@ automatically.
 
 ## 2. Anatomy of a pack
 
-| Field | What it is | Rule enforced by `npm run packs:check` |
-| --- | --- | --- |
-| `id`, `name`, `nativeName` | identity | ids unique |
-| `script` | `"latin"` (painted lettering) or `"glyph"` (invented glyphs) | |
-| `speech.synth` / `speech.recog` | BCP-47 tags for the voice the player hears / the recogniser | |
-| `speech.strict`, `speech.testPhrase` | for REAL languages: stay silent and explain when no voice for `synth` is installed (instead of an English voice reading it); `testPhrase` is a short, certainly-correct phrase for the voice test button | `strict` requires `testPhrase` |
-| `notation` | how sounds are written (`ipa` or `romanisation`), on-screen keys, ignored marks, equivalence classes | keyboard and dictionary must cover every symbol used in `sound` (warning) |
-| `phonology[]` | the phonetic dictionary: symbol, name, how to make it, real keywords | every keyword list non-empty; a symbol used by a word should have an entry (warning) |
-| `meanings[]` | picture cards (use `MEANING_LIBRARY`) | each picture exists |
-| `lexicon[]` | words: `written`, `sound`, true `meaning`, `pos`, notes, `verified` | meaning exists; `verified` must be true if the pack claims `verified` |
-| `encounters[]` | the story chain (§4) | one root, no cycles, drilled words need ≥ 2 supporting clues, approach point not inside a building |
-| `finale` | the closing sentence | words exist and were introduced; `shuffled` is a permutation of `target` |
-| `ui` | interface colours | ink on paper ≥ 7:1, accent text ≥ 4.5:1 (warning) |
-| `world` | scenery key, palette, buildings (also collision), people, signs | signs reference real words |
-| `verification` | honest status of the content | see §7 |
+| Field                                | What it is                                                                                                                                                                                               | Rule enforced by `npm run packs:check`                                                             |
+| ------------------------------------ | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------- |
+| `id`, `name`, `nativeName`           | identity                                                                                                                                                                                                 | ids unique                                                                                         |
+| `script`                             | `"latin"` (painted lettering) or `"glyph"` (invented glyphs)                                                                                                                                             |                                                                                                    |
+| `speech.synth` / `speech.recog`      | BCP-47 tags for the voice the player hears / the recogniser                                                                                                                                              |                                                                                                    |
+| `speech.strict`, `speech.testPhrase` | for REAL languages: stay silent and explain when no voice for `synth` is installed (instead of an English voice reading it); `testPhrase` is a short, certainly-correct phrase for the voice test button | `strict` requires `testPhrase`                                                                     |
+| `notation`                           | how sounds are written (`ipa` or `romanisation`), on-screen keys, ignored marks, equivalence classes                                                                                                     | keyboard and dictionary must cover every symbol used in `sound` (warning)                          |
+| `phonology[]`                        | the phonetic dictionary: symbol, name, how to make it, real keywords                                                                                                                                     | every keyword list non-empty; a symbol used by a word should have an entry (warning)               |
+| `meanings[]`                         | picture cards (use `MEANING_LIBRARY`)                                                                                                                                                                    | each picture exists                                                                                |
+| `lexicon[]`                          | words: `written`, `sound`, true `meaning`, `pos`, notes, `verified`                                                                                                                                      | meaning exists; `verified` must be true if the pack claims `verified`                              |
+| `encounters[]`                       | the story chain (§4)                                                                                                                                                                                     | one root, no cycles, drilled words need ≥ 2 supporting clues, approach point not inside a building |
+| `finale`                             | the closing sentence                                                                                                                                                                                     | words exist and were introduced; `shuffled` is a permutation of `target`                           |
+| `ui`                                 | interface colours                                                                                                                                                                                        | ink on paper ≥ 7:1, accent text ≥ 4.5:1 (warning)                                                  |
+| `world`                              | scenery key, palette, buildings (also collision), people, signs                                                                                                                                          | signs reference real words                                                                         |
+| `verification`                       | honest status of the content                                                                                                                                                                             | see §7                                                                                             |
 
 ## 3. Choosing the words
 
@@ -50,7 +50,7 @@ decided how to teach, and more than four new words per encounter.
 
 ## 4. Writing an encounter
 
-An encounter is *one place, one person, one idea*. For each one write:
+An encounter is _one place, one person, one idea_. For each one write:
 
 1. **`scene`**: what the player sees, in English, **without the target word**. The validator warns if the drilled
    word appears.
@@ -71,14 +71,14 @@ for each (a pump, a kiosk, a booth, a gate, an archive door). If your story need
 
 A clue is something the player may notice. Six kinds:
 
-| Kind | Example (Danish *kopper*) |
-| --- | --- |
-| `object` | The tray holds a row of identical cups. |
-| `action` | The child drinks from the cup. |
-| `gesture` | She counts one finger, then opens her whole hand over the tray. |
-| `writing` | The same word is painted on the pump, the basin and a bucket. |
+| Kind       | Example (Danish _kopper_)                                        |
+| ---------- | ---------------------------------------------------------------- |
+| `object`   | The tray holds a row of identical cups.                          |
+| `action`   | The child drinks from the cup.                                   |
+| `gesture`  | She counts one finger, then opens her whole hand over the tray.  |
+| `writing`  | The same word is painted on the pump, the basin and a bucket.    |
 | `contrast` | One cup is named, then a tray: the second word ends differently. |
-| `context` | A cyclist rings a bell. (usually a decoy) |
+| `context`  | A cyclist rings a bell. (usually a decoy)                        |
 
 Fields: `supports` lists the meanings the clue is **compatible with** (not just the true one), and `about` the words
 it helps with. A clue with `supports: []` is a **decoy**.
@@ -87,7 +87,7 @@ Rules of thumb (the first two are validated):
 
 - **At least two supporting clues per drilled word**, ideally of different kinds, so confidence can actually grow.
 - **At least one decoy per encounter.** Real scenes are noisy.
-- **Be honest in `supports`.** If "the child drinks" is compatible with both *water* and *drink*, list both. The
+- **Be honest in `supports`.** If "the child drinks" is compatible with both _water_ and _drink_, list both. The
   candidate cards always include every meaning your clues allow, so the player has to discriminate.
 - **Write the clue as an observation**, not a hint: "He pulls the gate and it does not move", not "the word means closed".
 - Give each clue an icon from the picture library (`picture`).
@@ -120,16 +120,20 @@ and the phonetic dictionary can insert symbols into the answer.
 
 **What is graded**
 
-- *Typed* answers → `gradeSound(sound, alsoAccept, guess, notation)`: characters in `notation.ignore` are stripped
+- _Typed_ answers → `gradeSound(sound, alsoAccept, guess, notation)`: characters in `notation.ignore` are stripped
   (stress, length, glottal stop, spaces), combining marks are removed, then sounds in the same `equivalent` class are
   merged. IPA allows one slip per five sounds; romanisation must match exactly.
-- *Spoken* answers → the browser recogniser (`speech.recog`) → compared with `written` leniently. For an invented
+- _Spoken_ answers → the browser recogniser (`speech.recog`) → compared with `written` leniently. For an invented
   language the recogniser only checks that the player said something close.
 
 **`equivalent` classes.** Use them to forgive distinctions that learners cannot hear yet or that you are not sure about:
 
 ```ts
-equivalent: [["ɔ","ʌ","o","ɒ"], ["b","p"], ["d","t","ð"]]
+equivalent: [
+  ["ɔ", "ʌ", "o", "ɒ"],
+  ["b", "p"],
+  ["d", "t", "ð"],
+];
 ```
 
 The first symbol of a class is its representative. A class makes the game lenient, so every class you add accepts some real errors
@@ -137,10 +141,10 @@ The first symbol of a class is its representative. A class makes the game lenien
 
 **`alsoAccept`** lists other transcriptions you accept for one word (dialect variants, common learner notation).
 
-**Phonetic dictionary entries.** For each sound give a plain-language `how` ("say *ee* with rounded lips"), a `spelling`
-warning when letters mislead ("Danish *b d g* are not voiced like English"), `confusableWith`, and 1–3 real `keywords` the
+**Phonetic dictionary entries.** For each sound give a plain-language `how` ("say _ee_ with rounded lips"), a `spelling`
+warning when letters mislead ("Danish _b d g_ are not voiced like English"), `confusableWith`, and 1–3 real `keywords` the
 voice can speak. If a keyword is also a game word its transcription and gloss are hidden until the sound task is done,
-so keep keywords that are *not* in the story where you can.
+so keep keywords that are _not_ in the story where you can.
 
 Sounds in the dictionary are spoken as whole words by the browser voice. There is no isolated-phoneme audio.
 
@@ -148,13 +152,13 @@ Sounds in the dictionary are spoken as whole words by the browser voice. There i
 
 A game that teaches pronunciation must not teach the wrong thing. Treat every item below as a claim someone must check.
 
-| Claim | Check against | Who |
-| --- | --- | --- |
-| spelling, meaning, grammar note | a standard dictionary (for Danish: *Retskrivningsordbogen*, *Den Danske Ordbog* at ordnet.dk) | you |
-| `sound` (IPA), `alsoAccept` | a pronunciation dictionary or a native speaker | native speaker |
-| phoneme descriptions and keywords | a phonetics reference for the language, or a native speaker | native speaker or phonetician |
-| a voice for the language exists and reads each word correctly | listen on the target devices; set `speech.strict: true` so a missing voice is reported instead of an English one reading it | you |
-| recognition accepts a correct pronunciation | try it in Chrome with a real voice | native speaker |
+| Claim                                                         | Check against                                                                                                               | Who                           |
+| ------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------- | ----------------------------- |
+| spelling, meaning, grammar note                               | a standard dictionary (for Danish: _Retskrivningsordbogen_, _Den Danske Ordbog_ at ordnet.dk)                               | you                           |
+| `sound` (IPA), `alsoAccept`                                   | a pronunciation dictionary or a native speaker                                                                              | native speaker                |
+| phoneme descriptions and keywords                             | a phonetics reference for the language, or a native speaker                                                                 | native speaker or phonetician |
+| a voice for the language exists and reads each word correctly | listen on the target devices; set `speech.strict: true` so a missing voice is reported instead of an English one reading it | you                           |
+| recognition accepts a correct pronunciation                   | try it in Chrome with a real voice                                                                                          | native speaker                |
 
 Set `verified: true` on a word only after its `sound` and `speak` are confirmed, then set `verification.status` to
 `"verified"`. While anything is unconfirmed leave `status: "unverified"` and write what remains in
@@ -251,15 +255,15 @@ Right-to-left or non-Latin real scripts are not supported yet.
 
 ## 12. Common mistakes (all seen while building the first packs)
 
-| Mistake | How the validator or tests catch it |
-| --- | --- |
-| A drilled word with only one supporting clue | error: *need at least 2* |
-| Finale uses a word no encounter introduced | error: *never introduced in an encounter* |
-| `scene` contains the answer | warning: *gives the answer away* |
-| Approach point inside a building | error: *approach point … inside a building* |
-| A clue `about` a word that is not in that encounter | error: *not a drill/exposure word* |
-| Meaning-card list missing a plausible rival | test: *meaning cards always include … every rival* |
-| Pack marked verified with unchecked words | error: *pack says verified* |
-| A factual note that is simply wrong (e.g. the wrong gender of a noun) | **not caught**: needs a human reviewer (§7) |
+| Mistake                                                               | How the validator or tests catch it                |
+| --------------------------------------------------------------------- | -------------------------------------------------- |
+| A drilled word with only one supporting clue                          | error: _need at least 2_                           |
+| Finale uses a word no encounter introduced                            | error: _never introduced in an encounter_          |
+| `scene` contains the answer                                           | warning: _gives the answer away_                   |
+| Approach point inside a building                                      | error: _approach point … inside a building_        |
+| A clue `about` a word that is not in that encounter                   | error: _not a drill/exposure word_                 |
+| Meaning-card list missing a plausible rival                           | test: _meaning cards always include … every rival_ |
+| Pack marked verified with unchecked words                             | error: _pack says verified_                        |
+| A factual note that is simply wrong (e.g. the wrong gender of a noun) | **not caught**: needs a human reviewer (§7)        |
 
 The last row is the important one: the tools check structure, not truth.

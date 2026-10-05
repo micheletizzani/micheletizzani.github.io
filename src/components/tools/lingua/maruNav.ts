@@ -15,7 +15,16 @@ export interface NavGrid {
 export type Solid = (x: number, z: number) => boolean;
 export type Height = (x: number, z: number) => number | null;
 
-export function buildGrid(minX: number, maxX: number, minZ: number, maxZ: number, cell: number, solid: Solid, height?: Height, maxStep = 0.5): NavGrid {
+export function buildGrid(
+  minX: number,
+  maxX: number,
+  minZ: number,
+  maxZ: number,
+  cell: number,
+  solid: Solid,
+  height?: Height,
+  maxStep = 0.5
+): NavGrid {
   const cols = Math.ceil((maxX - minX) / cell);
   const rows = Math.ceil((maxZ - minZ) / cell);
   const blocked = new Uint8Array(cols * rows);
@@ -35,7 +44,8 @@ const toCell = (g: NavGrid, x: number, z: number): [number, number] => [
   Math.min(g.rows - 1, Math.max(0, Math.floor((z - g.minZ) / g.cell))),
 ];
 const center = (g: NavGrid, c: number, r: number): [number, number] => [g.minX + (c + 0.5) * g.cell, g.minZ + (r + 0.5) * g.cell];
-const stepOk = (g: NavGrid, c0: number, r0: number, c1: number, r1: number) => Math.abs(g.heights[r1 * g.cols + c1] - g.heights[r0 * g.cols + c0]) <= g.maxStep;
+const stepOk = (g: NavGrid, c0: number, r0: number, c1: number, r1: number) =>
+  Math.abs(g.heights[r1 * g.cols + c1] - g.heights[r0 * g.cols + c0]) <= g.maxStep;
 const isBlocked = (g: NavGrid, c: number, r: number) => c < 0 || r < 0 || c >= g.cols || r >= g.rows || g.blocked[r * g.cols + c] === 1;
 
 /** Nearest free cell to a point (breadth-first), so clicking a wall or the water walks you to the closest open spot. */

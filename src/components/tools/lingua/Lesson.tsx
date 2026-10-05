@@ -394,11 +394,7 @@ function SoundTab({
                 autoFocus
                 className="min-w-0 flex-1 border-2 border-[var(--mx-ink)] bg-[var(--mx-paper-light)] px-3 py-2.5 font-serif text-xl text-[var(--mx-ink)] outline-none placeholder:text-[var(--mx-ink)]/40 focus:bg-white"
               />
-              <button
-                onClick={testSound}
-                title="Hear how your phonetic transcription sounds (Alt+P)"
-                className={BTN_PLAIN}
-              >
+              <button onClick={testSound} title="Hear how your phonetic transcription sounds (Alt+P)" className={BTN_PLAIN}>
                 <Volume2 size={13} className="mr-1 inline" /> Test sound <span className="hidden opacity-50 sm:inline">Alt+P</span>
               </button>
               <button onClick={submitText} className={BTN_PRIMARY}>

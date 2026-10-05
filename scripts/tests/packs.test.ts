@@ -2,7 +2,14 @@ import { test } from "node:test";
 import assert from "node:assert/strict";
 import { PACKS, da, maru, template } from "./_packs";
 import { validatePack, contrast } from "../../src/components/tools/lingua/packs/validate";
-import { grade, gradeSound, normalizeSound, syllablesOf, ipaToPronounceable, resolvePhoneticAudio } from "../../src/components/tools/lingua/maruPhonetics";
+import {
+  grade,
+  gradeSound,
+  normalizeSound,
+  syllablesOf,
+  ipaToPronounceable,
+  resolvePhoneticAudio,
+} from "../../src/components/tools/lingua/maruPhonetics";
 import { findPath, buildGrid } from "../../src/components/tools/lingua/maruNav";
 import { hiddenGround } from "../../src/components/tools/lingua/packs/visibility";
 import { makeTerrain } from "../../src/components/tools/lingua/maruTerrain";
@@ -153,7 +160,8 @@ test("meaning cards always include the truth and every rival the clues allow", (
         const w = pack.lexicon.find((x) => x.id === id)!;
         const ids = candidatesFor(pack, id).map((m) => m.id);
         assert.ok(ids.includes(w.meaning), `${pack.id}/${id}: truth missing`);
-        for (const c of e.clues.filter((k) => k.about?.includes(id))) for (const m of c.supports) assert.ok(ids.includes(m), `${pack.id}/${id}: rival "${m}" missing`);
+        for (const c of e.clues.filter((k) => k.about?.includes(id)))
+          for (const m of c.supports) assert.ok(ids.includes(m), `${pack.id}/${id}: rival "${m}" missing`);
       }
 });
 
@@ -174,7 +182,14 @@ test("evidence grows with varied observations and flags unsupported or conflicti
 });
 
 test("verdicts compare guesses with the truth and reveal nothing for missing words", () => {
-  const p = { ...emptyProgress(), words: { vand: { heard: true, sound: true, hintsUsed: 0, hypothesis: "water" }, kop: { heard: true, sound: true, hintsUsed: 0, hypothesis: "drink" }, kopper: { heard: false, sound: false, hintsUsed: 0 } } };
+  const p = {
+    ...emptyProgress(),
+    words: {
+      vand: { heard: true, sound: true, hintsUsed: 0, hypothesis: "water" },
+      kop: { heard: true, sound: true, hintsUsed: 0, hypothesis: "drink" },
+      kopper: { heard: false, sound: false, hintsUsed: 0 },
+    },
+  };
   const v = Object.fromEntries(verdicts(da, p).map((x) => [x.word, x.result]));
   assert.deepEqual(v, { vand: "correct", kop: "wrong", kopper: "unanswered" });
 });
@@ -209,9 +224,15 @@ test("voice choice: best quality first, the player's choice wins, a vanished cho
 
 test("install hints are specific to the platform when it can be told", () => {
   const mac = installHints("Danish", "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 Safari/605.1.15");
-  assert.deepEqual(mac.map((h) => h.platform), ["macOS"]);
+  assert.deepEqual(
+    mac.map((h) => h.platform),
+    ["macOS"]
+  );
   const android = installHints("Danish", "Mozilla/5.0 (Linux; Android 14) Chrome/120 Mobile");
-  assert.deepEqual(android.map((h) => h.platform), ["Android"]);
+  assert.deepEqual(
+    android.map((h) => h.platform),
+    ["Android"]
+  );
   assert.ok(installHints("Danish", "SomethingUnknown").length >= 4, "unknown platform lists all");
 });
 
@@ -237,7 +258,10 @@ test("every encounter is reachable on foot, and only by the stairs", () => {
     // the terrace is a wall away from the quay except at the stairs: a route from the west quay to the west terrace must pass them
     const route = findPath(grid, [-10, 0], [-10, -8]);
     assert.ok(route.length > 0, `${pack.id}: west terrace unreachable`);
-    assert.ok(route.some(([x, z]) => Math.abs(x) <= 2 && z > -5.6 && z < -3.4), `${pack.id}: route to the terrace did not use the stairs: ${JSON.stringify(route)}`);
+    assert.ok(
+      route.some(([x, z]) => Math.abs(x) <= 2 && z > -5.6 && z < -3.4),
+      `${pack.id}: route to the terrace did not use the stairs: ${JSON.stringify(route)}`
+    );
   }
 });
 
@@ -245,11 +269,17 @@ test("validator catches a layered world that does not hang together", () => {
   const noStairs = clone(da);
   noStairs.world.stairs = [];
   const r1 = validatePack(noStairs);
-  assert.ok(r1.errors.some((e) => e.includes('encounter "guard" cannot be reached')), "terraces without stairs strand the story");
+  assert.ok(
+    r1.errors.some((e) => e.includes('encounter "guard" cannot be reached')),
+    "terraces without stairs strand the story"
+  );
 
   const wrongHeight = clone(da);
   wrongHeight.world.stairs[0].y0 = 2.0;
-  assert.ok(validatePack(wrongHeight).errors.some((e) => e.includes("does not meet a terrace")), "stair that ends in mid-air");
+  assert.ok(
+    validatePack(wrongHeight).errors.some((e) => e.includes("does not meet a terrace")),
+    "stair that ends in mid-air"
+  );
 
   const floating = clone(da);
   floating.encounters[0].position = [30, 0, 30];
@@ -266,7 +296,10 @@ test("validator catches a layered world that does not hang together", () => {
   const nearEdge = clone(da);
   nearEdge.world.buildings.push({ position: [8, 0, 6], size: [3, 6, 3], color: "#fff", roof: "#fff", faces: ["w"], kind: "house" });
   const rn = validatePack(nearEdge);
-  assert.ok([...rn.errors, ...rn.warnings].some((m) => m.includes("hidden behind buildings")), "a tall building on the near edge hides ground and is reported");
+  assert.ok(
+    [...rn.errors, ...rn.warnings].some((m) => m.includes("hidden behind buildings")),
+    "a tall building on the near edge hides ground and is reported"
+  );
 });
 
 test("visibility: the shipped layout hides no walkable ground, and the check can see a hiding building", () => {

@@ -15,12 +15,12 @@ which guesses were right.
 
 1. **Discovery, not translation.** The game never states a meaning. It supplies evidence and lets you decide.
 2. **Nothing plays unless you ask.** Sound is always the result of a click or key press by the player.
-3. **Be honest about uncertainty.** Evidence meters measure *consistency with what you noticed*, never truth.
+3. **Be honest about uncertainty.** Evidence meters measure _consistency with what you noticed_, never truth.
    Content that has not been checked by a human is labelled as such in the UI.
 4. **Data, not code, for languages.** A new language, city or chapter is a data file ([PACK_TEMPLATE.md](./PACK_TEMPLATE.md)).
 5. **Playable on a phone in landscape**, with the same learning loop as on a desktop.
 
-Inspiration for the observational-decipherment idea: games such as *Chants of Sennar*. Everything here (art,
+Inspiration for the observational-decipherment idea: games such as _Chants of Sennar_. Everything here (art,
 glyphs, story, code) is original; no assets were copied.
 
 ## 3. Audience and learning goals
@@ -57,11 +57,12 @@ built from words learned earlier.
 ## 5. Systems
 
 ### 5.1 Navigation and camera
+
 - **Layered world.** The place is a stack of flat terraces floating over the sea (quay → terrace → upper terrace), joined
   by two flights of stairs. Heights are data (`world.tiers`, `world.stairs`); walking, pathfinding and the validator all
   read the same terrain.
 - **Isometric orthographic camera** (45° azimuth, 32° elevation, defined once in `maruCamera.ts`). By default the zoom is
-  chosen so the *whole* world is on screen, tall roofs included; the +/- buttons and the wheel zoom in, and then the camera
+  chosen so the _whole_ world is on screen, tall roofs included; the +/- buttons and the wheel zoom in, and then the camera
   follows the explorer. Click/tap the ground to walk (height-aware A*); WASD/arrows move relative to the screen.
 - **Everything walkable must be visible.** Tall things (houses, the gate wall) stand only on the far edges (west and
   north); the near edges (south and east) carry only low furniture. The validator checks this with exact ray tests
@@ -72,7 +73,8 @@ built from words learned earlier.
 - Why point-and-click: it works identically with a mouse and a thumb, needs no pointer lock, and keeps the HUD usable.
 
 ### 5.2 Observe: observational hints
-Each encounter lists **clues** of six kinds: *object, action, gesture, writing, contrast, context*. Clues start
+
+Each encounter lists **clues** of six kinds: _object, action, gesture, writing, contrast, context_. Clues start
 face-down; the player chooses to "look closer". A clue carries:
 
 - `supports`: the meanings it is compatible with (an empty list makes it a **decoy**: realistic noise),
@@ -82,13 +84,14 @@ Authoring rules (enforced by the validator): every drilled word needs at least t
 meaning, ideally of different kinds; each encounter should contain a decoy; scene text must not contain the answer.
 
 ### 5.3 Sound: write or say what you hear
+
 - The word is shown in the pack's script (glyphs or lettering) with a **Listen** and a **Slowly** button.
 - The player writes the sound in the pack's notation (IPA for Danish, romanisation for Maru) with an on-screen
   symbol keyboard, or says it into the microphone.
 - **Typed** answers are graded by `gradeSound`: ignored marks (stress, length, stød) are stripped, sounds in the same
-  *equivalence class* count as one, and IPA allows one slip per five sounds. Romanisation must match exactly.
+  _equivalence class_ count as one, and IPA allows one slip per five sounds. Romanisation must match exactly.
 - **Spoken** answers use the browser's speech recogniser (set to the pack's `recog` language) and are compared with the
-  *written* form, leniently. The recogniser is trained on a real language, so for an invented language this only
+  _written_ form, leniently. The recogniser is trained on a real language, so for an invented language this only
   tests that the player said something close; it is not a pronunciation score.
 - **Hints** (Alt+H) go in three steps: syllable count → first sound with a real keyword → consonant skeleton. After three
   hints or three failed tries the player may reveal the answer and move on (it is recorded as revealed).
@@ -97,28 +100,31 @@ meaning, ideally of different kinds; each encounter should contain a decoy; scen
   until its sound task is done, so the dictionary cannot be used as an answer key.
 
 ### 5.4 Meaning and the notebook
+
 - For each word the player picks one **picture card** from about eight candidates. The candidates always include the truth, any
   "close" meaning, and every other meaning that one of the word's clues also fits (the plausible wrong answers), then
   stable fillers.
 - Under each card, small squares show how many of the clues the player has noticed fit that meaning. This is scaffolding,
   not a verdict.
-- The **evidence meter** for the chosen guess: *none → untested → unsupported → conflict → suspected → probable → well
-  supported*, from the number of distinct clue kinds that back it.
+- The **evidence meter** for the chosen guess: _none → untested → unsupported → conflict → suspected → probable → well
+  supported_, from the number of distinct clue kinds that back it.
 - The notebook has three tabs: **Words** (written form, sound, guess, noticed clues, grammar note once learned), **Sounds**
   (the phonetic dictionary) and **Story** (what happened in each place).
 - After the finale the notebook marks every guess correct / close / not quite and reveals the truth for each word.
 
 ### 5.5 The finale
+
 The player assembles, types or says the target sentence. Typed and built sentences are compared with the written
 form (case, punctuation and diacritics ignored); spoken ones leniently. Success unlocks the verdicts.
 
 ### 5.6 Audio policy
+
 Sound is produced only by: Listen/Slowly, a word chip, a dictionary example, a correct-answer chime, and the optional
 **guide ping** (a soft tone from the direction of the next marker, **off by default**). Nothing plays on approach, on
 opening a lesson or on load. A global mute exists. Voices come from the browser, so quality varies by device.
 
 **Voice honesty.** A pronunciation game must not teach the wrong sounds. If no voice for the pack's language is installed,
-browsers silently fall back to their default voice (usually English) and read the text with its sound rules. A *strict* pack
+browsers silently fall back to their default voice (usually English) and read the text with its sound rules. A _strict_ pack
 (`speech.strict`, set for Danish) therefore stays **silent** and opens the Voice panel, which names the voice in use,
 lets the player test and change it, and lists install steps for the player's platform. Voices load asynchronously, so a
 press that arrives before the list is ready waits for it instead of guessing. An invented language is not strict: it is
@@ -134,7 +140,7 @@ read by the nearest voice as an approximation. A player may deliberately pick an
 
 ## 7. Art direction
 
-The look is a minimal indie style in the manner of *Monument Valley* (the concept, not its assets): isometric
+The look is a minimal indie style in the manner of _Monument Valley_ (the concept, not its assets): isometric
 architecture floating over a calm sea, **flat pastel faces with no outlines**, soft light, simple shapes and arches.
 
 - **Flat shading.** Lambert materials under one soft ambient light and one sun give every box three tones (top, south
@@ -148,14 +154,14 @@ architecture floating over a calm sea, **flat pastel faces with no outlines**, s
 - **Palette rule.** Pastel means high lightness and low-to-medium saturation (the Danish wall colours are the real
   Nyhavn colours lightened and softened). Each pack keeps its own palette, tied to the place and the language.
 
-| | Danish pack | Maru pack |
-| --- | --- | --- |
-| Place | Nyhavn, Copenhagen | Højbro Plads, Copenhagen |
-| Scenery key | `nyhavn` | `sandstone` |
+|              | Danish pack                                                                                                                              | Maru pack                                                         |
+| ------------ | ---------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------- |
+| Place        | Nyhavn, Copenhagen                                                                                                                       | Højbro Plads, Copenhagen                                          |
+| Scenery key  | `nyhavn`                                                                                                                                 | `sandstone`                                                       |
 | Architecture | tall narrow gabled houses in mustard, brick red, harbour blue, orange, sage, rose and navy; white window frames; shopfronts with awnings | flat-roofed sandstone façades with arched windows and balustrades |
-| Palette | pastel Nyhavn: powder blue sea, blush and cream cobbles, house colours in rose, butter, sky blue, sage; a soft Dannebrog red | pastel sandstone: sand, apricot, mint water, dusty rose |
-| Props | moored wooden boats, Dannebrog flags, bicycles, a red kiosk, a brass water pump | palms, a stone fountain, a market stall |
-| Writing | Latin lettering (painted signs) | invented glyphs (carved reliefs) |
+| Palette      | pastel Nyhavn: powder blue sea, blush and cream cobbles, house colours in rose, butter, sky blue, sage; a soft Dannebrog red             | pastel sandstone: sand, apricot, mint water, dusty rose           |
+| Props        | moored wooden boats, Dannebrog flags, bicycles, a red kiosk, a brass water pump                                                          | palms, a stone fountain, a market stall                           |
+| Writing      | Latin lettering (painted signs)                                                                                                          | invented glyphs (carved reliefs)                                  |
 
 The Nyhavn look follows the real place (the 17th-century harbour known for its rows of brightly painted houses)
 but is stylised, not surveyed.
@@ -195,11 +201,11 @@ Key decisions:
 
 ## 10. Testing
 
-| What | How |
-| --- | --- |
-| Pack structure and design rules | `npm run packs:check` and `scripts/tests/packs.test.ts` (the validator is itself tested by breaking packs on purpose) |
-| Sound grading, evidence meter, candidate cards, verdicts, A* | `npm run test:lingua` |
-| Gameplay in a browser | `scripts/e2e/*.mjs` (Playwright; needs a browser, see the header of each file): the Danish lesson flow, the finale and verdicts, the Maru pack. Run manually; not part of `npm run test:lingua` |
+| What                                                         | How                                                                                                                                                                                             |
+| ------------------------------------------------------------ | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Pack structure and design rules                              | `npm run packs:check` and `scripts/tests/packs.test.ts` (the validator is itself tested by breaking packs on purpose)                                                                           |
+| Sound grading, evidence meter, candidate cards, verdicts, A* | `npm run test:lingua`                                                                                                                                                                           |
+| Gameplay in a browser                                        | `scripts/e2e/*.mjs` (Playwright; needs a browser, see the header of each file): the Danish lesson flow, the finale and verdicts, the Maru pack. Run manually; not part of `npm run test:lingua` |
 
 ## 11. Known limitations and open questions
 
@@ -230,13 +236,13 @@ Key decisions:
 
 ## 13. Glossary
 
-| Term | Meaning |
-| --- | --- |
-| Pack | One language in one city: lexicon, story, phonology, theme and world as data |
-| Encounter | One place and one person; teaches 1–4 words |
-| Clue | An observation that may support one or more meanings; decoys support none |
-| Drill | A word the player must transcribe |
-| Exposure | A word heard in passing, not dictated |
-| Equivalence class | Sounds treated as identical when grading leniently |
-| Evidence meter | How well the chosen guess fits the clues the player noticed (not correctness) |
-| Verdict | The post-finale comparison of the player's guesses with the truth |
+| Term              | Meaning                                                                       |
+| ----------------- | ----------------------------------------------------------------------------- |
+| Pack              | One language in one city: lexicon, story, phonology, theme and world as data  |
+| Encounter         | One place and one person; teaches 1–4 words                                   |
+| Clue              | An observation that may support one or more meanings; decoys support none     |
+| Drill             | A word the player must transcribe                                             |
+| Exposure          | A word heard in passing, not dictated                                         |
+| Equivalence class | Sounds treated as identical when grading leniently                            |
+| Evidence meter    | How well the chosen guess fits the clues the player noticed (not correctness) |
+| Verdict           | The post-finale comparison of the player's guesses with the truth             |

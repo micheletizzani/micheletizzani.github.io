@@ -134,14 +134,35 @@ export function syllablesOf(written: string, kind: "ipa" | "romanisation"): numb
 }
 
 const IPA_DANISH_MAP: [string, string][] = [
-  ["pʰ", "p"], ["tˢ", "t"], ["kʰ", "k"],
-  ["b̥", "b"], ["d̥", "d"], ["ɡ̊", "g"],
-  ["iː", "i"], ["yː", "y"], ["eː", "e"], ["ɛː", "æ"],
-  ["øː", "ø"], ["œː", "ø"], ["aː", "a"], ["ɑː", "ar"],
-  ["uː", "u"], ["oː", "o"], ["ɔː", "å"],
-  ["ɛ", "æ"], ["ɑ", "ar"], ["ɔ", "å"], ["ʌ", "o"],
-  ["ə", "e"], ["ɐ", "er"], ["ð", "d"], ["ŋ", "ng"],
-  ["ʁ", "r"], ["ɡ", "g"], ["ˀ", ""], ["ː", ""]
+  ["pʰ", "p"],
+  ["tˢ", "t"],
+  ["kʰ", "k"],
+  ["b̥", "b"],
+  ["d̥", "d"],
+  ["ɡ̊", "g"],
+  ["iː", "i"],
+  ["yː", "y"],
+  ["eː", "e"],
+  ["ɛː", "æ"],
+  ["øː", "ø"],
+  ["œː", "ø"],
+  ["aː", "a"],
+  ["ɑː", "ar"],
+  ["uː", "u"],
+  ["oː", "o"],
+  ["ɔː", "å"],
+  ["ɛ", "æ"],
+  ["ɑ", "ar"],
+  ["ɔ", "å"],
+  ["ʌ", "o"],
+  ["ə", "e"],
+  ["ɐ", "er"],
+  ["ð", "d"],
+  ["ŋ", "ng"],
+  ["ʁ", "r"],
+  ["ɡ", "g"],
+  ["ˀ", ""],
+  ["ː", ""],
 ];
 
 /** Map common IPA sequences to pronounceable orthography for a target language */
@@ -167,11 +188,7 @@ export interface PhoneticAudioResolution {
  * Resolves a phonetic transcription input into speech-ready text and a descriptive label,
  * preferring authentic words and phoneme keywords before synthesized fallback.
  */
-export function resolvePhoneticAudio(
-  input: string,
-  pack: LanguagePack,
-  targetWordId?: WordId
-): PhoneticAudioResolution | null {
+export function resolvePhoneticAudio(input: string, pack: LanguagePack, targetWordId?: WordId): PhoneticAudioResolution | null {
   const clean = input.trim();
   if (!clean) return null;
 
@@ -256,4 +273,3 @@ export function resolvePhoneticAudio(
     source: "synthesized",
   };
 }
-

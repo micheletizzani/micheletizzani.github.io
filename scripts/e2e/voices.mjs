@@ -23,10 +23,21 @@ const stub = ({ voices, lateMs }) => {
     removeEventListener: (t, f) => (listeners[t] = (listeners[t] ?? []).filter((x) => x !== f)),
   };
   Object.defineProperty(window, "speechSynthesis", { value: synth, configurable: true });
-  window.SpeechSynthesisUtterance = function (t) { this.text = t; this.lang = ""; this.voice = null; };
-  if (lateMs) setTimeout(() => { window.__voices = voices; (listeners.voiceschanged ?? []).forEach((f) => f()); }, lateMs);
+  window.SpeechSynthesisUtterance = function (t) {
+    this.text = t;
+    this.lang = "";
+    this.voice = null;
+  };
+  if (lateMs)
+    setTimeout(() => {
+      window.__voices = voices;
+      (listeners.voiceschanged ?? []).forEach((f) => f());
+    }, lateMs);
 };
-const EN = [{ name: "Daniel", lang: "en-GB", localService: true }, { name: "Samantha", lang: "en-US", localService: true }];
+const EN = [
+  { name: "Daniel", lang: "en-GB", localService: true },
+  { name: "Samantha", lang: "en-US", localService: true },
+];
 const DA = { name: "Sara", lang: "da-DK", localService: true };
 
 async function open(opts, pack = "da") {
@@ -35,7 +46,10 @@ async function open(opts, pack = "da") {
   p.on("pageerror", (e) => console.log("ERR:", e.message.slice(0, 300)));
   await p.addInitScript(stub, opts);
   await p.goto(BASE + "/tools/maru/", { waitUntil: "networkidle" });
-  await p.evaluate((id) => { localStorage.clear(); localStorage.setItem("language-quest-pack", id); }, pack);
+  await p.evaluate((id) => {
+    localStorage.clear();
+    localStorage.setItem("language-quest-pack", id);
+  }, pack);
   await p.reload({ waitUntil: "networkidle" });
   await p.getByRole("button", { name: /^Enter / }).click();
   await p.waitForTimeout(2500);
@@ -73,7 +87,10 @@ async function open(opts, pack = "da") {
   await dlg.getByRole("button", { name: /^Listen/ }).click();
   await p.waitForTimeout(300);
   const s = await p.evaluate(() => window.__spoken);
-  ok(s.length === 1 && s[0].voice === "Sara" && s[0].lang === "da-DK" && s[0].text === "vand", "B: a Danish voice is selected explicitly: " + JSON.stringify(s));
+  ok(
+    s.length === 1 && s[0].voice === "Sara" && s[0].lang === "da-DK" && s[0].text === "vand",
+    "B: a Danish voice is selected explicitly: " + JSON.stringify(s)
+  );
   ok((await p.getByRole("dialog", { name: "Voice" }).count()) === 0, "B: no warning when a Danish voice exists");
   await p.getByRole("button", { name: /Voice: Sara/ }).click();
   const panel = p.getByRole("dialog", { name: "Voice" });

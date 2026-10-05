@@ -14,40 +14,83 @@ const b = await launch();
 let failed = 0;
 const ok = (c, m) => (console.log(c ? "PASS" : "FAIL", m), c || (failed += 1));
 const p = await b.newPage({ viewport: { width: 1280, height: 720 } });
-p.on("pageerror", e => console.log("ERR:", e.message.slice(0,500)));
-await p.addInitScript(() => { window.__spoken=[]; Object.defineProperty(window,"speechSynthesis",{value:{speak(u){window.__spoken.push(u.text)},cancel(){},getVoices:()=>[{name:"Sara",lang:"da-DK",localService:true}],addEventListener(){},removeEventListener(){}},configurable:true}); window.SpeechSynthesisUtterance=function(t){this.text=t}; });
+p.on("pageerror", (e) => console.log("ERR:", e.message.slice(0, 500)));
+await p.addInitScript(() => {
+  window.__spoken = [];
+  Object.defineProperty(window, "speechSynthesis", {
+    value: {
+      speak(u) {
+        window.__spoken.push(u.text);
+      },
+      cancel() {},
+      getVoices: () => [{ name: "Sara", lang: "da-DK", localService: true }],
+      addEventListener() {},
+      removeEventListener() {},
+    },
+    configurable: true,
+  });
+  window.SpeechSynthesisUtterance = function (t) {
+    this.text = t;
+  };
+});
 await p.goto(BASE + "/tools/maru/", { waitUntil: "networkidle" });
 await p.evaluate(() => {
   const w = (hyp) => ({ heard: true, sound: true, hintsUsed: 0, hypothesis: hyp });
   localStorage.setItem("language-quest-pack", "da");
-  localStorage.setItem("language-quest-progress-v1:da", JSON.stringify({ v: 1, finished: false, noticed: ["f-pump","f-drink","f-point"],
-    done: ["fountain","vendor","guard","gate"],
-    words: { vand: w("water"), kop: w("cup"), kopper: w("cup"), jeg: w("i"), har: w("have"), ikke: w("not"), "nøgle": w("key"), port: w("gate"), lukket: w("open"), fordi: w("because"), en: { heard: true, sound: false, hintsUsed: 0 } } }));
+  localStorage.setItem(
+    "language-quest-progress-v1:da",
+    JSON.stringify({
+      v: 1,
+      finished: false,
+      noticed: ["f-pump", "f-drink", "f-point"],
+      done: ["fountain", "vendor", "guard", "gate"],
+      words: {
+        vand: w("water"),
+        kop: w("cup"),
+        kopper: w("cup"),
+        jeg: w("i"),
+        har: w("have"),
+        ikke: w("not"),
+        nøgle: w("key"),
+        port: w("gate"),
+        lukket: w("open"),
+        fordi: w("because"),
+        en: { heard: true, sound: false, hintsUsed: 0 },
+      },
+    })
+  );
 });
 await p.reload({ waitUntil: "networkidle" });
-await p.getByText("Archive Door").first().click();     // choose destination on the map: starts at its approach point
+await p.getByText("Archive Door").first().click(); // choose destination on the map: starts at its approach point
 await p.waitForTimeout(3000);
 await p.keyboard.press("e");
 await p.waitForTimeout(800);
 const fin = p.getByRole("dialog", { name: /archivist/i });
-ok(await fin.count() === 1, "the final encounter opens a sentence sheet");
+ok((await fin.count()) === 1, "the final encounter opens a sentence sheet");
 await p.screenshot({ path: (process.env.SHOTS ?? "/tmp") + "/f1_finale.png" });
 // wrong sentence first
 await fin.getByLabel("Type the sentence").fill("jeg har en port");
 await p.keyboard.press("Enter");
 await p.waitForTimeout(300);
-ok(await fin.getByText(/not quite what you were told/).count() === 1, "a wrong sentence is rejected with guidance");
+ok((await fin.getByText(/not quite what you were told/).count()) === 1, "a wrong sentence is rejected with guidance");
 // build by tiles
-for (const w of ["jeg","har","brug","for","en","nøgle","fordi","porten","er","lukket"]) await fin.getByRole("button", { name: new RegExp("^" + w + "$") }).first().click();
+for (const w of ["jeg", "har", "brug", "for", "en", "nøgle", "fordi", "porten", "er", "lukket"])
+  await fin
+    .getByRole("button", { name: new RegExp("^" + w + "$") })
+    .first()
+    .click();
 await fin.getByRole("button", { name: /Say my sentence/ }).click();
 await p.waitForTimeout(800);
 const nb = p.getByRole("dialog", { name: "Field notebook" });
-ok(await nb.count() === 1, "success opens the notebook with the verdicts");
+ok((await nb.count()) === 1, "success opens the notebook with the verdicts");
 await p.screenshot({ path: (process.env.SHOTS ?? "/tmp") + "/f2_verdicts.png" });
 ok((await nb.getByTitle("correct").count()) >= 5, "verdict marks show correct guesses");
 ok((await nb.getByTitle("not quite").count()) === 2, "exactly the two wrong guesses (lukket=open, kopper=cup) are marked not quite");
 await nb.locator("button", { hasText: "lukket" }).first().click();
-ok(await nb.getByText("The truth").count() === 1 && await nb.getByText(/means closed/).count() === 1, "the word page reveals the truth for a wrong guess");
+ok(
+  (await nb.getByText("The truth").count()) === 1 && (await nb.getByText(/means closed/).count()) === 1,
+  "the word page reveals the truth for a wrong guess"
+);
 await p.screenshot({ path: (process.env.SHOTS ?? "/tmp") + "/f3_truth.png" });
 const saved = JSON.parse(await p.evaluate(() => localStorage.getItem("language-quest-progress-v1:da")));
 ok(saved.finished === true, "finished is persisted");

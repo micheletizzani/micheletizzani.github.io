@@ -1,32 +1,111 @@
-import React, { useEffect, useState } from 'react';
-import { X, Sparkles } from 'lucide-react';
-import { callLLM } from './llmClient';
-import type { StudyEnvironment } from './types';
+import React, { useEffect, useState } from "react";
+import { X, Sparkles } from "lucide-react";
+import { callLLM } from "./llmClient";
+import type { StudyEnvironment } from "./types";
 
 // Click any word inside an element marked lang="da" to see a contextual entry.
 // ponytail: static glossary + naive suffix stripping; ceiling = inflections not
 // covered. Upgrade path: the "Explain in context" LLM button (already wired).
 const GLOSSARY: Record<string, string> = {
-  i: 'in', dag: 'day', 'i dag': 'today', morgen: 'morning / tomorrow', cykler: 'bikes / (he/I) cycle(s)',
-  cykel: 'bicycle', jeg: 'I', du: 'you', han: 'he', hun: 'she', det: 'it / that', den: 'it / that (en-word)',
-  vi: 'we', de: 'they', på: 'on / at', arbejde: 'work', fordi: 'because', at: 'that / to (infinitive)',
-  ikke: 'not', aldrig: 'never', har: 'has / have', have: 'to have', tid: 'time', drikker: 'drink(s)',
-  kaffe: 'coffee', universitet: 'university', taler: 'speak(s)', dansk: 'Danish', endnu: 'yet / still',
-  desværre: 'unfortunately', kan: 'can / is able to', komme: 'to come', siger: 'say(s)', spiser: 'eat(s)',
-  kød: 'meat', hej: 'hi / hello', skal: 'shall / must / going to', en: 'a / an (common gender)',
-  et: 'a / an (neuter)', pose: 'bag', med: 'with', nej: 'no', tak: 'thanks', ja: 'yes', behøver: 'need(s)',
-  min: 'my (common)', mit: 'my (neuter)', egen: 'own', rygsæk: 'backpack', bliver: 'becomes / will be',
-  kroner: 'kroner (Danish currency)', vil: 'want(s) / will', kvittering: 'receipt', send: 'send (imperative)',
-  gerne: 'gladly / please / with pleasure', og: 'and', er: 'is / am / are', til: 'to / for', fra: 'from',
-  hund: 'dog', skib: 'ship', vand: 'water', frokost: 'lunch (NOT breakfast)', morgenmad: 'breakfast',
-  eventuelt: 'possibly / optionally', møde: 'meeting', aftale: 'agreement / appointment', anden: 'other / second',
-  kl: "o'clock", bil: 'car', rolig: 'calm', flink: 'kind / nice', blank: 'shiny', gade: 'street', rød: 'red',
-  lærer: 'teacher', hvid: 'white', hus: 'house', bog: 'book', nu: 'now', her: 'here', der: 'there / that (rel.)',
-  hvad: 'what', hvor: 'where', hvem: 'who', hvorfor: 'why', men: 'but', eller: 'or', så: 'so / then', om: 'about / if',
-  da: 'when (past) / since', hvis: 'if', ingen: 'no one / none', meget: 'very / much', også: 'also', kun: 'only',
+  i: "in",
+  dag: "day",
+  "i dag": "today",
+  morgen: "morning / tomorrow",
+  cykler: "bikes / (he/I) cycle(s)",
+  cykel: "bicycle",
+  jeg: "I",
+  du: "you",
+  han: "he",
+  hun: "she",
+  det: "it / that",
+  den: "it / that (en-word)",
+  vi: "we",
+  de: "they",
+  på: "on / at",
+  arbejde: "work",
+  fordi: "because",
+  at: "that / to (infinitive)",
+  ikke: "not",
+  aldrig: "never",
+  har: "has / have",
+  have: "to have",
+  tid: "time",
+  drikker: "drink(s)",
+  kaffe: "coffee",
+  universitet: "university",
+  taler: "speak(s)",
+  dansk: "Danish",
+  endnu: "yet / still",
+  desværre: "unfortunately",
+  kan: "can / is able to",
+  komme: "to come",
+  siger: "say(s)",
+  spiser: "eat(s)",
+  kød: "meat",
+  hej: "hi / hello",
+  skal: "shall / must / going to",
+  en: "a / an (common gender)",
+  et: "a / an (neuter)",
+  pose: "bag",
+  med: "with",
+  nej: "no",
+  tak: "thanks",
+  ja: "yes",
+  behøver: "need(s)",
+  min: "my (common)",
+  mit: "my (neuter)",
+  egen: "own",
+  rygsæk: "backpack",
+  bliver: "becomes / will be",
+  kroner: "kroner (Danish currency)",
+  vil: "want(s) / will",
+  kvittering: "receipt",
+  send: "send (imperative)",
+  gerne: "gladly / please / with pleasure",
+  og: "and",
+  er: "is / am / are",
+  til: "to / for",
+  fra: "from",
+  hund: "dog",
+  skib: "ship",
+  vand: "water",
+  frokost: "lunch (NOT breakfast)",
+  morgenmad: "breakfast",
+  eventuelt: "possibly / optionally",
+  møde: "meeting",
+  aftale: "agreement / appointment",
+  anden: "other / second",
+  kl: "o'clock",
+  bil: "car",
+  rolig: "calm",
+  flink: "kind / nice",
+  blank: "shiny",
+  gade: "street",
+  rød: "red",
+  lærer: "teacher",
+  hvid: "white",
+  hus: "house",
+  bog: "book",
+  nu: "now",
+  her: "here",
+  der: "there / that (rel.)",
+  hvad: "what",
+  hvor: "where",
+  hvem: "who",
+  hvorfor: "why",
+  men: "but",
+  eller: "or",
+  så: "so / then",
+  om: "about / if",
+  da: "when (past) / since",
+  hvis: "if",
+  ingen: "no one / none",
+  meget: "very / much",
+  også: "also",
+  kun: "only",
 };
 
-const STEMS = ['ene', 'erne', 'ede', 'ende', 'en', 'et', 'er', 'ne', 'e', 'r', 't', 's'];
+const STEMS = ["ene", "erne", "ede", "ende", "en", "et", "er", "ne", "e", "r", "t", "s"];
 
 function lookup(word: string, env: StudyEnvironment) {
   const w = word.toLowerCase();
@@ -53,7 +132,7 @@ function wordAt(x: number, y: number): { word: string; el: Element } | null {
     off = r?.startOffset ?? 0;
   }
   if (!node || node.nodeType !== Node.TEXT_NODE) return null;
-  const t = node.textContent || '';
+  const t = node.textContent || "";
   const isW = (c: string) => /[\p{L}'-]/u.test(c);
   let a = Math.min(off, t.length);
   let b = a;
@@ -67,33 +146,33 @@ function wordAt(x: number, y: number): { word: string; el: Element } | null {
 interface Props {
   environment: StudyEnvironment;
   apiKey: string;
-  provider: 'gemini' | 'groq';
+  provider: "gemini" | "groq";
 }
 
 export const WordGloss: React.FC<Props> = ({ environment, apiKey, provider }) => {
   const [pop, setPop] = useState<{ x: number; y: number; word: string; sentence: string } | null>(null);
-  const [ctx, setCtx] = useState('');
+  const [ctx, setCtx] = useState("");
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     const onClick = (e: MouseEvent) => {
-      if ((e.target as Element).closest('[data-gloss-popover]')) return;
+      if ((e.target as Element).closest("[data-gloss-popover]")) return;
       const hit = wordAt(e.clientX, e.clientY);
-      setCtx('');
+      setCtx("");
       if (!hit) return setPop(null);
       setPop({
         x: Math.min(e.clientX, window.innerWidth - 300),
         y: Math.min(e.clientY + 14, window.innerHeight - 220),
         word: hit.word,
-        sentence: (hit.el.textContent || '').trim(),
+        sentence: (hit.el.textContent || "").trim(),
       });
     };
-    const onKey = (e: KeyboardEvent) => e.key === 'Escape' && setPop(null);
-    document.addEventListener('click', onClick);
-    document.addEventListener('keydown', onKey);
+    const onKey = (e: KeyboardEvent) => e.key === "Escape" && setPop(null);
+    document.addEventListener("click", onClick);
+    document.addEventListener("keydown", onKey);
     return () => {
-      document.removeEventListener('click', onClick);
-      document.removeEventListener('keydown', onKey);
+      document.removeEventListener("click", onClick);
+      document.removeEventListener("keydown", onKey);
     };
   }, []);
 
@@ -148,7 +227,7 @@ export const WordGloss: React.FC<Props> = ({ environment, apiKey, provider }) =>
           disabled={loading}
           className="px-3 py-1.5 rounded-lg bg-[var(--accent-color)] text-black font-mono font-bold flex items-center gap-1.5 disabled:opacity-50"
         >
-          <Sparkles className="w-3 h-3" /> {loading ? 'Asking…' : 'Explain in context'}
+          <Sparkles className="w-3 h-3" /> {loading ? "Asking…" : "Explain in context"}
         </button>
       )}
     </div>

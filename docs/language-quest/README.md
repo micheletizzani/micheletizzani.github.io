@@ -3,11 +3,11 @@
 A point-and-click language-discovery game for the Study Hub. You arrive in a city knowing none of the language,
 watch what people do, listen, write down the sounds, and work out what the words mean from your own notes.
 
-| Document | Read it to… |
-| --- | --- |
-| [DESIGN.md](./DESIGN.md) | understand what the game is, why it works the way it does, and how it is built |
-| [PACK_TEMPLATE.md](./PACK_TEMPLATE.md) | add a new language, a new city, or a new story chapter |
-| [`packs/_template.ts`](../../src/components/tools/lingua/packs/_template.ts) | copy a complete, type-checked, validator-passing starting point |
+| Document                                                                     | Read it to…                                                                    |
+| ---------------------------------------------------------------------------- | ------------------------------------------------------------------------------ |
+| [DESIGN.md](./DESIGN.md)                                                     | understand what the game is, why it works the way it does, and how it is built |
+| [PACK_TEMPLATE.md](./PACK_TEMPLATE.md)                                       | add a new language, a new city, or a new story chapter                         |
+| [`packs/_template.ts`](../../src/components/tools/lingua/packs/_template.ts) | copy a complete, type-checked, validator-passing starting point                |
 
 ## Run it
 

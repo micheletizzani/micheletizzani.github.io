@@ -1,6 +1,16 @@
 import React, { useEffect, useMemo, useState } from "react";
 import { AlertTriangle, CheckCircle2, RefreshCw, Volume2 } from "lucide-react";
-import { chooseVoice, chosenVoiceName, hasNativeAudio, onVoicesChanged, speakText, voiceReport, voices, whenVoicesReady, type VoiceReport } from "./maruAudio";
+import {
+  chooseVoice,
+  chosenVoiceName,
+  hasNativeAudio,
+  onVoicesChanged,
+  speakText,
+  voiceReport,
+  voices,
+  whenVoicesReady,
+  type VoiceReport,
+} from "./maruAudio";
 import { installHints, rankVoices } from "./maruVoices";
 import type { LanguagePack } from "./packs/types";
 import { BTN_GOLD, BTN_PLAIN, CloseButton, Overlay } from "./ui";
@@ -88,8 +98,8 @@ export function VoicePanel({ pack, reason, onClose }: { pack: LanguagePack; reas
           <p className="mt-4 flex items-start gap-2 border-2 border-[var(--mx-good)] bg-[var(--mx-paper-light)] p-3 text-sm">
             <CheckCircle2 size={16} className="mt-0.5 shrink-0 text-[var(--mx-good)]" />
             <span>
-              Speaking with <strong>Studio Neural Voice</strong> (Christel · {langName}).
-              High-fidelity native pronunciation for words, sentences, and phonetic tests.
+              Speaking with <strong>Studio Neural Voice</strong> (Christel · {langName}). High-fidelity native pronunciation for words, sentences, and
+              phonetic tests.
             </span>
           </p>
         )}
@@ -162,9 +172,7 @@ export function VoicePanel({ pack, reason, onClose }: { pack: LanguagePack; reas
               onChange={(e) => pick(e.target.value)}
               className="mt-1 block w-full border-2 border-[var(--mx-ink)] bg-[var(--mx-paper-light)] px-2 py-2 text-sm"
             >
-              {hasNativeAudio(lang) && (
-                <option value="">Studio Neural Voice (Christel · Recommended)</option>
-              )}
+              {hasNativeAudio(lang) && <option value="">Studio Neural Voice (Christel · Recommended)</option>}
               {ranked.exact.length + ranked.sameLanguage.length > 0 && (
                 <optgroup label={`Installed ${langName} voices`}>
                   {[...ranked.exact, ...ranked.sameLanguage].map((v) => (

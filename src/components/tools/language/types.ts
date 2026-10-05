@@ -1,4 +1,4 @@
-export type CEFRLevel = 'A1' | 'A2' | 'B1' | 'B2' | 'C1' | 'C2';
+export type CEFRLevel = "A1" | "A2" | "B1" | "B2" | "C1" | "C2";
 
 export interface LanguageProfile {
   targetLanguage: string;
@@ -34,7 +34,7 @@ export interface ErrorLogItem {
   id: string;
   error: string;
   correction: string;
-  category: 'Syntax' | 'Interference' | 'Phonetics' | 'Register' | 'Lexical';
+  category: "Syntax" | "Interference" | "Phonetics" | "Register" | "Lexical";
   explanation: string;
   count: number;
   lastSeen: string;
@@ -61,7 +61,7 @@ export interface StudyPlan {
 
 export interface AssessmentQuestion {
   id: string;
-  category: 'syntax' | 'vocabulary' | 'interference' | 'phonetics';
+  category: "syntax" | "vocabulary" | "interference" | "phonetics";
   prompt: string;
   options: string[];
   correctIndex: number;
@@ -110,7 +110,7 @@ export interface VaultData {
   environments: StudyEnvironment[];
   activeEnvironmentId: string;
   apiKey: string;
-  provider: 'gemini' | 'groq';
+  provider: "gemini" | "groq";
   model: string;
   lastUnlocked: string;
 }
@@ -128,7 +128,7 @@ export interface MinimalPair {
 
 export interface SyntaxPuzzle {
   id: string;
-  sentenceType: 'main' | 'subordinate';
+  sentenceType: "main" | "subordinate";
   english: string;
   italianBridge?: string;
   targetTokens: string[];
