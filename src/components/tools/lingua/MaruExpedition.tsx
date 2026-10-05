@@ -387,6 +387,8 @@ export const MaruExpedition: React.FC<{ onExit?: () => void }> = ({ onExit }) =>
   const firedRef = useRef(new Set<string>());
   const afterStory = useRef<"notebook" | null>(null);
   const storyBeat = queue[0];
+  const mapOpenRef = useRef(true);
+  mapOpenRef.current = mapOpen;
   const [keys, setKeys] = useState<Record<ActionId, string>>(defaultKeys);
   const [destinationRaw, setDestination] = useState<EncounterId | null>(null);
   const [playerPosition, setPlayerPosition] = useState<[number, number]>([0, 4.6]);
@@ -542,7 +544,8 @@ export const MaruExpedition: React.FC<{ onExit?: () => void }> = ({ onExit }) =>
       if (!id) return;
       const e = encounterOf(pack, id);
       if (progress.done.includes(id)) return;
-      if (isUnlocked(pack, id, progress.done)) fire("enter", id);
+      // "enter" text belongs to the world: not while the map screen is open (it would jump ahead of the chapter's opening)
+      if (isUnlocked(pack, id, progress.done) && !mapOpenRef.current) fire("enter", id);
       if (isUnlocked(pack, id, progress.done))
         setMessage(
           `${e.name}: something is going on here. ${isTouch ? "Tap Look closer" : `Press ${keyLabel(keys.interact)} or click the glowing character`} to take a closer look.`
@@ -655,6 +658,7 @@ export const MaruExpedition: React.FC<{ onExit?: () => void }> = ({ onExit }) =>
     }
     setMapOpen(false);
     fire("start");
+    if (nearby && isUnlocked(pack, nearby, progress.done)) fire("enter", nearby); // whoever you are already standing beside
     if (!document.fullscreenElement) void toggleFullscreen();
   };
   const leave = () => (onExit ? onExit() : window.location.assign("/tools/language-hub"));
