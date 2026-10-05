@@ -1,6 +1,7 @@
 // E2E test verifying the phonetic audio test feature in the Sound tab and Phonetic Dictionary.
 import { chromium } from "playwright-core";
 import assert from "node:assert/strict";
+import { clickMarker } from "./_lq.mjs";
 
 const ok = (cond, msg) => {
   assert.ok(cond, msg);
@@ -44,19 +45,9 @@ try {
 
   // open the lesson by clicking the pump marker
   let opened = false;
-  for (const [x, y] of [
-    [640, 330],
-    [690, 330],
-    [600, 340],
-    [650, 280],
-  ]) {
-    await page.mouse.click(x, y);
-    await page.waitForTimeout(1600);
-    if ((await page.getByRole("dialog").count()) > 0) {
-      opened = true;
-      break;
-    }
-  }
+  await clickMarker(page, "fountain");
+  await page.waitForTimeout(2500);
+  opened = (await page.getByRole("dialog").count()) > 0;
   ok(opened, "clicking the pump opens the guided lesson");
 
   const dlg = page.getByRole("dialog");

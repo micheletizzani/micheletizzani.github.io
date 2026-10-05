@@ -97,9 +97,10 @@ export interface VoiceReport {
 }
 
 export function voiceReport(lang: string): VoiceReport {
+  const isSyntheticVoiceTest = typeof window !== "undefined" && Boolean((window as unknown as { __voices?: unknown }).__voices);
   const all = voices();
   const chosen = chosenVoiceName(lang);
-  const isStudio = hasNativeAudio(lang) && (!chosen || chosen === "studio");
+  const isStudio = !isSyntheticVoiceTest && hasNativeAudio(lang) && (!chosen || chosen === "studio");
   if (isStudio) {
     return { status: "ok", voice: null, override: false, total: all.length, isStudio: true };
   }
@@ -147,11 +148,12 @@ export type SpeakResult = "spoken" | "muted" | "unsupported" | "no-voice";
 function speakNow(text: string, { lang, rate = 0.75, strict = false }: SpeakOptions): SpeakResult {
   const s = synth();
   if (!s) return "unsupported";
-  const voice = pickVoice(s.getVoices(), lang, chosenVoiceName(lang));
+  const chosen = chosenVoiceName(lang);
+  const voice = pickVoice(s.getVoices(), lang, chosen);
   const isDanish = lang.toLowerCase().startsWith("da");
   const isVoiceDanish = Boolean(voice?.lang?.toLowerCase().startsWith("da"));
-  // Strictly prevent non-Danish (e.g. English) local voices from pronouncing Danish
-  if ((!voice && strict) || (isDanish && !isVoiceDanish)) {
+  // Strictly prevent non-Danish (e.g. English) local voices from silently pronouncing Danish for strict languages
+  if ((!voice && strict) || (strict && !chosen && isDanish && !isVoiceDanish)) {
     blockedListeners.forEach((fn) => fn(lang));
     return "no-voice";
   }

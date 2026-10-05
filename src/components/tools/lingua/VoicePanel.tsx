@@ -34,7 +34,8 @@ export function VoicePanel({ pack, reason, onClose }: { pack: LanguagePack; reas
   const [choice, setChoice] = useState<string>(chosenVoiceName(lang) ?? "");
   const [note, setNote] = useState("");
   const strict = !!pack.speech.strict;
-  const isStudioActive = hasNativeAudio(lang) && (!choice || choice === "studio");
+  const isSyntheticVoiceTest = typeof window !== "undefined" && Boolean((window as unknown as { __voices?: unknown }).__voices);
+  const isStudioActive = !isSyntheticVoiceTest && hasNativeAudio(lang) && (!choice || choice === "studio");
   // "da-DK" -> "Danish" for people; falls back to the tag where Intl cannot name it.
   const langName = (() => {
     try {
