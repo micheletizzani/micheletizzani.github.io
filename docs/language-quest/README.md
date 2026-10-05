@@ -5,6 +5,8 @@ watch what people do, listen, write down the sounds, and work out what the words
 
 | Document | Read it to… |
 | --- | --- |
+| [GAME_DESIGN_DOCUMENT.md](./GAME_DESIGN_DOCUMENT.md) | get the full, engine-independent concept: objectives, mechanics, art, content model, risks |
+| [STORY_BRIEF.md](./STORY_BRIEF.md) | write a story: one-page rules, chapter shape and a fill-in template |
 | [DESIGN.md](./DESIGN.md) | understand what the game is, why it works the way it does, and how it is built |
 | [PACK_TEMPLATE.md](./PACK_TEMPLATE.md) | add a new language, a new city, or a new story chapter |
 | [`packs/_template.ts`](../../src/components/tools/lingua/packs/_template.ts) | copy a complete, type-checked, validator-passing starting point |
