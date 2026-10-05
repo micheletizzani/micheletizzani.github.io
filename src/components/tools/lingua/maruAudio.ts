@@ -5,6 +5,7 @@
 import { pickVoice, rankVoices, type VoiceStatus } from "./maruVoices";
 import { NATIVE_AUDIO_CLIPS } from "./audioManifest";
 import { ipaToPronounceable } from "./maruPhonetics";
+import { duckMusic, initMusicContext, setMusicMuted } from "./maruMusic";
 
 let ctx: AudioContext | null = null;
 let muted = false;
@@ -17,16 +18,21 @@ const audioContext = () => {
     const Ctor = window.AudioContext ?? (window as unknown as { webkitAudioContext?: typeof AudioContext }).webkitAudioContext;
     if (!Ctor) return null;
     ctx = new Ctor();
+    initMusicContext(ctx);
   }
   if (ctx.state === "suspended") void ctx.resume();
   return ctx;
 };
 
+export const getAudioContext = () => audioContext();
+
 export const setMuted = (value: boolean) => {
   muted = value;
+  setMusicMuted(value);
   if (typeof window !== "undefined") {
     if (value) {
       window.speechSynthesis?.cancel();
+      duckMusic(false);
       if (currentAudio) {
         currentAudio.pause();
         currentAudio.currentTime = 0;
@@ -162,6 +168,10 @@ function speakNow(text: string, { lang, rate = 0.75, strict = false }: SpeakOpti
   utterance.lang = voice?.lang ?? lang;
   if (voice) utterance.voice = voice;
   utterance.rate = rate;
+  duckMusic(true);
+  const unduck = () => duckMusic(false);
+  utterance.onend = unduck;
+  utterance.onerror = unduck;
   s.speak(utterance);
   return "spoken";
 }
@@ -203,12 +213,20 @@ export function playNativeClip(url: string, rate = 1): boolean {
     const a = new Audio(url);
     currentAudio = a;
     a.playbackRate = rate;
+    duckMusic(true);
+    const unduck = () => duckMusic(false);
+    a.addEventListener("ended", unduck, { once: true });
+    a.addEventListener("pause", unduck, { once: true });
+    a.addEventListener("error", unduck, { once: true });
     const p = a.play();
     if (p !== undefined) {
-      p.catch(() => {});
+      p.catch(() => {
+        unduck();
+      });
     }
     return true;
   } catch {
+    duckMusic(false);
     return false;
   }
 }
@@ -254,6 +272,11 @@ function speakTextNow(text: string, options: SpeakOptions): SpeakResult {
       try {
         const a = new Audio(endpoint);
         a.playbackRate = options.rate ?? 1;
+        duckMusic(true);
+        const unduck = () => duckMusic(false);
+        a.addEventListener("ended", unduck, { once: true });
+        a.addEventListener("pause", unduck, { once: true });
+        a.addEventListener("error", unduck, { once: true });
         const p = a.play();
         if (p !== undefined) {
           p.then(() => {
@@ -262,7 +285,7 @@ function speakTextNow(text: string, options: SpeakOptions): SpeakResult {
             }
             currentAudio = a;
           }).catch(() => {
-            // Dynamic endpoint unavailable, fallback gracefully
+            unduck();
           });
         }
         if ((window as unknown as { __spoken?: unknown[] }).__spoken) {
@@ -270,7 +293,7 @@ function speakTextNow(text: string, options: SpeakOptions): SpeakResult {
         }
         return "spoken";
       } catch {
-        // Fall through
+        unduck();
       }
     }
   }
@@ -316,7 +339,8 @@ export function chime() {
 }
 
 export const unlockAudio = () => {
-  audioContext();
+  const c = audioContext();
+  if (c) initMusicContext(c);
   // Some browsers only populate voices after the first call.
   void whenVoicesReady();
 };

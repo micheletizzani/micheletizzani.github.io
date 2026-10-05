@@ -19,6 +19,7 @@ import { makeTerrain } from "../../src/components/tools/lingua/maruTerrain";
 import { packGrid, packTerrain } from "../../src/components/tools/lingua/packs/navgrid";
 import { pickVoice, rankVoices, installHints } from "../../src/components/tools/lingua/maruVoices";
 import { candidatesFor, emptyProgress, evidenceFor, verdicts, compatibility } from "../../src/components/tools/lingua/progress";
+import { normalizePhase, THEMES, musicEngine, type NarrativePhase } from "../../src/components/tools/lingua/maruMusic";
 import type { LanguagePack } from "../../src/components/tools/lingua/packs/types";
 
 const clone = (p: LanguagePack): LanguagePack => JSON.parse(JSON.stringify(p));
@@ -410,4 +411,47 @@ test("letter-folk: people must own real encounters, stand on ground and name the
   const twice = clone(t);
   twice.world.npcs[1].encounter = "fountain";
   assert.ok(validatePack(twice).warnings.some((w) => w.includes("owned by 2 people")));
+});
+
+test("music engine follows narrative arc and supports stopping anytime", () => {
+  // Phase mapping covers narrative beats and synonyms
+  assert.equal(normalizePhase("Observe"), "observe");
+  assert.equal(normalizePhase("The Fountain Court"), "observe");
+  assert.equal(normalizePhase("Connect"), "connect");
+  assert.equal(normalizePhase("Stall"), "connect");
+  assert.equal(normalizePhase("Hear"), "hear");
+  assert.equal(normalizePhase("The North Arch"), "hear");
+  assert.equal(normalizePhase("Compose"), "compose");
+  assert.equal(normalizePhase("The Closed Gate"), "compose");
+  assert.equal(normalizePhase("Speak"), "speak");
+  assert.equal(normalizePhase("The Archive"), "speak");
+  assert.equal(normalizePhase("Finale"), "speak");
+  assert.equal(normalizePhase(undefined), "observe");
+
+  // Every phase theme has valid harmonious chords and scale frequencies
+  const phases: NarrativePhase[] = ["observe", "connect", "hear", "compose", "speak"];
+  for (const p of phases) {
+    const theme = THEMES[p];
+    assert.ok(theme.chords.length >= 4, `${p} must have at least 4 chords in progression`);
+    for (const chord of theme.chords) {
+      assert.ok(chord.length >= 3, `${p} chord must have at least 3 voices`);
+      for (const freq of chord) {
+        assert.ok(freq > 50 && freq < 2000, `frequency ${freq} must be audible`);
+      }
+    }
+    assert.ok(theme.scale.length >= 5, `${p} melodic scale must have notes`);
+    assert.ok(theme.filterCutoff > 200 && theme.filterCutoff < 2000);
+    assert.ok(theme.tempoSec >= 4 && theme.tempoSec <= 12);
+  }
+
+  // Engine state transitions
+  musicEngine.setPhase("compose");
+  assert.equal(musicEngine.getPhase(), "compose");
+  musicEngine.setPhase("speak");
+  assert.equal(musicEngine.getPhase(), "speak");
+
+  musicEngine.setEnabled(false);
+  assert.equal(musicEngine.getEnabled(), false);
+  musicEngine.setEnabled(true);
+  assert.equal(musicEngine.getEnabled(), true);
 });

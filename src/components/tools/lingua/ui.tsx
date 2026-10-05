@@ -79,6 +79,8 @@ export function Overlay({ children, label, onClose }: { children: React.ReactNod
   );
 }
 
+import { pauseMusicForVoice } from "./maruMusic";
+
 // ---------- speech recognition (microphone) ----------
 type RecognitionCtor = new () => {
   lang: string;
@@ -103,6 +105,7 @@ export function useMic(lang: string) {
       return;
     }
     window.speechSynthesis?.cancel();
+    pauseMusicForVoice(true);
     const rec = new Recognition();
     rec.lang = lang;
     rec.maxAlternatives = 5;
@@ -115,6 +118,7 @@ export function useMic(lang: string) {
     };
     rec.onerror = (event) => {
       setListening(false);
+      pauseMusicForVoice(false);
       onError(
         event.error === "not-allowed"
           ? "Microphone permission was denied."
@@ -123,12 +127,16 @@ export function useMic(lang: string) {
             : `Speech recognition error: ${event.error}`
       );
     };
-    rec.onend = () => setListening(false);
+    rec.onend = () => {
+      setListening(false);
+      pauseMusicForVoice(false);
+    };
     setListening(true);
     try {
       rec.start();
     } catch {
       setListening(false);
+      pauseMusicForVoice(false);
     }
   };
   return { supported: !!Recognition, listening, start };
