@@ -1,6 +1,6 @@
 # Language Quest: story brief (one page)
 
-Use this as the reference when writing a story. The full concept is in [GAME_DESIGN_DOCUMENT.md](./GAME_DESIGN_DOCUMENT.md).
+Use this as the reference when writing a story. The long-form narrative concept is in [NARRATIVE_DESIGN.md](./NARRATIVE_DESIGN.md). The full concept is in [GAME_DESIGN_DOCUMENT.md](./GAME_DESIGN_DOCUMENT.md).
 
 ## The idea in three lines
 You are a quiet visitor in a place whose language you don't speak. People around you are busy with ordinary things and

@@ -264,11 +264,16 @@ Testing so far used software rendering. *Unverified:* frame rate on real phones,
 | New mechanic | New clue kinds, drill types (e.g. numbers, directions), review mode |
 | Better audio | Native recordings per word, keyed by word id, preferred over synthesis |
 
-## 12. Roadmap ideas (not committed)
+## 12. Narrative layer (planned)
+A larger story (an anthropologist chasing a lost manuscript through epochs of Copenhagen, with the notebook as the central
+object) is specified in [NARRATIVE_DESIGN.md](./NARRATIVE_DESIGN.md) and assessed in [STORYBOARD_EVALUATION.md](./STORYBOARD_EVALUATION.md).
+It needs new engine features (epoch layers, etymology side quests, a recall mode with the notebook hidden, multi-chapter progress); none is built.
+
+## 13. Roadmap ideas (not committed)
 Review mode with spaced repetition; Danish chapter two (numbers, directions, ordering at the kiosk); a cheaper rendering
 mode; reduced-motion option; a pack editor that runs the validator live; recordings by native speakers.
 
-## 13. Glossary
+## 14. Glossary
 | Term | Meaning |
 | --- | --- |
 | Pack | One language in one city, as data |
