@@ -11,8 +11,9 @@ try {
   buildSync({
     stdin: {
       contents: `import { PACKS } from "./src/components/tools/lingua/packs/index";
-        import { validatePack } from "./src/components/tools/lingua/packs/validate";
-        export const reports = PACKS.map((p) => ({ id: p.id, name: p.name, ...validatePack(p) }));`,
+        import { validatePack, validateRegistry } from "./src/components/tools/lingua/packs/validate";
+        export const reports = PACKS.map((p) => ({ id: p.id, name: p.name, ...validatePack(p) }));
+        export const registry = validateRegistry(PACKS);`,
       resolveDir: process.cwd(),
       loader: "ts",
     },
@@ -22,13 +23,17 @@ try {
     outfile: out,
     logLevel: "error",
   });
-  const { reports } = await import(pathToFileURL(out).href);
+  const { reports, registry } = await import(pathToFileURL(out).href);
   let failed = false;
   for (const r of reports) {
     console.log(`\n${r.name} (${r.id}): ${r.errors.length} error(s), ${r.warnings.length} warning(s)`);
     r.errors.forEach((e) => console.log("  ERROR  " + e));
     r.warnings.forEach((w) => console.log("  warn   " + w));
     if (r.errors.length) failed = true;
+  }
+  for (const e of registry) {
+    console.log("\nRegistry  ERROR  " + e);
+    failed = true;
   }
   process.exit(failed ? 1 : 0);
 } finally {

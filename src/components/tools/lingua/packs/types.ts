@@ -216,7 +216,7 @@ export interface BuildingSpec {
   kind?: "house" | "wall";
 }
 
-export type SceneryKey = "sandstone" | "nyhavn";
+export type SceneryKey = "sandstone" | "nyhavn" | "airport";
 
 /**
  * A flat terrace floating above the sea. Terraces are stacked in height and joined by stairs, and are laid out so
@@ -255,8 +255,42 @@ export interface WorldSpec {
   signs: SignSpec[];
 }
 
+/**
+ * A piece of story text shown on screen like an RPG dialogue box. Beats describe what happens; they never translate:
+ * `validate.ts` warns when a beat names the meaning of a word the pack teaches.
+ */
+export interface StoryBeat {
+  /** Unique within the language (prefix it with the pack id). Remembered as "seen". */
+  id: string;
+  /**
+   * start: when the player first enters the chapter. enter: when they come near an encounter. done: when an encounter is
+   * recorded (the finale encounter counts when its sentence is solved). end: after the finale, as a closing card.
+   */
+  trigger: "start" | "enter" | "done" | "end";
+  encounter?: EncounterId;
+  /** Who is speaking, shown as the label of the box. */
+  speaker: string;
+  text: string;
+  /** "card" is a full-screen chapter card instead of a bottom dialogue box. */
+  kind?: "box" | "card";
+  /** Title line of a card. */
+  title?: string;
+  /** Updates the objective bar when this beat is shown. */
+  objective?: string;
+}
+
+export interface Story {
+  /** The lead character, used in the data only so that writers can keep names consistent. */
+  protagonist: string;
+  beats: StoryBeat[];
+}
+
 export interface LanguagePack {
   id: string;
+  /** Packs of one language share the player's progress (words, notes, guesses). Defaults to `id`. Encounter ids must be unique across them. */
+  language?: string;
+  /** Position of this pack in the language's story, shown on the map screen. */
+  chapter?: { number: number; title: string };
   /** English name, e.g. "Danish". */
   name: string;
   /** Endonym, e.g. "Dansk". */
@@ -293,6 +327,8 @@ export interface LanguagePack {
   verification: { status: "verified" | "unverified"; note: string };
   /** Sources used for the content. */
   sources: string[];
+  /** Story text shown at checkpoints. Optional: a pack without it plays as before. */
+  story?: Story;
 }
 
 export type Pack = LanguagePack;

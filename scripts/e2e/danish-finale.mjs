@@ -65,7 +65,7 @@ await p.getByText("Archive Door").first().click(); // choose destination on the 
 await p.waitForTimeout(3000);
 await p.keyboard.press("e");
 await p.waitForTimeout(800);
-const fin = p.getByRole("dialog", { name: /archivist/i });
+const fin = p.getByRole("dialog", { name: /Archive Door/ });
 ok((await fin.count()) === 1, "the final encounter opens a sentence sheet");
 await p.screenshot({ path: (process.env.SHOTS ?? "/tmp") + "/f1_finale.png" });
 // wrong sentence first

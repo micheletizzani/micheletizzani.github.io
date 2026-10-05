@@ -38,7 +38,10 @@ await page.addInitScript(() => {
 
 try {
   await page.goto(BASE + "/tools/maru/", { waitUntil: "networkidle" });
-  await page.evaluate(() => localStorage.clear());
+  await page.evaluate(() => {
+    localStorage.clear();
+    localStorage.setItem("language-quest-pack", "da"); // Chapter 2 (Nyhavn)
+  });
   await page.reload({ waitUntil: "networkidle" });
   await page.getByRole("button", { name: /Enter Nyhavn/i }).click();
   await page.waitForTimeout(2500);

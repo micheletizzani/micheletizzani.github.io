@@ -72,6 +72,10 @@ built from words learned earlier.
 - While a lesson is open the camera eases in on the subject and shifts so it sits above the lesson sheet.
 - Why point-and-click: it works identically with a mouse and a thumb, needs no pointer lock, and keeps the HUD usable.
 
+### 5.1a Story text and chapters
+
+Story text appears like an RPG dialogue box at checkpoints (start of a chapter, near an encounter, after recording, after the finale) and as full-screen chapter cards. Space, Enter or E finishes a line and then moves on; Esc skips the queue; the world pauses while a box is open; nothing is spoken. An objective bar (top left) shows the current goal, and the Notebook's Story tab keeps a log. A language can have several chapters (packs sharing one progress).
+
 ### 5.2 Observe: observational hints
 
 Each encounter lists **clues** of six kinds: _object, action, gesture, writing, contrast, context_. Clues start

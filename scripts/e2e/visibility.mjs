@@ -13,13 +13,15 @@ for (const [name, viewport] of [
   ["desktop", { width: 1280, height: 720 }],
   ["phone landscape", { width: 844, height: 390 }],
 ]) {
-  for (const pack of ["Danish", "Maru"]) {
+  for (const pack of ["da-1", "da", "maru"]) {
     const p = await b.newPage({ viewport });
     p.on("pageerror", (e) => console.log("ERR:", e.message.slice(0, 300)));
     await p.goto(BASE + "/tools/maru/", { waitUntil: "networkidle" });
-    await p.evaluate(() => localStorage.clear());
+    await p.evaluate((id) => {
+      localStorage.clear();
+      localStorage.setItem("language-quest-pack", id);
+    }, pack);
     await p.reload({ waitUntil: "networkidle" });
-    if (pack !== "Danish") await p.getByRole("button", { name: pack, exact: true }).click();
     await p.getByRole("button", { name: /^Enter / }).click();
     await waitForWorld(p);
     await p.waitForTimeout(2500);

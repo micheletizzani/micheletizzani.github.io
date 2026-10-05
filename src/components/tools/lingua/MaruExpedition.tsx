@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useRef, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import {
   AudioLines,
   BookOpen,
@@ -26,8 +26,9 @@ import { MaruWorld } from "./MaruWorld";
 import { Notebook, type NotebookTab } from "./Notebook";
 import { PhoneticDictionary } from "./PhoneticDictionary";
 import { onSpeechBlocked, setMuted, setPingsEnabled, unlockAudio } from "./maruAudio";
-import { DEFAULT_PACK_ID, PACKS, encounter as encounterOf, getPack, isUnlocked, nextEncounter } from "./packs";
-import type { EncounterId, LanguagePack } from "./packs/types";
+import { DEFAULT_PACK_ID, PACKS, encounter as encounterOf, getPack, isUnlocked, languageOf, nextEncounter } from "./packs";
+import type { EncounterId, LanguagePack, StoryBeat } from "./packs/types";
+import { ObjectiveBar, StoryOverlay } from "./StoryOverlay";
 import { emptyProgress, loadProgress, clearProgress, saveProgress, type Progress } from "./progress";
 import { CloseButton, Overlay, themeVars } from "./ui";
 import { VoicePanel, useVoiceReport } from "./VoicePanel";
@@ -36,6 +37,45 @@ const mapCoordinates = ([x, , z]: [number, number, number]) => ({ x: 51 + x * 2.
 const PACK_STORE = "language-quest-pack";
 
 // ---------- map screen ----------
+/** A schematic plan drawn from the pack's terraces and stairs (used where the Copenhagen street map does not apply). */
+function TierMapArt({ pack }: { pack: LanguagePack }) {
+  const at = (x: number, z: number) => mapCoordinates([x, 0, z]);
+  return (
+    <g>
+      <rect width="100" height="100" fill={pack.world.palette.water} opacity="0.45" />
+      {pack.world.tiers.map((t) => {
+        const a = at(Math.min(...t.x), Math.min(...t.z));
+        const b = at(Math.max(...t.x), Math.max(...t.z));
+        return <rect key={t.id} x={a.x} y={a.y} width={b.x - a.x} height={b.y - a.y} fill={t.color} stroke={t.side} strokeWidth="0.6" rx="1" />;
+      })}
+      {pack.world.stairs.map((s, i) => {
+        const a = at(Math.min(...s.x), Math.min(...s.z));
+        const b = at(Math.max(...s.x), Math.max(...s.z));
+        return (
+          <rect
+            key={i}
+            x={a.x}
+            y={a.y}
+            width={b.x - a.x}
+            height={b.y - a.y}
+            fill={s.color ?? "#fbf4ec"}
+            stroke="#9aa6b2"
+            strokeWidth="0.4"
+            strokeDasharray="1 0.8"
+          />
+        );
+      })}
+      {pack.world.tiers.map((t) => {
+        const p = at((t.x[0] + t.x[1]) / 2, t.z[0] + 1.5);
+        return (
+          <text key={t.id} x={p.x} y={p.y} textAnchor="middle" fontSize="2.2" fill="#5b6b7b" fontFamily="Georgia, serif" letterSpacing="0.3">
+            {t.id.toUpperCase()}
+          </text>
+        );
+      })}
+    </g>
+  );
+}
 function MapScreen({
   pack,
   progress,
@@ -64,7 +104,7 @@ function MapScreen({
             aria-label={`Stylised map of central ${pack.city}`}
           >
             <rect width="100" height="100" fill="#dccfac" />
-            <CityMapArt water={pack.world.palette.water} />
+            {pack.world.scenery === "airport" ? <TierMapArt pack={pack} /> : <CityMapArt water={pack.world.palette.water} />}
             {pack.encounters.map((e, index) => {
               const point = mapCoordinates(e.position);
               const available = isUnlocked(pack, e.id, done);
@@ -100,8 +140,7 @@ function MapScreen({
             Start with the city, not the answer.
           </h1>
           <p className="mt-5 text-sm leading-relaxed text-[var(--mx-paper)]/85 [@media(max-height:480px)]:hidden">
-            {pack.intro}{" "}
-            Nothing makes a sound until you ask for it.
+            {pack.intro} Nothing makes a sound until you ask for it.
           </p>
           <div className="mt-4 flex items-center gap-2" role="group" aria-label="Language">
             <Languages size={15} className="text-[var(--mx-gold)]" />
@@ -112,7 +151,7 @@ function MapScreen({
                 aria-pressed={p.id === pack.id}
                 className={`border-2 border-[var(--mx-gold)] px-3 py-1.5 font-mono text-[11px] uppercase ${p.id === pack.id ? "bg-[var(--mx-gold)] font-bold text-[var(--mx-ink)]" : "hover:bg-[var(--mx-gold)]/25"}`}
               >
-                {p.nativeName}
+                {p.chapter ? `${p.nativeName} ${p.chapter.number} · ${p.chapter.title}` : p.nativeName}
               </button>
             ))}
           </div>
@@ -344,6 +383,10 @@ export const MaruExpedition: React.FC<{ onExit?: () => void }> = ({ onExit }) =>
   const [helpOpen, setHelpOpen] = useState(false);
   const [voicePanel, setVoicePanel] = useState<{ reason?: "blocked" } | null>(null);
   const [mapOpen, setMapOpen] = useState(true);
+  const [queue, setQueue] = useState<StoryBeat[]>([]);
+  const firedRef = useRef(new Set<string>());
+  const afterStory = useRef<"notebook" | null>(null);
+  const storyBeat = queue[0];
   const [keys, setKeys] = useState<Record<ActionId, string>>(defaultKeys);
   const [destination, setDestination] = useState<EncounterId | null>(null);
   const [playerPosition, setPlayerPosition] = useState<[number, number]>([0, 4.6]);
@@ -358,7 +401,8 @@ export const MaruExpedition: React.FC<{ onExit?: () => void }> = ({ onExit }) =>
   const current = nearby ? encounterOf(pack, nearby) : undefined;
   const unlocked = !!current && isUnlocked(pack, current.id, done);
   const target = nextEncounter(pack, done)?.id ?? null;
-  const playing = !mapOpen && !notebook && !dictionary && !lesson && !finaleOpen && !helpOpen && !voicePanel;
+  const playing = !mapOpen && !notebook && !dictionary && !lesson && !finaleOpen && !helpOpen && !voicePanel && !storyBeat;
+  const storyVisible = !!storyBeat && !mapOpen && !notebook && !dictionary && !lesson && !finaleOpen && !helpOpen && !voicePanel;
   const focus: EncounterId | null = lesson?.id ?? (finaleOpen ? pack.finale.encounter : null);
   const key = (id: ActionId) => keyLabel(keys[id]);
 
@@ -375,7 +419,10 @@ export const MaruExpedition: React.FC<{ onExit?: () => void }> = ({ onExit }) =>
     setPackId(getPack(saved).id);
   }, []);
   useEffect(() => {
-    setProgress(loadProgress(pack.id));
+    const saved = loadProgress(languageOf(pack));
+    firedRef.current = new Set(saved.story ?? []);
+    setQueue([]);
+    setProgress(saved);
     setLoaded(true);
     setDestination(pack.encounters[0].id);
     setNearby(null);
@@ -383,7 +430,7 @@ export const MaruExpedition: React.FC<{ onExit?: () => void }> = ({ onExit }) =>
     setFinaleOpen(false);
   }, [pack.id]); // eslint-disable-line react-hooks/exhaustive-deps
   useEffect(() => {
-    if (loaded) saveProgress(pack.id, progress);
+    if (loaded) saveProgress(languageOf(pack), progress);
   }, [progress, pack.id, loaded]);
   const choosePack = (id: string) => {
     setLoaded(false);
@@ -395,6 +442,30 @@ export const MaruExpedition: React.FC<{ onExit?: () => void }> = ({ onExit }) =>
     }
   };
 
+  // --- story text: beats are queued once, remembered in the progress (the story log) and shown one at a time ---
+  const fire = useCallback(
+    (trigger: StoryBeat["trigger"], encounterId?: EncounterId) => {
+      const fresh = (pack.story?.beats ?? []).filter(
+        (b) => b.trigger === trigger && (b.encounter ?? null) === (encounterId ?? null) && !firedRef.current.has(b.id)
+      );
+      if (!fresh.length) return;
+      fresh.forEach((b) => firedRef.current.add(b.id));
+      setQueue((q) => [...q, ...fresh]);
+      setProgress((p) => ({ ...p, story: [...(p.story ?? []), ...fresh.map((b) => b.id).filter((id) => !(p.story ?? []).includes(id))] }));
+    },
+    [pack]
+  );
+  const nextBeat = useCallback(() => setQueue((q) => q.slice(1)), []);
+  const skipStory = useCallback(() => setQueue([]), []);
+  const objective = useMemo(() => {
+    const beats = pack.story?.beats ?? [];
+    for (const id of [...(progress.story ?? [])].reverse()) {
+      const b = beats.find((x) => x.id === id && x.objective);
+      if (b) return b.objective!;
+    }
+    return null;
+  }, [pack, progress.story]);
+
   // --- encounters ---
   const openEncounter = useCallback(
     (id: EncounterId, tab?: LessonTab) => {
@@ -403,7 +474,7 @@ export const MaruExpedition: React.FC<{ onExit?: () => void }> = ({ onExit }) =>
         return;
       }
       if (id === pack.finale.encounter) {
-        if (progress.done.includes(id)) setMessage("The archivist already knows you understood. The door stands open.");
+        if (progress.done.includes(id)) setMessage("You have already said the final sentence here. Open your notebook to review it.");
         else setFinaleOpen(true);
         return;
       }
@@ -417,13 +488,19 @@ export const MaruExpedition: React.FC<{ onExit?: () => void }> = ({ onExit }) =>
     setProgress((p) => (p.done.includes(e.id) ? p : { ...p, done: [...p.done, e.id] }));
     setMessage(`${e.reveal.line} ${e.reveal.discovery}`);
     setLesson(null);
-  }, [lesson, pack]);
+    fire("done", e.id);
+  }, [lesson, pack, fire]);
   const finish = useCallback(() => {
     setProgress((p) => ({ ...p, done: p.done.includes(pack.finale.encounter) ? p.done : [...p.done, pack.finale.encounter], finished: true }));
     setFinaleOpen(false);
     setMessage(`${pack.finale.successLine} (“${pack.finale.translation}”) Open your notebook to see what the words really meant.`);
-    setNotebook({ tab: "words" });
-  }, [pack]);
+    const hasStory = (pack.story?.beats ?? []).some((b) => (b.trigger === "done" && b.encounter === pack.finale.encounter) || b.trigger === "end");
+    if (hasStory) {
+      afterStory.current = "notebook"; // the story comes first; the notebook with the verdicts opens when it ends
+      fire("done", pack.finale.encounter);
+      fire("end");
+    } else setNotebook({ tab: "words" });
+  }, [pack, fire]);
   const arrived = useCallback(
     (id: EncounterId, distanceTo: number) => {
       const e = encounterOf(pack, id);
@@ -438,13 +515,21 @@ export const MaruExpedition: React.FC<{ onExit?: () => void }> = ({ onExit }) =>
       if (!id) return;
       const e = encounterOf(pack, id);
       if (progress.done.includes(id)) return;
+      if (isUnlocked(pack, id, progress.done)) fire("enter", id);
       if (isUnlocked(pack, id, progress.done))
         setMessage(
           `${e.name}: something is going on here. ${isTouch ? "Tap Look closer" : `Press ${keyLabel(keys.interact)} or click the gold marker`} to take a closer look.`
         );
     },
-    [pack, progress.done, isTouch, keys.interact]
+    [pack, progress.done, isTouch, keys.interact, fire]
   );
+
+  useEffect(() => {
+    if (!queue.length && afterStory.current === "notebook") {
+      afterStory.current = null;
+      setNotebook({ tab: "words" });
+    }
+  }, [queue.length]);
 
   // --- environment ---
   useEffect(() => {
@@ -542,6 +627,7 @@ export const MaruExpedition: React.FC<{ onExit?: () => void }> = ({ onExit }) =>
       setMessage(`Route marked for ${encounterOf(pack, id).name}. Follow the arrow, or just look around.`);
     }
     setMapOpen(false);
+    fire("start");
     if (!document.fullscreenElement) void toggleFullscreen();
   };
   const leave = () => (onExit ? onExit() : window.location.assign("/tools/language-hub"));
@@ -574,6 +660,7 @@ export const MaruExpedition: React.FC<{ onExit?: () => void }> = ({ onExit }) =>
         onPosition={setPlayerPosition}
       />
       {!mapOpen && !focus && <CompassHud pack={pack} poseRef={poseRef} target={target} />}
+      {storyVisible && storyBeat && <StoryOverlay beat={storyBeat} remaining={queue.length} onNext={nextBeat} onSkip={skipStory} />}
       <div className="pointer-events-none absolute inset-x-0 top-0 flex items-start justify-between p-3 sm:p-5 [@media(max-height:480px)]:p-2">
         <div className="pointer-events-auto flex flex-col gap-2 [@media(max-height:480px)]:flex-row">
           <div className="pointer-events-none hidden border-2 border-[var(--mx-ink)] bg-[var(--mx-paper)] px-4 py-3 shadow-[3px_3px_0_var(--mx-ink)] sm:block [@media(max-height:480px)]:hidden">
@@ -593,6 +680,7 @@ export const MaruExpedition: React.FC<{ onExit?: () => void }> = ({ onExit }) =>
               <Type size={15} /> <span className="hidden sm:inline">Sounds</span>
             </button>
           </div>
+          {objective && !mapOpen && !focus && <ObjectiveBar text={objective} />}
         </div>
         <div className="pointer-events-auto flex gap-2">
           <button onClick={() => setHelpOpen(true)} aria-label="Commands" className={`${hud} flex items-center gap-2 px-3 py-2`}>
@@ -653,7 +741,7 @@ export const MaruExpedition: React.FC<{ onExit?: () => void }> = ({ onExit }) =>
         </div>
       )}
       <div
-        className={`pointer-events-none absolute bottom-3 flex items-end justify-between gap-3 ${focus ? "hidden" : ""} ${isTouch ? "left-3 right-28 portrait:bottom-24 portrait:right-3" : "left-4 right-4 sm:left-6 sm:right-6"}`}
+        className={`pointer-events-none absolute bottom-3 flex items-end justify-between gap-3 ${focus || storyVisible ? "hidden" : ""} ${isTouch ? "left-3 right-28 portrait:bottom-24 portrait:right-3" : "left-4 right-4 sm:left-6 sm:right-6"}`}
       >
         <div className="pointer-events-auto max-h-[38vh] max-w-md overflow-y-auto border-2 border-[var(--mx-ink)] bg-[var(--mx-paper)] p-3 shadow-[4px_4px_0_var(--mx-ink)] sm:p-3">
           <div className="flex items-center gap-2 font-mono text-[10px] uppercase tracking-[.16em] text-[var(--mx-accent)]">
@@ -740,7 +828,9 @@ export const MaruExpedition: React.FC<{ onExit?: () => void }> = ({ onExit }) =>
           onChange={setKeys}
           onReset={() => setKeys(defaultKeys())}
           onResetProgress={() => {
-            clearProgress(pack.id);
+            clearProgress(languageOf(pack));
+            firedRef.current = new Set();
+            setQueue([]);
             setProgress(emptyProgress());
             setMessage("Progress for this language was erased.");
           }}

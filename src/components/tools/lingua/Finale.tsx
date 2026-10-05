@@ -2,7 +2,7 @@ import React, { useRef, useState } from "react";
 import { Mic, Volume2 } from "lucide-react";
 import { chime, speakText } from "./maruAudio";
 import { grade } from "./maruPhonetics";
-import { writtenOf, word as wordOf } from "./packs/helpers";
+import { encounter as encounterOf, writtenOf, word as wordOf } from "./packs/helpers";
 import type { LanguagePack } from "./packs/types";
 import { BTN, BTN_PLAIN, BTN_PRIMARY, CloseButton, Sheet, Written, useChord, useMic } from "./ui";
 
@@ -38,7 +38,7 @@ export function Finale({ pack, onDone, onClose }: { pack: LanguagePack; onDone: 
   const builtText = built.map((i) => wordOf(pack, f.shuffled[i]).written).join(" ");
 
   return (
-    <Sheet label="Say it to the archivist" tall>
+    <Sheet label={`${encounterOf(pack, f.encounter).name}: say the final sentence`} tall>
       <div className="p-3 pt-8 sm:p-5 sm:pt-9">
         <div className="flex items-start justify-between gap-3">
           <div>

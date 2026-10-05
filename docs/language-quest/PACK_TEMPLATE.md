@@ -253,6 +253,22 @@ Right-to-left or non-Latin real scripts are not supported yet.
 - [ ] `?debug` shows an acceptable frame rate on a mid-range phone.
 - [ ] No copyrighted assets, brand logos or real people were used. Place-inspired art is stylised, not copied.
 
+## 11a. Story text and chapters (optional)
+
+A pack may carry `story: { protagonist, beats }`. Each beat is shown like an RPG dialogue box (or a full-screen chapter card with `kind: "card"`):
+
+| `trigger` | Fires when                                                                                             |
+| --------- | ------------------------------------------------------------------------------------------------------ |
+| `start`   | the player first enters the chapter (beats show in list order)                                         |
+| `enter`   | the player comes near an encounter (`encounter` required)                                              |
+| `done`    | an encounter is recorded; for the finale encounter, when the sentence is solved (`encounter` required) |
+| `end`     | after the finale, as a closing card                                                                    |
+
+A beat may set `objective` (the goal shown top-left). Beats are shown once, remembered in the progress (`progress.story`) and listed in the Notebook's Story tab.
+Rules: narration **describes, it does not translate**. The validator warns when a beat names the meaning of a word the pack teaches, so write what happens ("a woman feeds a card to a machine"), not what the word means. Ids must be unique across the packs of one language, because those packs share progress.
+
+**Several chapters in one language.** Give each chapter its own pack and set `language` (the same value in every chapter) and `chapter: { number, title }`. They share progress, the phonetic dictionary, voice settings and the notebook; encounter, clue and beat ids must be unique across them (`npm run packs:check` reports clashes), and a word with the same id must have the same meaning and sound. Chapter 1 (`packs/da1.ts`) reuses the Danish language data from `packs/da.ts` and only adds words, story and world.
+
 ## 11b. Fields for references and history (optional)
 
 Each lexicon entry may carry `sources` (what a reviewer should open), `etymology` (older forms, shown only in etymology mode) and

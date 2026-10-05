@@ -21,9 +21,11 @@ export interface Progress {
   noticed: string[];
   /** The final sentence has been said. Unlocks the verdicts in the notebook. */
   finished: boolean;
+  /** Ids of the story beats the player has read, oldest first (the story log). */
+  story?: string[];
 }
 
-export const emptyProgress = (): Progress => ({ v: 1, done: [], words: {}, noticed: [], finished: false });
+export const emptyProgress = (): Progress => ({ v: 1, done: [], words: {}, noticed: [], finished: false, story: [] });
 const key = (packId: string) => `language-quest-progress-v1:${packId}`;
 
 export function loadProgress(packId: string): Progress {

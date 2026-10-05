@@ -110,32 +110,50 @@ export function Notebook({
       {tab === "sounds" && <PhoneticDictionary pack={pack} progress={progress} embedded />}
 
       {tab === "story" && (
-        <ul className="divide-y-2 divide-[var(--mx-ink)]/15">
-          {pack.encounters.map((e, i) => {
-            const done = progress.done.includes(e.id);
-            const open = !e.requires || progress.done.includes(e.requires);
-            return (
-              <li key={e.id} className={`flex gap-3 p-3 sm:p-4 ${open ? "" : "opacity-45"}`}>
-                <span
-                  className={`grid h-8 w-8 shrink-0 place-items-center border-2 border-[var(--mx-ink)] font-mono text-xs ${done ? "bg-[var(--mx-good)] text-white" : "bg-[var(--mx-paper-light)]"}`}
-                >
-                  {done ? "✓" : i + 1}
-                </span>
-                <div>
-                  <p className="font-mono text-[10px] uppercase tracking-wider text-[var(--mx-accent)]">{e.phase}</p>
-                  <h3 className="font-serif text-lg text-[var(--mx-ink)]">{e.name}</h3>
-                  <p className="text-sm text-[var(--mx-muted)]">
-                    {done
-                      ? `${e.reveal.line} ${e.reveal.discovery}`
-                      : open
-                        ? "Find the gold marker."
-                        : "A previous encounter must make this place intelligible."}
-                  </p>
-                </div>
-              </li>
-            );
-          })}
-        </ul>
+        <>
+          {!!pack.story && (
+            <div className="border-b-2 border-[var(--mx-ink)]/15 p-3 sm:p-4">
+              <p className="font-mono text-[10px] uppercase tracking-wider text-[var(--mx-accent)]">Story so far</p>
+              <ol className="mt-2 space-y-2">
+                {pack.story.beats
+                  .filter((b) => (progress.story ?? []).includes(b.id))
+                  .map((b) => (
+                    <li key={b.id} className="text-sm leading-relaxed">
+                      <span className="font-mono text-[10px] uppercase tracking-wider text-[var(--mx-muted)]">{b.title ?? b.speaker} </span>
+                      <span className="font-serif">{b.text}</span>
+                    </li>
+                  ))}
+                {!(progress.story ?? []).length && <li className="text-sm text-[var(--mx-muted)]">Nothing yet. Enter the world to begin.</li>}
+              </ol>
+            </div>
+          )}
+          <ul className="divide-y-2 divide-[var(--mx-ink)]/15">
+            {pack.encounters.map((e, i) => {
+              const done = progress.done.includes(e.id);
+              const open = !e.requires || progress.done.includes(e.requires);
+              return (
+                <li key={e.id} className={`flex gap-3 p-3 sm:p-4 ${open ? "" : "opacity-45"}`}>
+                  <span
+                    className={`grid h-8 w-8 shrink-0 place-items-center border-2 border-[var(--mx-ink)] font-mono text-xs ${done ? "bg-[var(--mx-good)] text-white" : "bg-[var(--mx-paper-light)]"}`}
+                  >
+                    {done ? "✓" : i + 1}
+                  </span>
+                  <div>
+                    <p className="font-mono text-[10px] uppercase tracking-wider text-[var(--mx-accent)]">{e.phase}</p>
+                    <h3 className="font-serif text-lg text-[var(--mx-ink)]">{e.name}</h3>
+                    <p className="text-sm text-[var(--mx-muted)]">
+                      {done
+                        ? `${e.reveal.line} ${e.reveal.discovery}`
+                        : open
+                          ? "Find the gold marker."
+                          : "A previous encounter must make this place intelligible."}
+                    </p>
+                  </div>
+                </li>
+              );
+            })}
+          </ul>
+        </>
       )}
     </Overlay>
   );

@@ -12,6 +12,7 @@ import type { Terrain } from "./maruTerrain";
 import { LOW_FURNITURE } from "./packs/visibility";
 import { NyhavnScenery } from "./world/Nyhavn";
 import { SandstoneScenery } from "./world/Sandstone";
+import { AirportScenery } from "./world/Airport";
 import { Ball, PackCtx, Round, TerrainCtx } from "./world/toon";
 import { Blob, Bubble, Marker, People } from "./world/shared";
 
@@ -451,7 +452,7 @@ export function MaruWorld({
               if (active) walkRef.current?.(event.point.x, event.point.z);
             }}
           >
-            {pack.world.scenery === "nyhavn" ? <NyhavnScenery /> : <SandstoneScenery />}
+            {pack.world.scenery === "nyhavn" ? <NyhavnScenery /> : pack.world.scenery === "airport" ? <AirportScenery /> : <SandstoneScenery />}
           </group>
           <People />
           {pack.encounters.map((e) => (

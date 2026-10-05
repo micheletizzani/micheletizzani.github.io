@@ -1,6 +1,6 @@
 # Chapter 1: _Skilt_ (Signs): storyline for approval
 
-Status: **proposal, not built.** Nothing in this file is implemented. Tell me what to change; I build after approval.
+Status: **approved and built** (owner decisions: vocabulary and final sentence approved; separate pack sharing Danish progress; English-only narration; protagonist **Paul Glotty**; stylised airport). The built text differs slightly from the drafts below: the validator forbids narration that names the meaning of a taught word, so a few lines were rewritten. The authoritative text is in `src/components/tools/lingua/packs/da1.ts`.
 Lens: **Signs** ([CALVINO_GUIDE.md](./CALVINO_GUIDE.md)). Place: **airport and metro**. Length target: about 20 to 25 minutes, five encounters.
 All Danish below is **unverified** and listed for your review (see [CONTENT_ARCHITECTURE.md](./CONTENT_ARCHITECTURE.md)).
 

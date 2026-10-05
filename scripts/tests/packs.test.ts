@@ -4,7 +4,7 @@ import { PACKS, template } from "./_packs";
 
 // Engine tests run on the template pack and on inline fixtures, never on Danish or Maru: correcting the real
 // content (spellings, IPA, clues) must not break tests of the game's dynamics. Content is checked by the validator.
-import { validatePack, contrast } from "../../src/components/tools/lingua/packs/validate";
+import { validatePack, validateRegistry, contrast } from "../../src/components/tools/lingua/packs/validate";
 import {
   grade,
   gradeSound,
@@ -324,4 +324,65 @@ test("visibility: the shipped layout hides no walkable ground, and the check can
   const far = clone(template);
   far.world.buildings = far.world.buildings.filter((b) => b.position[0] > 0 || b.position[2] < 0);
   assert.equal(hiddenGround(far).hidden.length, 0);
+});
+
+test("story text: beats are validated and may not name the meaning of a taught word", () => {
+  const withStory = clone(template);
+  withStory.story = {
+    protagonist: "Test",
+    beats: [
+      { id: "t:start", trigger: "start", speaker: "Narrator", text: "A quiet morning at the fountain." },
+      { id: "t:in", trigger: "enter", encounter: "fountain", speaker: "Narrator", text: "A child fills a cup.", objective: "Look around." },
+    ],
+  };
+  const clean = validatePack(withStory);
+  assert.deepEqual(clean.errors, []);
+  assert.deepEqual(clean.warnings, []);
+
+  const leaky = clone(withStory);
+  leaky.story!.beats[1].text = "The child drinks water from the spout.";
+  assert.ok(
+    validatePack(leaky).warnings.some((w) => w.includes('says "water"')),
+    "a narrated meaning is flagged"
+  );
+
+  const dup = clone(withStory);
+  dup.story!.beats[1].id = "t:start";
+  assert.ok(validatePack(dup).errors.some((e) => e.includes("duplicate story beat id")));
+
+  const unknown = clone(withStory);
+  unknown.story!.beats[1].encounter = "nowhere";
+  assert.ok(validatePack(unknown).errors.some((e) => e.includes('unknown encounter "nowhere"')));
+
+  const noEncounter = clone(withStory);
+  delete noEncounter.story!.beats[1].encounter;
+  assert.ok(validatePack(noEncounter).errors.some((e) => e.includes("needs an encounter")));
+
+  const card = clone(withStory);
+  card.story!.beats[0].kind = "card";
+  assert.ok(validatePack(card).errors.some((e) => e.includes("needs a title")));
+});
+
+test("packs of one language share progress, so their ids must not collide", () => {
+  assert.deepEqual(validateRegistry(PACKS), [], "the registered packs are consistent");
+  const a = clone(template);
+  const b = clone(template);
+  a.id = "xa";
+  b.id = "xb";
+  a.language = b.language = "xx";
+  const errors = validateRegistry([a, b]);
+  assert.ok(
+    errors.some((e) => e.includes('encounter id "fountain"')),
+    "same encounter ids in one language are rejected"
+  );
+  assert.ok(errors.some((e) => e.includes('clue id "t-drink"')));
+  b.encounters.forEach((e) => (e.id = "b-" + e.id));
+  b.encounters.forEach((e) => e.requires && (e.requires = "b-" + e.requires));
+  b.finale.encounter = "b-" + b.finale.encounter;
+  b.encounters.forEach((e) => e.clues.forEach((c) => (c.id = "b-" + c.id)));
+  b.lexicon.find((w) => w.id === "alo")!.meaning = "boat";
+  assert.ok(
+    validateRegistry([a, b]).some((e) => e.includes('word "alo" differs')),
+    "a word must mean the same in every chapter"
+  );
 });

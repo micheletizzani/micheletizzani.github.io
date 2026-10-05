@@ -47,7 +47,10 @@ await p.addInitScript(() => {
   window.webkitSpeechRecognition = Fake;
 });
 await p.goto(BASE + "/tools/maru/", { waitUntil: "networkidle" });
-await p.evaluate(() => localStorage.clear());
+await p.evaluate(() => {
+  localStorage.clear();
+  localStorage.setItem("language-quest-pack", "da"); // Chapter 2, the Nyhavn pack
+});
 await p.reload({ waitUntil: "networkidle" });
 await p.getByRole("button", { name: /Enter Nyhavn/i }).click();
 await p.waitForTimeout(2500);

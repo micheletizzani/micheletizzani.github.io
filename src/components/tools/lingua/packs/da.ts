@@ -32,11 +32,14 @@ const cons = (symbol: string, name: string, how: string, keywords: PhonemeEntry[
 
 export const da: LanguagePack = {
   id: "da",
+  language: "da",
+  chapter: { number: 2, title: "Navn" },
   name: "Danish",
   nativeName: "Dansk",
   city: "Copenhagen",
   district: "Nyhavn",
-  intro: "You have just arrived at Nyhavn and you speak no Danish. Nobody will translate. Watch what people do, listen, write down the sounds, and work out what the words mean.",
+  intro:
+    "You have just arrived at Nyhavn and you speak no Danish. Nobody will translate. Watch what people do, listen, write down the sounds, and work out what the words mean.",
   script: "latin",
   speech: { synth: "da-DK", recog: "da-DK", rate: 0.75, strict: true, testPhrase: "Goddag" },
   notation: {
@@ -67,6 +70,7 @@ export const da: LanguagePack = {
       "g",
       "f",
       "v",
+      "w",
       "s",
       "h",
       "j",
@@ -204,6 +208,13 @@ export const da: LanguagePack = {
         { written: "rød", sound: "ʁœð", gloss: "red" },
       ],
       { spelling: "Spelled d after a vowel (and in -ed endings).", confusableWith: ["d"] }
+    ),
+    cons(
+      "w",
+      "labial-velar glide",
+      "A short “w”/“u” glide at the end of a syllable, like the end of English “cow”. It appears in words such as hav and in tog and af.",
+      [{ written: "hav", sound: "hɑwˀ", gloss: "sea" }],
+      { confusableWith: ["v", "u"] }
     ),
     cons("f", "voiceless labiodental fricative", "As in English “fish”.", [{ written: "fisk", sound: "fesk", gloss: "fish" }]),
     cons("v", "labiodental approximant", "Softer than English “v”, almost like a “w” with the lower lip near the teeth.", [

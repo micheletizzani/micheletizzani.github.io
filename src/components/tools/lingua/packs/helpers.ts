@@ -35,3 +35,6 @@ export const allWords = (pack: LanguagePack): WordId[] => Array.from(new Set(pac
 
 /** What to send to speech synthesis for a word or line of written text. */
 export const spokenForm = (pack: LanguagePack, id: WordId) => word(pack, id).speak ?? word(pack, id).written;
+
+/** The id under which a pack's progress is stored: packs of one language share it. */
+export const languageOf = (pack: LanguagePack) => pack.language ?? pack.id;

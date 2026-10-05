@@ -167,6 +167,59 @@ export const PICTURES: Record<PictureId, Shape[]> = {
     { d: CUP_HANDLE, width: 2.5 },
     { d: "M16 14Q12 10 16 6M24 14Q20 10 24 6", width: 2.5 },
   ],
+  // travel pictograms (chapter 1)
+  arrive: [
+    { d: "M6 40H42", width: 2.5 },
+    { d: "M10 12L26 22L38 26Q41 28 38 31L12 29Z", fill: "paper" },
+    { d: "M24 4V14M19 10L24 15L29 10", width: 2.5 },
+  ],
+  depart: [
+    { d: "M6 40H42", width: 2.5 },
+    { d: "M10 30L26 22L38 12Q41 11 40 15L36 30Z", fill: "paper" },
+    { d: "M24 16V6M19 10L24 5L29 10", width: 2.5 },
+  ],
+  exit: [
+    { d: "M8 6H26V42H8Z", fill: "paper" },
+    { d: "M26 24H42M36 18L42 24L36 30", width: 3 },
+    { d: "M13 24h2", width: 3 },
+  ],
+  door: [
+    { d: "M12 6H36V42H12Z", fill: "wood" },
+    { d: "M17 12H31V24H17Z", fill: "paper" },
+    { d: circle(31, 30, 1.6), fill: "gold" },
+  ],
+  ticket: [
+    { d: "M6 14H42V21a3 3 0 0 0 0 6V34H6V27a3 3 0 0 0 0-6Z", fill: "gold" },
+    { d: "M30 14V34", dash: true, width: 2 },
+    { d: "M12 22H24M12 27H20", width: 2 },
+  ],
+  train: [
+    { d: "M8 10H40V32H8Z", fill: "paper" },
+    { d: "M12 14H21V22H12ZM27 14H36V22H27Z", fill: "water" },
+    { d: circle(15, 37, 3), fill: "ink" },
+    { d: circle(33, 37, 3), fill: "ink" },
+    { d: "M4 42H44", width: 2.5 },
+  ],
+  where: [
+    { d: "M24 42a13 13 0 1 0 0-26a13 13 0 0 0 0 26Z", fill: "paper" },
+    { d: "M19 27Q19 21 24 21Q29 21 29 26Q29 29 24 31V33", width: 3 },
+    { d: circle(24, 38, 1.4), fill: "ink" },
+    { d: "M24 4V12M20 8L24 4L28 8", width: 2.5 },
+  ],
+  metro: [
+    { d: circle(24, 24, 18), fill: "accent" },
+    { d: "M13 33V15L24 27L35 15V33", width: 4 },
+  ],
+  suitcase: [
+    { d: "M8 16H40V38H8Z", fill: "wood" },
+    { d: "M18 16V11H30V16", width: 2.5 },
+    { d: "M8 26H40", width: 2 },
+  ],
+  board: [
+    { d: "M6 10H42V26H6Z", fill: "paper" },
+    { d: "M12 16H22M12 21H30M30 16H36", width: 2 },
+    { d: "M16 26V40M32 26V40", width: 2.5 },
+  ],
 };
 
 export const PICTURE_IDS = Object.keys(PICTURES);
@@ -174,6 +227,14 @@ export const PICTURE_IDS = Object.keys(PICTURES);
 /** Candidate meanings, shared by all packs. A pack selects the ones it needs (truths plus distractors). */
 export const MEANING_LIBRARY: Meaning[] = [
   { id: "water", label: "water", picture: "water" },
+  { id: "arrive", label: "arrival", picture: "arrive" },
+  { id: "depart", label: "departure", picture: "depart" },
+  { id: "exit", label: "exit", picture: "exit" },
+  { id: "door", label: "door", picture: "door" },
+  { id: "ticket", label: "ticket", picture: "ticket" },
+  { id: "train", label: "train", picture: "train" },
+  { id: "where", label: "where", picture: "where" },
+  { id: "metro", label: "metro", picture: "metro" },
   { id: "cup", label: "a cup", picture: "cup" },
   { id: "cups", label: "several cups", picture: "cups" },
   { id: "key", label: "a key", picture: "key" },

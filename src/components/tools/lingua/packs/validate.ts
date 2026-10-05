@@ -191,9 +191,64 @@ export function validatePack(pack: LanguagePack): Report {
   }
   if (pack.world.npcs.length < pack.encounters.length) warn(`fewer NPCs (${pack.world.npcs.length}) than encounters (${pack.encounters.length})`);
 
+  // --- story text ---
+  if (pack.story) {
+    const beatIds = pack.story.beats.map((b) => b.id);
+    for (const d of new Set(dupes(beatIds))) err(`duplicate story beat id "${d}"`);
+    if (!pack.story.beats.some((b) => b.trigger === "start")) warn(`the story has no "start" beat`);
+    // The narration must describe, not translate: it may not name the meaning of a word the pack teaches.
+    const taught = new Set(pack.encounters.flatMap((e) => e.drills));
+    const phrases: [string, string][] = [];
+    for (const w of pack.lexicon.filter((x) => taught.has(x.id))) {
+      const label = pack.meanings.find((m) => m.id === w.meaning)?.label ?? w.meaning;
+      for (const alt of label.split("/")) {
+        const p = alt
+          .trim()
+          .toLowerCase()
+          .replace(/^(a|an|the) /, "");
+        if (p.length >= 4) phrases.push([p, w.id]);
+      }
+    }
+    for (const b of pack.story.beats) {
+      if ((b.trigger === "enter" || b.trigger === "done") && !b.encounter) err(`story beat "${b.id}" needs an encounter`);
+      if (b.encounter && !encounters.has(b.encounter)) err(`story beat "${b.id}" refers to unknown encounter "${b.encounter}"`);
+      if (b.kind === "card" && !b.title) err(`story card "${b.id}" needs a title`);
+      if (!b.text.trim()) err(`story beat "${b.id}" has no text`);
+      const text = [b.text, b.objective ?? ""].join(" ").toLowerCase();
+      for (const [p, id] of phrases)
+        if (new RegExp(`\\b${p.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}(s|es)?\\b`).test(text))
+          warn(`story beat "${b.id}" says "${p}", the meaning of the taught word "${id}": narration must describe, not translate`);
+    }
+  }
+
   // --- accessibility ---
   const { ink, paper, accent, accentText } = pack.ui;
   if (contrast(ink, paper) < 7) warn(`ui ink on paper contrast is ${contrast(ink, paper).toFixed(1)}:1 (aim for 7:1)`);
   if (contrast(accentText, accent) < 4.5) warn(`ui accentText on accent contrast is ${contrast(accentText, accent).toFixed(1)}:1 (need 4.5:1)`);
   return { errors, warnings };
+}
+
+/** Checks across packs that share a language (and therefore progress): ids must not collide. */
+export function validateRegistry(packs: readonly LanguagePack[]): string[] {
+  const errors: string[] = [];
+  const byLanguage = new Map<string, LanguagePack[]>();
+  for (const p of packs) byLanguage.set(p.language ?? p.id, [...(byLanguage.get(p.language ?? p.id) ?? []), p]);
+  for (const [language, group] of byLanguage) {
+    if (group.length < 2) continue;
+    for (const [what, pick] of [
+      ["encounter", (p: LanguagePack) => p.encounters.map((e) => e.id)],
+      ["clue", (p: LanguagePack) => p.encounters.flatMap((e) => e.clues.map((c) => c.id))],
+      ["story beat", (p: LanguagePack) => (p.story?.beats ?? []).map((b) => b.id)],
+    ] as const) {
+      const all = group.flatMap((p) => pick(p));
+      for (const d of new Set(dupes(all)))
+        errors.push(`[${language}] ${what} id "${d}" is used by more than one pack of this language (they share progress)`);
+    }
+    for (const w of group.flatMap((p) => p.lexicon)) {
+      const same = group.flatMap((p) => p.lexicon).filter((x) => x.id === w.id);
+      if (same.some((x) => x.meaning !== w.meaning || x.sound !== w.sound))
+        errors.push(`[${language}] word "${w.id}" differs between packs of this language`);
+    }
+  }
+  return errors;
 }
