@@ -11,6 +11,8 @@ import {
   Map,
   MessageCircle,
   MousePointer2,
+  Music,
+  Music2,
   Shrink,
   Type,
   Volume2,
@@ -26,6 +28,7 @@ import { MaruWorld } from "./MaruWorld";
 import { Notebook, type NotebookTab } from "./Notebook";
 import { PhoneticDictionary } from "./PhoneticDictionary";
 import { onSpeechBlocked, setMuted, setPingsEnabled, unlockAudio } from "./maruAudio";
+import { THEMES, isMusicEnabled, onMusicChange, setMusicPhase, startMusic, toggleMusic, type NarrativePhase } from "./maruMusic";
 import { DEFAULT_PACK_ID, PACKS, encounter as encounterOf, getPack, isUnlocked, languageOf, nextEncounter } from "./packs";
 import type { EncounterId, LanguagePack, StoryBeat } from "./packs/types";
 import { ObjectiveBar, StoryOverlay } from "./StoryOverlay";
@@ -240,7 +243,7 @@ function CompassHud({
 }
 
 // ---------- commands (rebindable) ----------
-type ActionId = "interact" | "speak" | "type" | "notebook" | "dictionary" | "map" | "fullscreen" | "help";
+type ActionId = "interact" | "speak" | "type" | "notebook" | "dictionary" | "map" | "fullscreen" | "help" | "music";
 const ACTIONS: { id: ActionId; label: string; hint: string; code: string }[] = [
   { id: "interact", label: "Take a closer look", hint: "or click / tap a glowing character", code: "KeyE" },
   { id: "speak", label: "Try to say the word", hint: "opens the Sound tab; Alt+T uses the microphone", code: "KeyT" },
@@ -248,6 +251,7 @@ const ACTIONS: { id: ActionId; label: string; hint: string; code: string }[] = [
   { id: "notebook", label: "Field notebook", hint: "words, guesses, observations", code: "KeyN" },
   { id: "dictionary", label: "Phonetic dictionary", hint: "every sound, with real words to hear", code: "KeyG" },
   { id: "map", label: "City map", hint: "", code: "KeyM" },
+  { id: "music", label: "Background music", hint: "relaxing soundtrack, stops for listening/voice", code: "KeyB" },
   { id: "fullscreen", label: "Full screen", hint: "", code: "KeyF" },
   { id: "help", label: "This command list", hint: "", code: "KeyH" },
 ];
@@ -395,6 +399,8 @@ export const MaruExpedition: React.FC<{ onExit?: () => void }> = ({ onExit }) =>
   const [isTouch, setIsTouch] = useState(false);
   const [isFs, setIsFs] = useState(false);
   const [soundOn, setSoundOn] = useState(true);
+  const [musicOn, setMusicOn] = useState(isMusicEnabled());
+  const [musicPhase, setMusicPhaseState] = useState<NarrativePhase>("observe");
   const [pings, setPings] = useState(false);
   const [debug, setDebug] = useState(false);
 
@@ -403,6 +409,13 @@ export const MaruExpedition: React.FC<{ onExit?: () => void }> = ({ onExit }) =>
   const nearby = known(nearbyRaw);
   const destination = known(destinationRaw);
   const lesson = lessonRaw && known(lessonRaw.id) ? lessonRaw : null;
+
+  useEffect(() => {
+    return onMusicChange((enabled, _playing, phase) => {
+      setMusicOn(enabled);
+      setMusicPhaseState(phase);
+    });
+  }, []);
 
   const voice = useVoiceReport(pack);
   const done = progress.done;
@@ -601,6 +614,19 @@ export const MaruExpedition: React.FC<{ onExit?: () => void }> = ({ onExit }) =>
     }
   };
 
+  useEffect(() => {
+    if (finaleOpen) {
+      setMusicPhase("speak");
+    } else if (current?.phase) {
+      setMusicPhase(current.phase);
+    } else if (target) {
+      const enc = encounterOf(pack, target);
+      setMusicPhase(enc?.phase);
+    } else {
+      setMusicPhase("observe");
+    }
+  }, [current?.phase, finaleOpen, target, pack]);
+
   // --- keyboard commands (typing in a field never triggers them) ---
   useEffect(() => {
     const handle = (event: KeyboardEvent) => {
@@ -637,6 +663,9 @@ export const MaruExpedition: React.FC<{ onExit?: () => void }> = ({ onExit }) =>
         case "map":
           if (!lesson && !finaleOpen) setMapOpen(true);
           break;
+        case "music":
+          toggleMusic();
+          break;
         case "fullscreen":
           void toggleFullscreen();
           break;
@@ -652,6 +681,7 @@ export const MaruExpedition: React.FC<{ onExit?: () => void }> = ({ onExit }) =>
 
   const begin = (id?: EncounterId) => {
     unlockAudio();
+    if (isMusicEnabled()) startMusic();
     if (id) {
       setDestination(id);
       setMessage(`Route marked for ${encounterOf(pack, id).name}. Follow the arrow, or just look around.`);
@@ -754,6 +784,23 @@ export const MaruExpedition: React.FC<{ onExit?: () => void }> = ({ onExit }) =>
             className={`${hud} px-3 py-2`}
           >
             {pings ? <Bell size={15} /> : <BellOff size={15} />}
+          </button>
+          <button
+            onClick={() => {
+              unlockAudio();
+              toggleMusic();
+            }}
+            aria-pressed={musicOn}
+            aria-label={musicOn ? "Stop background music" : "Play background music"}
+            title={
+              musicOn
+                ? `Background music: On (${THEMES[musicPhase].label}) — Click or press ${key("music")} to stop`
+                : `Background music: Off — Click or press ${key("music")} to play`
+            }
+            className={`${hud} flex items-center gap-1.5 px-3 py-2 ${musicOn ? "bg-[var(--mx-gold)]/40 font-bold" : ""}`}
+          >
+            {musicOn ? <Music size={15} /> : <Music2 size={15} className="opacity-40" />}
+            <span className="hidden xl:inline text-[10px] font-mono uppercase">{musicOn ? "Music" : "Mute BGM"}</span>
           </button>
           <button onClick={() => setSoundOn((v) => !v)} aria-label={soundOn ? "Mute" : "Unmute"} className={`${hud} px-3 py-2`}>
             {soundOn ? <Volume2 size={15} /> : <VolumeX size={15} />}
