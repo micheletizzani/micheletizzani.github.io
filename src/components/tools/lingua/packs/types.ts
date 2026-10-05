@@ -167,6 +167,11 @@ export interface PaletteSpec {
   cloaks: string[];
   accent: string;
   light: { ambient: string; hemiSky: string; hemiGround: string; sun: string };
+  /** Relative strength of the ambient light and the sun (default 0.5 each). Lower ambient and higher sun give a moodier, higher-contrast scene. */
+  ambientLevel?: number;
+  sunLevel?: number;
+  /** Colour of lit windows and lamps: the warm light that makes a dusky scene feel inhabited (default a warm amber). */
+  glow?: string;
 }
 
 export interface UiSpec {
@@ -184,9 +189,18 @@ export interface UiSpec {
   halftone: string;
 }
 
+/** The five kinds of "living character": silhouettes built from the shape of a letter of the language's own script. */
+export type Archetype = "gatekeeper" | "elder" | "messenger" | "merchant" | "scholar";
+
 export interface NpcSpec {
   position: [number, number, number];
   color: string;
+  /** Draw this person as a letterform silhouette. Without it the person is a plain cloaked figure. */
+  archetype?: Archetype;
+  /** The letter the silhouette is built from (for example "Ø"). Used for descriptions; the shape comes from `archetype`. */
+  letter?: string;
+  /** The encounter this person gives (their letter opening glows while it is the next step). */
+  encounter?: EncounterId;
   scale?: number;
   facing?: number;
   tool?: "key" | "spear" | "cup" | "none";

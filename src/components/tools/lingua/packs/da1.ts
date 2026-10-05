@@ -42,9 +42,9 @@ const newWords: LexiconEntry[] = [
 ];
 const er = da.lexicon.find((w) => w.id === "er")!;
 
-const WALL = "#d8dee6";
-const TERMINAL = ["#cfe5ee", "#f4dfd3", "#dcead9", "#f3e7c6", "#e3dcef"];
-const ROOFS = ["#a9c3d4", "#c7b6c9", "#b8cdbd"];
+const WALL = "#8a90a8";
+const TERMINAL = ["#7f9db8", "#c98f86", "#86a897", "#d4b878", "#9d90bd"];
+const ROOFS = ["#46557a", "#5a4a66", "#46665e"];
 
 // ---------------------------------------------------------------- the story text (shown like RPG dialogue)
 // Beats describe what happens and never say what a word means (the validator checks for the meanings of this pack's words).
@@ -429,15 +429,24 @@ export const da1: LanguagePack = {
   world: {
     scenery: "airport",
     // The three levels of the airport: arrivals hall (low), ticket hall (middle), metro platform (high).
-    ...terraces({ a: ["#e7edf0", "#c9d5dc"], b: ["#f1e3da", "#d8c0b4"], d: ["#efd9db", "#d2aeb3"], stairs: "#fbf4ec" }),
-    palette: da.world.palette,
-    buildings: [...westHouses(TERMINAL, ROOFS), archiveHouse("#f3dcd5", "#c9a9a2"), gateWall(WALL, "#b9c2cd")],
+    ...terraces({ a: ["#b4bccb", "#58628a"], b: ["#c8adb6", "#6c5778"], d: ["#c2a6b0", "#664f72"], stairs: "#dcd5de" }),
+    palette: {
+      ...da.world.palette,
+      ground: "#b4bccb",
+      street: "#a6aebf",
+      plaza: "#c9cfdb",
+      water: "#2a3a64",
+      sky: ["#0f1530", "#6f6489"],
+      glow: "#bfe8ff", // cold terminal light against the warm Nyhavn amber of chapter 2
+    },
+    buildings: [...westHouses(TERMINAL, ROOFS), archiveHouse("#c9879a", "#5a4660"), gateWall(WALL, "#5f6985")],
+    // The living characters: each is a silhouette built from a letter of the Danish alphabet (see docs/language-quest/CHARACTER_DESIGN.md).
     npcs: [
-      { ...NPC_SPOTS.child, color: "#e8828a" },
-      { ...NPC_SPOTS.vendor, color: "#e8c36a" },
-      { ...NPC_SPOTS.traveller, color: "#b79bc9" },
-      { ...NPC_SPOTS.archivist, color: "#8cc4b4" },
-      { position: [1.3, 2.4, -14.2], facing: -0.5, color: "#7f9cc4", tool: "none" },
+      { ...NPC_SPOTS.child, color: "#f2b84b", archetype: "elder", letter: "Å", encounter: "boards" },
+      { ...NPC_SPOTS.vendor, color: "#5ec4c8", archetype: "gatekeeper", letter: "Ø", encounter: "door" },
+      { ...NPC_SPOTS.traveller, color: "#d9558c", archetype: "merchant", letter: "Æ", encounter: "machine" },
+      { ...NPC_SPOTS.archivist, color: "#7f9cf0", archetype: "messenger", letter: "k", encounter: "platform" },
+      { position: [1.3, 2.4, -14.2], facing: -0.5, color: "#b79bf0", archetype: "scholar", letter: "T", encounter: "sign" },
     ],
     signs: [
       { words: ["ankomst"], position: [-1.2, 1.55, 4.3], width: 1.5 },

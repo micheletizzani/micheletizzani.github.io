@@ -71,7 +71,7 @@ export function Notebook({
       {tab === "words" &&
         (known.length === 0 ? (
           <p className="p-6 text-sm text-[var(--mx-muted)]">
-            Nothing here yet. Walk to a gold marker and listen to what people say; each word you meet is added to this notebook.
+            Nothing here yet. Walk to a glowing character and listen to what people say; each word you meet is added to this notebook.
           </p>
         ) : (
           <div className="grid md:grid-cols-[minmax(0,4fr)_minmax(0,7fr)]">
@@ -145,7 +145,7 @@ export function Notebook({
                       {done
                         ? `${e.reveal.line} ${e.reveal.discovery}`
                         : open
-                          ? "Find the gold marker."
+                          ? "Find the glowing character."
                           : "A previous encounter must make this place intelligible."}
                     </p>
                   </div>

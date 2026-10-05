@@ -4,7 +4,7 @@ import { Terrain, archShape } from "./Terrain";
 import { Balustrade, Basin, Bench, Lamp, Planter } from "./Props";
 import { Sea } from "./Sea";
 import { Blob, Sign } from "./shared";
-import { Ball, Box, Round, Toon, darken, lighten, mix, usePack, type V3 } from "./toon";
+import { Ball, Box, Round, Toon, darken, isLit, lighten, mix, useGlow, usePack, type V3 } from "./toon";
 
 /** Sun-washed sandstone town: flat roofs, arched windows, balustrades and small palms. Used by the invented-language pack. */
 
@@ -13,7 +13,8 @@ function Facade({ spec }: { spec: BuildingSpec }) {
   const [px, py, pz] = spec.position;
   const [w, h, d] = spec.size;
   const wall = spec.kind === "wall";
-  const glass = mix(pack.world.palette.ink, "#ffffff", 0.2);
+  const glass = mix(pack.world.palette.ink, "#ffffff", 0.1);
+  const glow = useGlow();
   const arch = useMemo(() => archShape(0.7, 1.2), []);
   const windows = useMemo(() => {
     const out: { p: V3; r: number }[] = [];
@@ -47,7 +48,7 @@ function Facade({ spec }: { spec: BuildingSpec }) {
       {windows.map((win, i) => (
         <group key={i} position={win.p} rotation={[0, win.r, 0]}>
           <mesh geometry={arch} position={[0, -0.6, 0]}>
-            <meshBasicMaterial color={glass} />
+            <meshBasicMaterial color={isLit(i + Math.round(pz)) ? glow : glass} />
           </mesh>
         </group>
       ))}

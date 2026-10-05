@@ -5,6 +5,7 @@ import * as THREE from "three";
 import { GlyphPhrase, lettersTexture, reliefTexture } from "../maruGlyphs";
 import { writtenOf, encounter as encounterOf, word as wordOf } from "../packs/helpers";
 import type { EncounterId, NpcSpec, SignSpec } from "../packs/types";
+import { LetterFolk, type OpeningState } from "./characters/Characters";
 import { Ball, Box, Round, lighten, mix, usePack, type V3 } from "./toon";
 
 /** A carved or painted sign: glyph relief for glyph scripts, lettering for alphabetic ones. */
@@ -70,20 +71,54 @@ export function Blob({ radius, opacity = 0.18 }: { radius: number; opacity?: num
   );
 }
 
-export function People() {
+export function People({
+  states,
+  awakening,
+  speaking,
+  focus,
+}: {
+  states: Record<EncounterId, OpeningState>;
+  awakening: Record<EncounterId, number>;
+  speaking: boolean;
+  focus: EncounterId | null;
+}) {
   const pack = usePack();
   return (
     <>
-      {pack.world.npcs.map((npc, i) => (
-        <Figure key={i} npc={npc} />
-      ))}
+      {pack.world.npcs.map((npc, i) =>
+        npc.archetype ? (
+          <LetterFolk
+            key={i}
+            npc={npc}
+            state={npc.encounter ? (states[npc.encounter] ?? "locked") : "locked"}
+            awaken={npc.encounter ? (awakening[npc.encounter] ?? 0) : 0}
+            speaking={speaking && !!npc.encounter && npc.encounter === focus}
+            focused={!!npc.encounter && npc.encounter === focus}
+          />
+        ) : (
+          <Figure key={i} npc={npc} />
+        )
+      )}
     </>
   );
 }
 
 export type MarkerState = "next" | "done" | "locked";
 
-export function Marker({ id, state, onSelect }: { id: EncounterId; state: MarkerState; onSelect: (id: EncounterId) => void }) {
+export function Marker({
+  id,
+  state,
+  onSelect,
+  hidden = false,
+  at,
+}: {
+  id: EncounterId;
+  state: MarkerState;
+  onSelect: (id: EncounterId) => void;
+  /** A person owns this encounter and shows it with their glowing letter opening: draw no ring or gem, keep the click area. */
+  hidden?: boolean;
+  at?: V3;
+}) {
   const pack = usePack();
   const encounter = encounterOf(pack, id);
   const ring = useRef<THREE.Mesh>(null);
@@ -101,17 +136,21 @@ export function Marker({ id, state, onSelect }: { id: EncounterId; state: Marker
     }
   });
   const color = state === "next" ? pack.ui.gold : state === "done" ? pack.ui.good : "#b9aab0";
-  const [x, y, z] = encounter.position;
+  const [x, y, z] = at ?? encounter.position;
   return (
     <group position={[x, y, z]} userData={{ noOcclude: true }}>
-      <mesh ref={ring} rotation={[-Math.PI / 2, 0, 0]} position={[0, 0.05, 0]}>
-        <ringGeometry args={[1.35, 1.6, 40]} />
-        <meshBasicMaterial color={color} transparent opacity={0.9} depthWrite={false} />
-      </mesh>
-      <mesh ref={gem} position={[0, 3.3, 0]}>
-        <octahedronGeometry args={[state === "next" ? 0.32 : 0.2]} />
-        <meshBasicMaterial color={color} />
-      </mesh>
+      {!hidden && (
+        <mesh ref={ring} rotation={[-Math.PI / 2, 0, 0]} position={[0, 0.05, 0]}>
+          <ringGeometry args={[1.35, 1.6, 40]} />
+          <meshBasicMaterial color={color} transparent opacity={0.9} depthWrite={false} />
+        </mesh>
+      )}
+      {!hidden && (
+        <mesh ref={gem} position={[0, 3.3, 0]}>
+          <octahedronGeometry args={[state === "next" ? 0.32 : 0.2]} />
+          <meshBasicMaterial color={color} />
+        </mesh>
+      )}
       {/* generous invisible hit area: this is what you click */}
       <mesh
         position={[0, 2.1, 0]}

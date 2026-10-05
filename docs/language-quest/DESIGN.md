@@ -144,26 +144,22 @@ read by the nearest voice as an approximation. A player may deliberately pick an
 
 ## 7. Art direction
 
-The look is a minimal indie style in the manner of _Monument Valley_ (the concept, not its assets): isometric
-architecture floating over a calm sea, **flat pastel faces with no outlines**, soft light, simple shapes and arches.
+The look is a minimal indie style in the manner of _Monument Valley_ (the concept, not its assets), pushed toward **dusk**: isometric architecture floating over a dark calm sea, flat faces with no outlines, **a darker, mysterious mood that is deliberately a little ironic** (cheerful dusty façades, every window lit, under a deep indigo sky; a very serious scholar in a very small world).
 
-- **Flat shading.** Lambert materials under one soft ambient light and one sun give every box three tones (top, south
-  face, east face). No outlines, no halftone, no textures on walls. Colours are not tone-mapped (`<Canvas flat>`), so
-  the pastels on screen are the pastels in the pack.
-- **Terraces** have a paved top (cobbles or inlaid tiles, only a few percent lighter or darker than the base) and
-  sides that fade into the sea, with arched openings on the two faces the camera sees.
-- **Figures** are small hooded cloaks with a pale face and a blob shadow; the player is the same shape in the accent colour.
-- **Sea and sky** are one pastel gradient; there is no fog and no hard horizon.
-- **UI** keeps the paper-and-ink sheets so text stays readable (contrast checked by the validator).
-- **Palette rule.** Pastel means high lightness and low-to-medium saturation (the Danish wall colours are the real
-  Nyhavn colours lightened and softened). Each pack keeps its own palette, tied to the place and the language.
+- **Flat shading.** Lambert materials under one cool ambient light and one low warm sun give every box three tones (top, south face, east face). Ambient and sun strength are pack data (`palette.ambientLevel`, `sunLevel`; the dusk packs use about 0.42 and 0.64). No outlines, no halftone, no textures on walls. Colours are not tone-mapped (`<Canvas flat>`).
+- **Dusk palette.** Sky from deep indigo to dusty mauve, a dark sea that hazes toward the horizon, terrace tops in dusty lilac so dark silhouettes read against them, terrace sides in deep plum and indigo, building colours lowered and dusted (the real Nyhavn colours, a little greyed). **Warm light carries the mystery:** lit windows (`palette.glow`), lamp globes and pools of light. The airport uses a cold glow, Nyhavn a warm amber.
+- **Characters** are flat dark silhouettes drawn as camera-facing layers: Paul Glotty (hat, pointed nose, staff, notebook, and a scarf as the only saturated colour) and "living characters" whose bodies are letters of the language's script, each with a **glowing letter opening**. See [CHARACTER_DESIGN.md](./CHARACTER_DESIGN.md).
+- **Terraces** have a paved top (cobbles or inlaid tiles) and sides that fade into the sea, with arched openings on the two faces the camera sees.
+- **Sea and sky** are one gradient; there is no fog and no hard horizon.
+- **UI** keeps the cream paper-and-ink sheets so text stays readable (contrast checked by the validator); they stand out against the dark scene like a notebook lit by a lamp.
+- **Palette rule.** Dusty, mid-value colours with enough lightness that dark silhouettes and lit windows still read; each pack keeps a palette tied to its place and language.
 
 |              | Danish pack                                                                                                                              | Maru pack                                                         |
 | ------------ | ---------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------- |
 | Place        | Nyhavn, Copenhagen                                                                                                                       | Højbro Plads, Copenhagen                                          |
 | Scenery key  | `nyhavn`                                                                                                                                 | `sandstone`                                                       |
 | Architecture | tall narrow gabled houses in mustard, brick red, harbour blue, orange, sage, rose and navy; white window frames; shopfronts with awnings | flat-roofed sandstone façades with arched windows and balustrades |
-| Palette      | pastel Nyhavn: powder blue sea, blush and cream cobbles, house colours in rose, butter, sky blue, sage; a soft Dannebrog red             | pastel sandstone: sand, apricot, mint water, dusty rose           |
+| Palette      | Nyhavn at dusk: indigo sea and sky, dusty lilac cobbles, muted rose, mustard, blue and sage houses, amber lit windows                    | sandstone at dusk: dusty sand and apricot, plum sea, amber light  |
 | Props        | moored wooden boats, Dannebrog flags, bicycles, a red kiosk, a brass water pump                                                          | palms, a stone fountain, a market stall                           |
 | Writing      | Latin lettering (painted signs)                                                                                                          | invented glyphs (carved reliefs)                                  |
 

@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useRef } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import { Canvas, useFrame, useThree, type ThreeEvent } from "@react-three/fiber";
 import * as THREE from "three";
 import { clamp } from "./maruData";
@@ -13,7 +13,10 @@ import { LOW_FURNITURE } from "./packs/visibility";
 import { NyhavnScenery } from "./world/Nyhavn";
 import { SandstoneScenery } from "./world/Sandstone";
 import { AirportScenery } from "./world/Airport";
-import { Ball, PackCtx, Round, TerrainCtx } from "./world/toon";
+import { PackCtx, TerrainCtx } from "./world/toon";
+import { Paul } from "./world/characters/Characters";
+import type { OpeningState } from "./world/characters/Characters";
+import { onSpeak } from "./maruAudio";
 import { Blob, Bubble, Marker, People } from "./world/shared";
 
 export const CAMERA_YAW = CAMERA.azimuth;
@@ -71,6 +74,7 @@ interface WalkerProps {
   target: EncounterId | null;
   visited: EncounterId[];
   zoomRef: React.MutableRefObject<number>;
+  scarf: { fraction: number; glyphs: readonly string[] };
   poseRef: React.MutableRefObject<{ x: number; z: number; yaw: number }>;
   onNearby: (id: EncounterId | null) => void;
   onArrive: (id: EncounterId, distance: number) => void;
@@ -87,6 +91,7 @@ function Walker({
   destination,
   target,
   zoomRef,
+  scarf,
   poseRef,
   onNearby,
   onArrive,
@@ -99,6 +104,7 @@ function Walker({
   const pingsRef = useRef(pings);
   pingsRef.current = pings;
   const body = useRef<THREE.Group>(null);
+  const paulPose = useRef({ heading: Math.PI, walking: 0 });
   const marker = useRef<THREE.Mesh>(null);
   const pos = useRef({ x: 0, z: 6.4, heading: Math.PI, walking: 0 });
   const path = useRef<[number, number][]>([]);
@@ -217,12 +223,11 @@ function Walker({
     }
     const py = groundAt(p.x, p.z);
     // --- figure ---
+    paulPose.current.heading = p.heading;
+    paulPose.current.walking += (p.walking - paulPose.current.walking) * Math.min(1, delta * 8);
     if (body.current) {
       body.current.position.set(p.x, py + Math.abs(Math.sin(state.clock.elapsedTime * 9)) * 0.07 * p.walking, p.z);
-      let diff = p.heading - body.current.rotation.y;
-      diff = Math.atan2(Math.sin(diff), Math.cos(diff));
-      body.current.rotation.y += diff * Math.min(1, delta * 10);
-      body.current.rotation.z = Math.sin(state.clock.elapsedTime * 9) * 0.06 * p.walking;
+      // Paul is a flat character: he mirrors to face the way he walks (see Paul), the group does not turn.
     }
     if (marker.current) {
       markerLife.current = Math.max(0, markerLife.current - delta * 1.2);
@@ -283,17 +288,11 @@ function Walker({
     }
   });
 
-  const hood = new THREE.Color(pack.world.palette.accent).lerp(new THREE.Color("#ffffff"), 0.2).getStyle();
   return (
     <>
       <group ref={body} position={[0, 0, 6.4]} userData={{ noOcclude: true }}>
-        <Blob radius={0.62} opacity={0.22} />
-        <Round position={[0, 0.85, 0]} radius={0.5} top={0.22} height={1.7} color={pack.world.palette.accent} segments={10} />
-        <Ball position={[0, 1.86, 0]} radius={0.33} color={hood} />
-        <mesh position={[0, 1.82, 0.22]}>
-          <circleGeometry args={[0.16, 12]} />
-          <meshBasicMaterial color="#fbe9dc" />
-        </mesh>
+        <Blob radius={0.62} opacity={0.3} />
+        <Paul pose={paulPose} scarf={scarf} />
       </group>
       <mesh ref={marker} rotation={[-Math.PI / 2, 0, 0]} userData={{ noOcclude: true }}>
         <ringGeometry args={[0.35, 0.5, 24]} />
@@ -355,7 +354,9 @@ function Hooks({ pack, terrain, poseRef }: { pack: LanguagePack; terrain: Terrai
       pose: () => poseRef.current,
       marker: (id: EncounterId) => {
         const e = encounterOf(pack, id);
-        return project(e.position[0], e.position[1] + 1.2, e.position[2]);
+        const owner = pack.world.npcs.find((n) => n.archetype && n.encounter === id);
+        const at = owner?.position ?? e.position;
+        return project(at[0], at[1] + 1.2, at[2]);
       },
       ground: (x: number, z: number) => project(x, terrain.groundY(x, z) ?? 0, z),
     };
@@ -396,6 +397,10 @@ export interface MaruWorldProps {
   pings: boolean;
   /** Zoom relative to "the whole world fits the screen" (1). The shell's +/- buttons and the wheel change it. */
   zoomRef: React.MutableRefObject<number>;
+  /** Share of each encounter's words the player has recorded (0 to 1): colour rises inside the person who gave it. */
+  awakening: Record<EncounterId, number>;
+  /** How much of the language has been recorded, and the written words that decorate Paul's scarf. */
+  scarf: { fraction: number; glyphs: readonly string[] };
   poseRef: React.MutableRefObject<{ x: number; z: number; yaw: number }>;
   onNearby: (id: EncounterId | null) => void;
   /** The player walked up to an encounter they clicked (or tapped). */
@@ -415,6 +420,8 @@ export function MaruWorld({
   debug,
   pings,
   zoomRef,
+  awakening,
+  scarf,
   poseRef,
   onNearby,
   onArrive,
@@ -422,6 +429,22 @@ export function MaruWorld({
 }: MaruWorldProps) {
   const walkRef = useRef<((x: number, z: number, then?: EncounterId) => void) | null>(null);
   const terrain = useMemo(() => packGrid(pack).terrain, [pack]);
+  // accents float round whoever is being listened to, for a couple of seconds after the player asks for a sound
+  const [speaking, setSpeaking] = useState(false);
+  useEffect(() => {
+    let timer = 0;
+    const off = onSpeak(() => {
+      setSpeaking(true);
+      window.clearTimeout(timer);
+      timer = window.setTimeout(() => setSpeaking(false), 2300);
+    });
+    return () => {
+      off();
+      window.clearTimeout(timer);
+    };
+  }, []);
+  const stateOf = (id: EncounterId): OpeningState => (visited.includes(id) ? "done" : id === target ? "next" : "locked");
+  const states = Object.fromEntries(pack.encounters.map((e) => [e.id, stateOf(e.id)])) as Record<EncounterId, OpeningState>;
   const select = (id: EncounterId) => {
     if (!active) return;
     const [ax, az] = encounterOf(pack, id).approach;
@@ -442,9 +465,9 @@ export function MaruWorld({
       <PackCtx.Provider value={pack}>
         <TerrainCtx.Provider value={terrain}>
           {/* Flat shading: one soft ambient plus one sun gives each box its three tones (top, south face, east face). */}
-          <ambientLight color={light.ambient} intensity={0.5 * Math.PI} />
+          <ambientLight color={light.ambient} intensity={(pack.world.palette.ambientLevel ?? 0.5) * Math.PI} />
           <hemisphereLight args={[light.hemiSky, light.hemiGround, 0.12 * Math.PI]} />
-          <directionalLight position={[3, 8.5, 5]} intensity={0.5 * Math.PI} color={light.sun} />
+          <directionalLight position={[3, 8.5, 5]} intensity={(pack.world.palette.sunLevel ?? 0.5) * Math.PI} color={light.sun} />
           {/* clicking anywhere in the world (ground, walls) walks to the nearest open spot */}
           <group
             onClick={(event: ThreeEvent<MouseEvent>) => {
@@ -454,10 +477,11 @@ export function MaruWorld({
           >
             {pack.world.scenery === "nyhavn" ? <NyhavnScenery /> : pack.world.scenery === "airport" ? <AirportScenery /> : <SandstoneScenery />}
           </group>
-          <People />
-          {pack.encounters.map((e) => (
-            <Marker key={e.id} id={e.id} state={visited.includes(e.id) ? "done" : e.id === target ? "next" : "locked"} onSelect={select} />
-          ))}
+          <People states={states} awakening={awakening} speaking={speaking} focus={focus} />
+          {pack.encounters.map((e) => {
+            const owner = pack.world.npcs.find((n) => n.archetype && n.encounter === e.id);
+            return <Marker key={e.id} id={e.id} state={stateOf(e.id)} onSelect={select} hidden={!!owner} at={owner?.position} />;
+          })}
           {bubbleId && <Bubble id={bubbleId} />}
           <Walker
             pack={pack}
@@ -469,6 +493,7 @@ export function MaruWorld({
             target={target}
             visited={visited}
             zoomRef={zoomRef}
+            scarf={scarf}
             poseRef={poseRef}
             onNearby={onNearby}
             onArrive={onArrive}

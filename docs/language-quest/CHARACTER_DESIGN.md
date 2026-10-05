@@ -1,6 +1,6 @@
 # Character design: Paul Glotty and the "Living Characters"
 
-Status: **proposal for approval, not built.** Source material: the owner's character sheet ("Paul Glotty, The Scholar (Revised)": front, two 3/4 views, "on the move") with a floating book and an eye-in-a-glyph-wheel emblem, a 10-second animation, and the owner's NPC concept ("The Living Characters").
+Status: **built (phases 1 to 4 of section 6, first version); decisions approved by the owner.** Approved: layered-sprite approach; Danish letters and chapter 1 casting; scarf shows progress; Paul and the NPCs together; the glowing letter opening replaces the gold marker (still used for encounters without a person). Not built yet: the pencil, look and travel poses (phase 5). Also approved: a darker, mysterious, almost ironic art direction (see DESIGN.md section 7). Source material: the owner's character sheet ("Paul Glotty, The Scholar (Revised)": front, two 3/4 views, "on the move") with a floating book and an eye-in-a-glyph-wheel emblem, a 10-second animation, and the owner's NPC concept ("The Living Characters").
 
 ## 1. What the references show
 
@@ -112,3 +112,13 @@ Status: **proposal for approval, not built.** Source material: the owner's chara
 3. Approve "scarf as progress" (a display of recorded words) or keep the scarf decorative.
 4. Start with Paul only (phase 1), then the NPCs?
 5. Keep the gold interaction marker, or replace it with the glowing aperture?
+
+## 9. As built (first version)
+
+- **Files:** `world/characters/shapes.ts` (the hand-drawn silhouettes on a 120 x 240 canvas), `textures.ts` (body, glowing opening, scarf, speech marks), `Characters.tsx` (`Paul`, `LetterFolk`, scarf ribbon, speech marks).
+- **Paul:** a dark billboard that mirrors to face the way he walks, breathes when idle and bobs when walking. His scarf is a wavy ribbon: it grows with the share of the language recorded (all packs of the language count) and is written over with the written forms of the last 30 recorded words.
+- **Letter-folk:** `NpcSpec` gained `archetype`, `letter` and `encounter`. The person who owns an encounter glows at their letter opening: warm and pulsing when it is the next step, dim when locked, in their own colour once done. Colour rises from the feet in eight steps with the share of the encounter's drilled words recorded (an encounter without drills counts as complete when done). The click area sits on the person; encounters without an owner keep the old gold marker.
+- **Speech marks:** accents float round the person you are studying for about two seconds after you press a Listen button. They are decorative and never show the transcription.
+- **Rules kept:** nothing here says whether a guess is right; colour and scarf only show what has been recorded. The Notebook still lists every word, so colour is never the only signal.
+- **Validator:** a person's `encounter` must exist, an archetype must stand on ground and name its letter, and an encounter should have one owner.
+- **Known gaps:** the pencil, look and travel poses; phone-sized legibility of the silhouettes is untested on a real device; the Maru pack uses archetype shapes with romanised letters, since its glyph script has no letterforms of its own yet.

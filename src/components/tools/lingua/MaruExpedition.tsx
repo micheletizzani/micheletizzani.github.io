@@ -242,7 +242,7 @@ function CompassHud({
 // ---------- commands (rebindable) ----------
 type ActionId = "interact" | "speak" | "type" | "notebook" | "dictionary" | "map" | "fullscreen" | "help";
 const ACTIONS: { id: ActionId; label: string; hint: string; code: string }[] = [
-  { id: "interact", label: "Take a closer look", hint: "or click / tap a gold marker", code: "KeyE" },
+  { id: "interact", label: "Take a closer look", hint: "or click / tap a glowing character", code: "KeyE" },
   { id: "speak", label: "Try to say the word", hint: "opens the Sound tab; Alt+T uses the microphone", code: "KeyT" },
   { id: "type", label: "Write the sound", hint: "opens the Sound tab", code: "KeyP" },
   { id: "notebook", label: "Field notebook", hint: "words, guesses, observations", code: "KeyN" },
@@ -315,8 +315,8 @@ function CommandsPanel({
           <CloseButton onClick={onClose} />
         </div>
         <p className="mt-2 text-xs text-[var(--mx-muted)]">
-          Click or tap the ground to walk, and a gold marker to look closer. W A S D or the arrows also walk; the mouse wheel zooms. Your key choices
-          are saved in this browser.
+          Click or tap the ground to walk, and a glowing character to look closer. W A S D or the arrows also walk; the mouse wheel zooms. Your key
+          choices are saved in this browser.
         </p>
         <ul className="mt-4 divide-y divide-[var(--mx-ink)]/15 border-2 border-[var(--mx-ink)]/40">
           {ACTIONS.map((action) => (
@@ -374,7 +374,7 @@ export const MaruExpedition: React.FC<{ onExit?: () => void }> = ({ onExit }) =>
   const [loaded, setLoaded] = useState(false);
   const [nearbyRaw, setNearby] = useState<EncounterId | null>(null);
   const [message, setMessage] = useState(
-    "Click the ground to walk, then click the glowing gold marker to take a closer look. Nothing makes a sound until you ask."
+    "Click the ground to walk, then click the character whose letter opening glows to take a closer look. Nothing makes a sound until you ask."
   );
   const [lessonRaw, setLesson] = useState<{ id: EncounterId; tab?: LessonTab } | null>(null);
   const [finaleOpen, setFinaleOpen] = useState(false);
@@ -404,6 +404,27 @@ export const MaruExpedition: React.FC<{ onExit?: () => void }> = ({ onExit }) =>
 
   const voice = useVoiceReport(pack);
   const done = progress.done;
+  // Paul's scarf and the colour inside each person show what the player has RECORDED, never whether it is right.
+  const awakening = useMemo(
+    () =>
+      Object.fromEntries(
+        pack.encounters.map((x) => [
+          x.id,
+          x.drills.length ? x.drills.filter((id) => progress.words[id]?.sound).length / x.drills.length : progress.done.includes(x.id) ? 1 : 0,
+        ])
+      ),
+    [pack, progress.words, progress.done]
+  );
+  const scarf = useMemo(() => {
+    const lexicon: Record<string, string> = {};
+    for (const p of PACKS) if (languageOf(p) === languageOf(pack)) for (const w of p.lexicon) lexicon[w.id] = w.written;
+    const recorded = Object.entries(progress.words)
+      .filter(([, n]) => n.sound)
+      .map(([id]) => lexicon[id])
+      .filter((w): w is string => !!w);
+    const total = Object.keys(lexicon).length;
+    return { fraction: total ? recorded.length / total : 0, glyphs: recorded.slice(-30) };
+  }, [pack, progress.words]);
   const current = nearby ? encounterOf(pack, nearby) : undefined;
   const unlocked = !!current && isUnlocked(pack, current.id, done);
   const target = nextEncounter(pack, done)?.id ?? null;
@@ -524,7 +545,7 @@ export const MaruExpedition: React.FC<{ onExit?: () => void }> = ({ onExit }) =>
       if (isUnlocked(pack, id, progress.done)) fire("enter", id);
       if (isUnlocked(pack, id, progress.done))
         setMessage(
-          `${e.name}: something is going on here. ${isTouch ? "Tap Look closer" : `Press ${keyLabel(keys.interact)} or click the gold marker`} to take a closer look.`
+          `${e.name}: something is going on here. ${isTouch ? "Tap Look closer" : `Press ${keyLabel(keys.interact)} or click the glowing character`} to take a closer look.`
         );
     },
     [pack, progress.done, isTouch, keys.interact, fire]
@@ -545,7 +566,7 @@ export const MaruExpedition: React.FC<{ onExit?: () => void }> = ({ onExit }) =>
     setKeys(loadKeys());
     if (coarse)
       setMessage(
-        "Tap the ground to walk, then tap the glowing gold marker to take a closer look. Nothing makes a sound until you ask. Landscape works best."
+        "Tap the ground to walk, then tap the character whose letter opening glows to take a closer look. Nothing makes a sound until you ask. Landscape works best."
       );
     const onFs = () => setIsFs(!!document.fullscreenElement);
     document.addEventListener("fullscreenchange", onFs);
@@ -597,12 +618,12 @@ export const MaruExpedition: React.FC<{ onExit?: () => void }> = ({ onExit }) =>
       switch (action) {
         case "interact":
           if (playing && near) openEncounter(near.id);
-          else if (playing) setMessage("Nothing to look at here. Walk to a gold marker (follow the arrow), or click one.");
+          else if (playing) setMessage("Nothing to look at here. Walk to a glowing character (follow the arrow), or click one.");
           break;
         case "type":
         case "speak":
           if (playing && near) openEncounter(near.id, "sound");
-          else if (playing) setMessage("Get close to a gold marker first.");
+          else if (playing) setMessage("Get close to a glowing character first.");
           break;
         case "notebook":
           if (!lesson && !finaleOpen) setNotebook((v) => (v ? null : { tab: "words" }));
@@ -660,6 +681,8 @@ export const MaruExpedition: React.FC<{ onExit?: () => void }> = ({ onExit }) =>
         debug={debug}
         pings={pings}
         zoomRef={zoomRef}
+        awakening={awakening}
+        scarf={scarf}
         poseRef={poseRef}
         onNearby={handleNearby}
         onArrive={arrived}
@@ -783,7 +806,7 @@ export const MaruExpedition: React.FC<{ onExit?: () => void }> = ({ onExit }) =>
               <MousePointer2 size={14} /> click ground · walk (or W A S D)
             </div>
             <div className="mt-1 flex items-center gap-2">
-              <Compass size={14} /> click a gold marker · look closer
+              <Compass size={14} /> click a glowing character · look closer
             </div>
             <div className="mt-1">
               {key("interact")} look · {key("type")} sound · {key("notebook")} notebook · {key("dictionary")} sounds

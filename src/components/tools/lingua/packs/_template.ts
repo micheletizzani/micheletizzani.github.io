@@ -180,18 +180,21 @@ export const template: LanguagePack = {
   world: {
     scenery: "sandstone", // "nyhavn" (gabled houses, boats, flags) or "sandstone" (arched façades); add your own in world/
     // Three floating terraces joined by stairs. Reuse the layout so encounters, the map and collision stay consistent.
-    ...terraces({ a: ["#f3e0c0", "#e3c5a6"], b: ["#f5d6b8", "#dfb497"], d: ["#f1cfc4", "#d9a69c"], stairs: "#faefdc" }),
+    ...terraces({ a: ["#c4aa9c", "#6f5a78"], b: ["#cfa896", "#7a5a72"], d: ["#c9a1a0", "#745270"], stairs: "#e0d2cc" }),
     palette: {
-      ground: "#f3e0c0",
-      street: "#ecd2ac",
-      plaza: "#f8ecd2",
-      water: "#b5ddd9", // the sea around the terraces
-      sky: ["#c7e3e8", "#f3e5d1"], // background gradient, top to bottom (pastel)
-      fog: "#efe3d2",
-      ink: "#8a6f8c", // fine detail: window glass
+      ground: "#c4aa9c",
+      street: "#b89c90",
+      plaza: "#d4bfb2",
+      water: "#2c4466", // the sea around the terraces: dark and calm
+      sky: ["#171a36", "#8a6a80"], // background gradient, top to bottom: dusk
+      fog: "#4a4466",
+      ink: "#34284a", // dark: sign lettering and fine detail
       cloaks: ["#e58c7c", "#7fb0c4", "#d17a8c", "#a89cc9", "#7fbfa5"],
       accent: "#e07a8a",
-      light: { ambient: "#fff1e6", hemiSky: "#fffaf0", hemiGround: "#e2c4d4", sun: "#fff6e4" },
+      light: { ambient: "#9a8cc4", hemiSky: "#7a76b0", hemiGround: "#4a3a4a", sun: "#ffcf9a" },
+      ambientLevel: 0.42, // lower ambient + stronger sun = darker, moodier shading
+      sunLevel: 0.64,
+      glow: "#ffcf80", // lit windows and lamps
     },
     // Tall buildings stand ONLY on the far (west and north) edges so nothing hides a walkable surface.
     // position[1] is the height of the terrace the building stands on (0 quay, 1.2 terrace, 2.4 upper).

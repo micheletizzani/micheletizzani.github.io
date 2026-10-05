@@ -1,6 +1,6 @@
 import React, { useMemo } from "react";
 import * as THREE from "three";
-import { lighten, mix, usePack } from "./toon";
+import { mix, usePack } from "./toon";
 
 export const SEA_Y = -4.4;
 
@@ -13,9 +13,9 @@ export function Sea() {
     canvas.height = 256;
     const ctx = canvas.getContext("2d")!;
     const g = ctx.createLinearGradient(0, 256, 0, 0); // canvas bottom = uv v 0 = near edge (south)
-    g.addColorStop(0.3, mix(palette.water, palette.ink, 0.1));
+    g.addColorStop(0.3, mix(palette.water, "#000010", 0.35));
     g.addColorStop(0.5, palette.water);
-    g.addColorStop(0.7, lighten(palette.water, 0.4));
+    g.addColorStop(0.7, mix(palette.water, palette.sky[1], 0.6));
     ctx.fillStyle = g;
     ctx.fillRect(0, 0, 4, 256);
     const t = new THREE.CanvasTexture(canvas);

@@ -218,7 +218,20 @@ export function playNativeClip(url: string, rate = 1): boolean {
  * Without a matching voice a strict language is not spoken at all (see `SpeakOptions.strict`);
  * a non-strict one (an invented language) is read by the browser's default voice as syllables.
  */
+const speakListeners = new Set<() => void>();
+/** Subscribe to "something was just spoken because the player asked" (used for the floating speech marks). */
+export function onSpeak(fn: () => void) {
+  speakListeners.add(fn);
+  return () => void speakListeners.delete(fn);
+}
+
 export function speakText(text: string, options: SpeakOptions): SpeakResult {
+  const result = speakTextNow(text, options);
+  if (result === "spoken") speakListeners.forEach((fn) => fn());
+  return result;
+}
+
+function speakTextNow(text: string, options: SpeakOptions): SpeakResult {
   if (muted) return "muted";
 
   // Check if running under synthetic voice test harness (e.g. voices.mjs)

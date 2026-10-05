@@ -179,6 +179,8 @@ one low stall, tall buildings on the west/north edges, a gate or back wall on th
 
 ## 5. Art direction
 
+> **Update:** after the first version the art direction moved from bright pastel to **dusk**: darker, mysterious, a little ironic, with dark silhouette characters and warm lit windows. The authoritative description is [DESIGN.md](./DESIGN.md) section 7 and [CHARACTER_DESIGN.md](./CHARACTER_DESIGN.md); the pastel wording below describes the first version.
+
 ### 5.1 Style
 
 Minimal indie, in the manner of isometric architectural puzzle games: flat colour faces, no outlines, soft light, simple

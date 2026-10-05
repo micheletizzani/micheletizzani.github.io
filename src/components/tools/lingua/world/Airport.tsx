@@ -6,7 +6,7 @@ import { Bench, Lamp, Planter } from "./Props";
 import { Sea } from "./Sea";
 import { Blob, Sign } from "./shared";
 import { Terrain, archShape } from "./Terrain";
-import { Box, Round, darken, mix, usePack } from "./toon";
+import { Box, Round, darken, isLit, mix, useGlow, usePack } from "./toon";
 
 /**
  * A stylised airport for the Danish "Skilt" chapter: arrivals hall (low), ticket hall (middle), metro platform (high).
@@ -21,7 +21,8 @@ function TerminalBlock({ spec }: { spec: BuildingSpec }) {
   const pack = usePack();
   const [px, py, pz] = spec.position;
   const [w, h, d] = spec.size;
-  const glass = mix(pack.world.palette.ink, "#ffffff", 0.45);
+  const glass = mix(pack.world.palette.ink, "#ffffff", 0.2);
+  const glow = useGlow();
   const rows = Math.max(1, Math.floor((h - 1.5) / 1.7));
   const cols = Math.max(1, Math.floor(d / 1.15));
   return (
@@ -33,7 +34,7 @@ function TerminalBlock({ spec }: { spec: BuildingSpec }) {
         Array.from({ length: cols }, (_, c) => (
           <mesh key={`${r}-${c}`} position={[w / 2 + 0.02, 1.6 + r * 1.7, -d / 2 + ((c + 0.5) * d) / cols]} rotation={[0, Math.PI / 2, 0]}>
             <planeGeometry args={[(d / cols) * 0.8, 1.2]} />
-            <meshBasicMaterial color={glass} />
+            <meshBasicMaterial color={isLit(r * 5 + c + Math.round(pz)) ? glow : glass} />
           </mesh>
         ))
       )}
@@ -46,7 +47,7 @@ function Carriage({ spec }: { spec: BuildingSpec }) {
   const pack = usePack();
   const [px, py, pz] = spec.position;
   const [w, , d] = spec.size;
-  const glass = mix(pack.world.palette.ink, "#ffffff", 0.45);
+  const glass = useGlow();
   const h = 3.1;
   return (
     <group position={[px, py, pz]}>

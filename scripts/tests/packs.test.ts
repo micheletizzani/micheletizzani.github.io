@@ -386,3 +386,28 @@ test("packs of one language share progress, so their ids must not collide", () =
     "a word must mean the same in every chapter"
   );
 });
+
+test("letter-folk: people must own real encounters, stand on ground and name their letter", () => {
+  const t = clone(template);
+  t.world.npcs[0].archetype = "gatekeeper";
+  t.world.npcs[0].encounter = "fountain";
+  t.world.npcs[0].letter = "O";
+  assert.deepEqual(validatePack(t).errors, []);
+  assert.deepEqual(validatePack(t).warnings, []);
+
+  const unknown = clone(t);
+  unknown.world.npcs[0].encounter = "nowhere";
+  assert.ok(validatePack(unknown).errors.some((e) => e.includes('unknown encounter "nowhere"')));
+
+  const sea = clone(t);
+  sea.world.npcs[0].position = [30, 0, 30];
+  assert.ok(validatePack(sea).errors.some((e) => e.includes("over the sea")));
+
+  const noLetter = clone(t);
+  delete noLetter.world.npcs[0].letter;
+  assert.ok(validatePack(noLetter).warnings.some((w) => w.includes("has no letter")));
+
+  const twice = clone(t);
+  twice.world.npcs[1].encounter = "fountain";
+  assert.ok(validatePack(twice).warnings.some((w) => w.includes("owned by 2 people")));
+});

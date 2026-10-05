@@ -2,7 +2,7 @@ import React, { useRef } from "react";
 import { useFrame } from "@react-three/fiber";
 import * as THREE from "three";
 import { Blob } from "./shared";
-import { Ball, Box, Round, Toon, darken, lighten, type V3 } from "./toon";
+import { Ball, Box, Round, Toon, darken, lighten, useGlow, type V3 } from "./toon";
 
 // Small set pieces shared by the sceneries. Everything is built from flat boxes, cylinders and spheres,
 // kept low (under 2.2 m) wherever it stands in front of something the player has to see.
@@ -27,11 +27,20 @@ export function Bench({
   );
 }
 
-export function Lamp({ position, pole = "#8a8fa8", globe = "#fff3cf" }: { position: V3; pole?: string; globe?: string }) {
+export function Lamp({ position, pole = "#8a8fa8", globe }: { position: V3; pole?: string; globe?: string }) {
+  const glow = useGlow();
   return (
     <group position={position} userData={{ noOcclude: true }}>
+      {/* a warm pool of light on the ground */}
+      <mesh position={[0, 0.04, 0]} rotation={[-Math.PI / 2, 0, 0]} raycast={() => null}>
+        <circleGeometry args={[1.5, 24]} />
+        <meshBasicMaterial color={glow} transparent opacity={0.22} depthWrite={false} blending={THREE.AdditiveBlending} />
+      </mesh>
       <Round position={[0, 1.2, 0]} radius={0.06} height={2.4} color={pole} segments={6} />
-      <Ball position={[0, 2.5, 0]} radius={0.2} color={globe} />
+      <mesh position={[0, 2.5, 0]}>
+        <sphereGeometry args={[0.2, 14, 10]} />
+        <meshBasicMaterial color={globe ?? glow} />
+      </mesh>
     </group>
   );
 }

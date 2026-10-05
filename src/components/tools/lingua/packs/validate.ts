@@ -189,6 +189,17 @@ export function validatePack(pack: LanguagePack): Report {
     if (!s.words?.length && !s.text) err(`a sign at ${JSON.stringify(s.position)} has neither words nor text`);
     for (const id of s.words ?? []) if (!words.has(id)) err(`sign uses unknown word "${id}"`);
   }
+  for (const n of pack.world.npcs) {
+    if (n.encounter && !encounters.has(n.encounter)) err(`a person at ${JSON.stringify(n.position)} owns unknown encounter "${n.encounter}"`);
+    if (n.archetype && terrain.groundY(n.position[0], n.position[2]) === null)
+      err(`a ${n.archetype} stands over the sea at ${JSON.stringify(n.position)}`);
+    if (n.archetype && !n.letter)
+      warn(`the ${n.archetype} at ${JSON.stringify(n.position)} has no letter (say which letter of the script it is built from)`);
+  }
+  for (const e of pack.encounters) {
+    const owners = pack.world.npcs.filter((n) => n.encounter === e.id).length;
+    if (owners > 1) warn(`encounter "${e.id}" is owned by ${owners} people; only one should glow for it`);
+  }
   if (pack.world.npcs.length < pack.encounters.length) warn(`fewer NPCs (${pack.world.npcs.length}) than encounters (${pack.encounters.length})`);
 
   // --- story text ---

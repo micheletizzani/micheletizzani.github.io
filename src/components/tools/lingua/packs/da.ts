@@ -10,8 +10,8 @@ import type { LanguagePack, PhonemeEntry } from "./types";
  */
 
 // Nyhavn façade colours: mustard, brick red, harbour blue, cream, orange, sage, rose, navy.
-const FACADE = ["#f3d98b", "#e9a59c", "#9fc3de", "#f4ead2", "#f2b88c", "#b8d4bf", "#e7b6c4", "#9fb0cf"];
-const ROOFS = ["#d98a7d", "#8d9bb0", "#b58e86"];
+const FACADE = ["#d8b062", "#c97b86", "#6f93b8", "#dccdb0", "#cf8450", "#7fa58f", "#b9788f", "#8392b8"];
+const ROOFS = ["#5a4a66", "#4a5068", "#6a4f5a"];
 
 const vowel = (symbol: string, name: string, how: string, keywords: PhonemeEntry["keywords"], extra: Partial<PhonemeEntry> = {}): PhonemeEntry => ({
   symbol,
@@ -699,26 +699,30 @@ export const da: LanguagePack = {
   world: {
     scenery: "nyhavn",
     // Three floating terraces joined by stairs (see packs/layout.ts), in pastel versions of the Nyhavn colours.
-    ...terraces({ a: ["#efe2cf", "#dcc6b4"], b: ["#f2d9c6", "#d9b8a8"], d: ["#ecd3d0", "#cfa9a6"], stairs: "#f8eee2" }),
+    ...terraces({ a: ["#b9b0c2", "#5f5a7e"], b: ["#c6aab6", "#6f5776"], d: ["#c0a6a9", "#6a5170"], stairs: "#d9d0d8" }),
+    // Nyhavn at dusk: deep indigo sea and sky, the real house colours a little dusty, every window lit.
     palette: {
-      ground: "#efe2cf",
-      street: "#e6d5bd",
-      plaza: "#f7efe0",
-      water: "#a6d0df",
-      sky: ["#b9d9ea", "#e9f1ee"],
-      fog: "#dcecef",
-      ink: "#6f86a6",
+      ground: "#b9b0c2",
+      street: "#aaa1b6",
+      plaza: "#cdc4d0",
+      water: "#2d3c66",
+      sky: ["#121734", "#7b6486"],
+      fog: "#3a3f66",
+      ink: "#2a2f4a",
       cloaks: ["#e8828a", "#7f9cc4", "#e8c36a", "#8cc4b4", "#b79bc9"],
-      accent: "#df6670",
-      light: { ambient: "#fff4ee", hemiSky: "#ffffff", hemiGround: "#cddcf0", sun: "#fffaf0" },
+      accent: "#e0707a",
+      light: { ambient: "#8c91c8", hemiSky: "#6a74b0", hemiGround: "#3a2f4a", sun: "#ffd2a0" },
+      ambientLevel: 0.42,
+      sunLevel: 0.64,
+      glow: "#ffd58a",
     },
     buildings: [...westHouses(FACADE, ROOFS), archiveHouse("#f4ead2", "#b58e86"), gateWall("#d9cbb6", "#bfae96")],
     npcs: [
-      { ...NPC_SPOTS.child, color: "#e8828a", tool: "cup" },
-      { ...NPC_SPOTS.vendor, color: "#8cc4b4", tool: "cup" },
-      { ...NPC_SPOTS.guard, color: "#7f9cc4", tool: "key" },
-      { ...NPC_SPOTS.traveller, color: "#b79bc9" },
-      { ...NPC_SPOTS.archivist, color: "#e8c36a" },
+      { ...NPC_SPOTS.child, color: "#7f9cf0", tool: "cup", archetype: "messenger", letter: "k", encounter: "fountain" },
+      { ...NPC_SPOTS.vendor, color: "#d9558c", tool: "cup", archetype: "merchant", letter: "Æ", encounter: "vendor" },
+      { ...NPC_SPOTS.guard, color: "#5ec4c8", tool: "key", archetype: "gatekeeper", letter: "Ø", encounter: "guard" },
+      { ...NPC_SPOTS.traveller, color: "#f2b84b", archetype: "elder", letter: "Å" },
+      { ...NPC_SPOTS.archivist, color: "#b79bf0", archetype: "scholar", letter: "T", encounter: "archive" },
     ],
     signs: [
       { words: ["vand"], position: [0, 0.34, 3.97], width: 1.1 },

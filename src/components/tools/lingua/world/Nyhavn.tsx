@@ -4,14 +4,14 @@ import { Terrain, archShape } from "./Terrain";
 import { Basin, Bench, Bike, Boat, Lamp, Planter } from "./Props";
 import { Sea } from "./Sea";
 import { Blob, Sign } from "./shared";
-import { Box, Gable, Round, darken, lighten, mix, usePack } from "./toon";
+import { Box, Gable, Round, darken, isLit, lighten, mix, useGlow, usePack } from "./toon";
 
 /**
  * Nyhavn: the 17th-century harbour in Copenhagen, known for its rows of tall, narrow, painted gabled houses,
  * wooden boats and cobbles. Stylised in pastel flat shapes: the colours and silhouettes follow the place.
  */
 
-const WHITE = "#fdf8ee";
+const WHITE = "#d8d0e0"; // window frames: dusk-pale
 const RED = "#e58a8a"; // a pastel Dannebrog red
 
 function House({ spec }: { spec: BuildingSpec }) {
@@ -21,7 +21,8 @@ function House({ spec }: { spec: BuildingSpec }) {
   const dir = (spec.faces?.[0] ?? "e") === "e" ? 1 : -1;
   const rotY = dir === 1 ? Math.PI / 2 : -Math.PI / 2;
   const fx = dir * (w / 2);
-  const glass = mix(pack.world.palette.ink, "#ffffff", 0.25);
+  const glass = mix(pack.world.palette.ink, "#ffffff", 0.1);
+  const glow = useGlow();
   const trim = spec.trim ?? lighten(spec.color, 0.5);
   const windows = useMemo(() => {
     const out: { y: number; dz: number }[] = [];
@@ -44,7 +45,7 @@ function House({ spec }: { spec: BuildingSpec }) {
         </mesh>
         <mesh position={[0, 0, 0.01]}>
           <circleGeometry args={[0.2, 18]} />
-          <meshBasicMaterial color={glass} />
+          <meshBasicMaterial color={glow} />
         </mesh>
       </group>
       {windows.map((win, i) => (
@@ -55,7 +56,7 @@ function House({ spec }: { spec: BuildingSpec }) {
           </mesh>
           <mesh position={[0, 0, 0.01]}>
             <planeGeometry args={[0.54, 0.9]} />
-            <meshBasicMaterial color={glass} />
+            <meshBasicMaterial color={isLit(i + Math.round(pz * 3)) ? glow : glass} />
           </mesh>
           <mesh position={[0, 0, 0.02]}>
             <planeGeometry args={[0.06, 0.9]} />
@@ -70,7 +71,7 @@ function House({ spec }: { spec: BuildingSpec }) {
         </mesh>
         <mesh position={[d * 0.2, 1.0, 0.01]}>
           <planeGeometry args={[1.0, 0.9]} />
-          <meshBasicMaterial color={glass} />
+          <meshBasicMaterial color={glow} />
         </mesh>
         <Box
           position={[d * 0.2, 1.7, 0.3]}

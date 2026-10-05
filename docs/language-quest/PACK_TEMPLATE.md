@@ -177,9 +177,7 @@ spoken. Process used for Danish / Nyhavn:
    harbour blue, cream, orange, sage, rose, navy; the red-and-white Dannebrog; harbour teal; cobble grey).
 2. Put the wall colours in `world.buildings[].color`, the ground and water in `world.palette`, figures' clothes in
    `palette.cloaks`.
-   **Make every colour pastel**: lighten and soften the real colours (roughly lightness 75–90 %, saturation under 60 %).
-   Flat faces on a pale sea read well; strong saturated colours look harsh without outlines. `palette.sky` is the
-   background gradient (top, bottom); `palette.water` is the sea.
+   **Paint it at dusk**: take the real colours and dust them (lower the lightness, soften the saturation), keep terrace tops mid-light so dark silhouettes read, and let warm light (`palette.glow`, lit windows, lamps) carry the mystery. `palette.sky` is the background gradient (top, bottom: deep to dusty); `palette.water` is the dark sea; `palette.ambientLevel` and `sunLevel` set how moody the shading is.
 3. Pick **ink** (text, window glass) as a dark-ish version of the place's darkest colour and **paper** as a warm light.
    Check contrast (§2). The Danish pack uses navy ink on warm white with Danish red as the accent.
 4. Set `ui.wash` low-opacity (it is no longer drawn over the scene, but the field stays in the type for now).
@@ -249,9 +247,13 @@ Right-to-left or non-Latin real scripts are not supported yet.
 - [ ] `verified` flags and `verification.note` are honest; unverified content is visible as such.
 - [ ] Contrast checked; text readable on the 3D scene at both zoom levels.
 - [ ] The whole walkable world is on screen at zoom 1, on desktop and in phone landscape (`node scripts/e2e/visibility.mjs`).
-- [ ] The palette is pastel and tied to the place.
+- [ ] The palette is dusk-dusty, tied to the place, and dark silhouettes and lit windows still read.
 - [ ] `?debug` shows an acceptable frame rate on a mid-range phone.
 - [ ] No copyrighted assets, brand logos or real people were used. Place-inspired art is stylised, not copied.
+
+## 11a-0. People: letter-folk (optional)
+
+A person in `world.npcs` can be a "living character": set `archetype` (`gatekeeper`, `elder`, `messenger`, `merchant`, `scholar`), `letter` (the letter of the script it is built from, for example "Ø" in Danish, written in the pack's own alphabet) and `encounter` (the encounter this person gives). Their letter opening then glows for that encounter and the old gold marker is not drawn. Without `archetype` the person is a plain cloaked figure and the gold marker stays. Colour inside the person rises as the player records the encounter's words. See [CHARACTER_DESIGN.md](./CHARACTER_DESIGN.md).
 
 ## 11a. Story text and chapters (optional)
 

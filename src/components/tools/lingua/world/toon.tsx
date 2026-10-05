@@ -144,3 +144,9 @@ export function mix(a: string, b: string, t: number): string {
 }
 export const lighten = (hex: string, t: number) => mix(hex, "#ffffff", t);
 export const darken = (hex: string, t: number) => mix(hex, "#4a4258", t);
+
+/** Colour of lit windows and lamps in this pack's scene. */
+export const useGlow = () => usePack().world.palette.glow ?? "#ffd58a";
+
+/** Which windows are lit: most of them, in an uneven pattern (an index in, a yes or no out). */
+export const isLit = (i: number) => (i * 7 + 3) % 10 < 7;
