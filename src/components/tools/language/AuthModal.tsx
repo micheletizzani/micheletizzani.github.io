@@ -1,8 +1,16 @@
-import React, { useState } from 'react';
-import { Lock, Unlock, Key, ShieldCheck, AlertCircle, Eye, EyeOff, Download, Upload, RefreshCw } from 'lucide-react';
-import { isVaultInitialized, initializeVault, unlockVault, exportEncryptedVault, importEncryptedVault, resetVault } from './cryptoVault';
-import { INITIAL_VAULT_DATA } from './defaultData';
-import type { VaultData } from './types';
+import React, { useState } from "react";
+import { Lock, Unlock, Key, ShieldCheck, AlertCircle, Eye, EyeOff, Download, Upload, RefreshCw, X } from "lucide-react";
+import {
+  isVaultInitialized,
+  initializeVault,
+  unlockVault,
+  exportEncryptedVault,
+  importEncryptedVault,
+  resetVault,
+  changeVaultPassword,
+} from "./cryptoVault";
+import { INITIAL_VAULT_DATA } from "./defaultData";
+import type { VaultData } from "./types";
 
 interface AuthModalProps {
   isOpen: boolean;
@@ -11,6 +19,7 @@ interface AuthModalProps {
   currentVaultData?: VaultData | null;
   masterPassword?: string;
   onUpdateVault?: (data: VaultData) => void;
+  managementMode?: boolean;
 }
 
 export const AuthModal: React.FC<AuthModalProps> = ({
@@ -19,57 +28,94 @@ export const AuthModal: React.FC<AuthModalProps> = ({
   currentVaultData,
   masterPassword,
   onUpdateVault,
+  onClose,
+  managementMode = false,
 }) => {
   const [isInitialized, setIsInitialized] = useState<boolean>(() => isVaultInitialized());
-  const [password, setPassword] = useState('');
-  const [confirmPassword, setConfirmPassword] = useState('');
-  const [apiKey, setApiKey] = useState('');
-  const [provider, setProvider] = useState<'gemini' | 'groq'>('gemini');
+  const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const [apiKey, setApiKey] = useState("");
+  const [provider, setProvider] = useState<"gemini" | "groq">("gemini");
   const [showPassword, setShowPassword] = useState(false);
-  const [errorMessage, setErrorMessage] = useState('');
+  const [errorMessage, setErrorMessage] = useState("");
   const [loading, setLoading] = useState(false);
-  const [activeTab, setActiveTab] = useState<'unlock' | 'settings' | 'backup'>('unlock');
-  const [backupJson, setBackupJson] = useState('');
-  const [backupSuccess, setBackupSuccess] = useState('');
+  const [activeTab, setActiveTab] = useState<"unlock" | "settings" | "password" | "backup">(managementMode ? "settings" : "unlock");
+  const [backupJson, setBackupJson] = useState("");
+  const [backupSuccess, setBackupSuccess] = useState("");
+  const [currentPassword, setCurrentPassword] = useState("");
+  const [nextPassword, setNextPassword] = useState("");
+  const [confirmNextPassword, setConfirmNextPassword] = useState("");
+
+  React.useEffect(() => {
+    if (isOpen) setActiveTab(managementMode ? "settings" : "unlock");
+  }, [isOpen, managementMode]);
 
   if (!isOpen) return null;
 
   const handleUnlock = async (e: React.FormEvent) => {
     e.preventDefault();
-    setErrorMessage('');
+    setErrorMessage("");
     setLoading(true);
 
     try {
       const data = await unlockVault(password);
       onUnlocked(data, password);
+      setPassword("");
     } catch (err: any) {
-      setErrorMessage(err.message || 'Incorrect password.');
+      setErrorMessage(err.message || "Incorrect password.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleChangePassword = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setErrorMessage("");
+    setBackupSuccess("");
+    if (nextPassword.length < 6) {
+      setErrorMessage("New master password must be at least 6 characters.");
+      return;
+    }
+    if (nextPassword !== confirmNextPassword) {
+      setErrorMessage("New passwords do not match.");
+      return;
+    }
+    setLoading(true);
+    try {
+      const data = await changeVaultPassword(currentPassword || masterPassword || "", nextPassword);
+      onUnlocked(data, nextPassword);
+      setCurrentPassword("");
+      setNextPassword("");
+      setConfirmNextPassword("");
+      setBackupSuccess("Password changed. Your vault was re-encrypted with a new salt.");
+    } catch (err: any) {
+      setErrorMessage(err.message || "Could not verify the current password.");
     } finally {
       setLoading(false);
     }
   };
 
   const handleResetVault = () => {
-    if (confirm('Are you sure you want to reset this local browser vault? Existing encrypted items will be cleared.')) {
+    if (confirm("Are you sure you want to reset this local browser vault? Existing encrypted items will be cleared.")) {
       resetVault();
       setIsInitialized(false);
-      setPassword('');
-      setConfirmPassword('');
-      setErrorMessage('');
+      setPassword("");
+      setConfirmPassword("");
+      setErrorMessage("");
     }
   };
 
   const handleInitialize = async (e: React.FormEvent) => {
     e.preventDefault();
-    setErrorMessage('');
+    setErrorMessage("");
 
     if (password.length < 6) {
-      setErrorMessage('Master password must be at least 6 characters.');
+      setErrorMessage("Master password must be at least 6 characters.");
       return;
     }
 
     if (password !== confirmPassword) {
-      setErrorMessage('Passwords do not match.');
+      setErrorMessage("Passwords do not match.");
       return;
     }
 
@@ -86,7 +132,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({
       setIsInitialized(true);
       onUnlocked(initialData, password);
     } catch (err: any) {
-      setErrorMessage(err.message || 'Failed to initialize encrypted vault.');
+      setErrorMessage(err.message || "Failed to initialize encrypted vault.");
     } finally {
       setLoading(false);
     }
@@ -102,34 +148,34 @@ export const AuthModal: React.FC<AuthModalProps> = ({
       provider,
     };
     onUpdateVault(updated);
-    setBackupSuccess('API settings updated and encrypted in local vault.');
+    setBackupSuccess("API settings updated and encrypted in local vault.");
   };
 
   const handleExportBackup = () => {
     const exported = exportEncryptedVault();
-    const blob = new Blob([exported], { type: 'application/json' });
+    const blob = new Blob([exported], { type: "application/json" });
     const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
+    const a = document.createElement("a");
     a.href = url;
     a.download = `language-hub-vault-${new Date().toISOString().slice(0, 10)}.json`;
     a.click();
     URL.revokeObjectURL(url);
-    setBackupSuccess('Encrypted vault exported to downloads.');
+    setBackupSuccess("Encrypted vault exported to downloads.");
   };
 
   const handleImportBackup = () => {
-    setErrorMessage('');
+    setErrorMessage("");
     if (!backupJson.trim()) {
-      setErrorMessage('Please paste the encrypted JSON backup string.');
+      setErrorMessage("Please paste the encrypted JSON backup string.");
       return;
     }
     const success = importEncryptedVault(backupJson);
     if (success) {
       setIsInitialized(true);
-      setBackupSuccess('Vault imported successfully. Enter your password to unlock.');
-      setActiveTab('unlock');
+      setBackupSuccess("Vault imported successfully. Enter your password to unlock.");
+      setActiveTab("unlock");
     } else {
-      setErrorMessage('Invalid vault backup format.');
+      setErrorMessage("Invalid vault backup format.");
     }
   };
 
@@ -143,37 +189,48 @@ export const AuthModal: React.FC<AuthModalProps> = ({
               <ShieldCheck className="w-5 h-5" />
             </div>
             <div>
-              <h2 className="text-xl font-serif font-bold text-[var(--heading-color)]">
-                Cryptographic Access Gate
-              </h2>
-              <p className="text-xs text-[var(--text-color)] opacity-70">
-                PBKDF2 + 256-bit AES-GCM Client Vault
-              </p>
+              <h2 className="text-xl font-serif font-bold text-[var(--heading-color)]">Cryptographic Access Gate</h2>
+              <p className="text-xs text-[var(--text-color)] opacity-70">PBKDF2 + 256-bit AES-GCM Client Vault</p>
             </div>
           </div>
           {currentVaultData && (
             <div className="flex gap-2">
               <button
-                onClick={() => setActiveTab('settings')}
+                onClick={() => setActiveTab("settings")}
                 className={`text-xs px-2.5 py-1 rounded-lg border transition-all ${
-                  activeTab === 'settings'
-                    ? 'border-[var(--accent-color)] bg-[var(--accent-color)]/15 text-[var(--heading-color)]'
-                    : 'border-[var(--border-color)] opacity-70 hover:opacity-100'
+                  activeTab === "settings"
+                    ? "border-[var(--accent-color)] bg-[var(--accent-color)]/15 text-[var(--heading-color)]"
+                    : "border-[var(--border-color)] opacity-70 hover:opacity-100"
                 }`}
               >
                 API Key
               </button>
               <button
-                onClick={() => setActiveTab('backup')}
+                onClick={() => setActiveTab("password")}
                 className={`text-xs px-2.5 py-1 rounded-lg border transition-all ${
-                  activeTab === 'backup'
-                    ? 'border-[var(--accent-color)] bg-[var(--accent-color)]/15 text-[var(--heading-color)]'
-                    : 'border-[var(--border-color)] opacity-70 hover:opacity-100'
+                  activeTab === "password"
+                    ? "border-[var(--accent-color)] bg-[var(--accent-color)]/15 text-[var(--heading-color)]"
+                    : "border-[var(--border-color)] opacity-70 hover:opacity-100"
+                }`}
+              >
+                Password
+              </button>
+              <button
+                onClick={() => setActiveTab("backup")}
+                className={`text-xs px-2.5 py-1 rounded-lg border transition-all ${
+                  activeTab === "backup"
+                    ? "border-[var(--accent-color)] bg-[var(--accent-color)]/15 text-[var(--heading-color)]"
+                    : "border-[var(--border-color)] opacity-70 hover:opacity-100"
                 }`}
               >
                 Backup
               </button>
             </div>
+          )}
+          {managementMode && onClose && (
+            <button onClick={onClose} className="ml-2 p-1 opacity-60 hover:opacity-100" aria-label="Close settings">
+              <X className="w-4 h-4" />
+            </button>
           )}
         </div>
 
@@ -199,17 +256,16 @@ export const AuthModal: React.FC<AuthModalProps> = ({
               <div className="p-3 rounded-xl bg-[var(--bg-secondary)] border border-[var(--border-color)] text-xs space-y-1">
                 <p className="font-semibold text-[var(--heading-color)]">Welcome to Language Learning Hub</p>
                 <p className="opacity-75">
-                  Set a master password to encrypt your learning data, custom notebooks, and API tokens directly in your browser. No server ever sees your password.
+                  Set a master password to encrypt your learning data, custom notebooks, and API tokens directly in your browser. No server ever sees
+                  your password.
                 </p>
               </div>
 
               <div>
-                <label className="block text-xs font-mono uppercase tracking-wider mb-1.5 opacity-80">
-                  Master Password
-                </label>
+                <label className="block text-xs font-mono uppercase tracking-wider mb-1.5 opacity-80">Master Password</label>
                 <div className="relative">
                   <input
-                    type={showPassword ? 'text' : 'password'}
+                    type={showPassword ? "text" : "password"}
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                     placeholder="Enter at least 6 characters"
@@ -227,11 +283,9 @@ export const AuthModal: React.FC<AuthModalProps> = ({
               </div>
 
               <div>
-                <label className="block text-xs font-mono uppercase tracking-wider mb-1.5 opacity-80">
-                  Confirm Password
-                </label>
+                <label className="block text-xs font-mono uppercase tracking-wider mb-1.5 opacity-80">Confirm Password</label>
                 <input
-                  type={showPassword ? 'text' : 'password'}
+                  type={showPassword ? "text" : "password"}
                   value={confirmPassword}
                   onChange={(e) => setConfirmPassword(e.target.value)}
                   placeholder="Repeat master password"
@@ -252,9 +306,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({
                   placeholder="AIzaSy... or gsk_... (Stored encrypted)"
                   className="w-full px-4 py-2.5 rounded-xl bg-[var(--bg-secondary)] border border-[var(--border-color)] text-sm font-mono focus:outline-none focus:border-[var(--accent-color)]"
                 />
-                <p className="mt-1 text-[11px] opacity-60">
-                  Leave blank to use pre-loaded linguistic data and heuristic fallback.
-                </p>
+                <p className="mt-1 text-[11px] opacity-60">Leave blank to use pre-loaded linguistic data and heuristic fallback.</p>
               </div>
 
               <div className="pt-2">
@@ -268,21 +320,19 @@ export const AuthModal: React.FC<AuthModalProps> = ({
                 </button>
               </div>
             </form>
-          ) : activeTab === 'settings' && currentVaultData ? (
+          ) : activeTab === "settings" && currentVaultData ? (
             /* Settings Mode: Manage API Key */
             <form onSubmit={handleSaveSettings} className="space-y-4">
               <div>
-                <label className="block text-xs font-mono uppercase tracking-wider mb-1.5 opacity-80">
-                  AI Provider
-                </label>
+                <label className="block text-xs font-mono uppercase tracking-wider mb-1.5 opacity-80">AI Provider</label>
                 <div className="grid grid-cols-2 gap-2">
                   <button
                     type="button"
-                    onClick={() => setProvider('gemini')}
+                    onClick={() => setProvider("gemini")}
                     className={`p-3 rounded-xl border text-xs font-medium text-left transition-all ${
-                      provider === 'gemini'
-                        ? 'border-[var(--accent-color)] bg-[var(--accent-color)]/10 text-[var(--heading-color)]'
-                        : 'border-[var(--border-color)] opacity-70'
+                      provider === "gemini"
+                        ? "border-[var(--accent-color)] bg-[var(--accent-color)]/10 text-[var(--heading-color)]"
+                        : "border-[var(--border-color)] opacity-70"
                     }`}
                   >
                     Google AI Studio (Gemini)
@@ -290,11 +340,11 @@ export const AuthModal: React.FC<AuthModalProps> = ({
                   </button>
                   <button
                     type="button"
-                    onClick={() => setProvider('groq')}
+                    onClick={() => setProvider("groq")}
                     className={`p-3 rounded-xl border text-xs font-medium text-left transition-all ${
-                      provider === 'groq'
-                        ? 'border-[var(--accent-color)] bg-[var(--accent-color)]/10 text-[var(--heading-color)]'
-                        : 'border-[var(--border-color)] opacity-70'
+                      provider === "groq"
+                        ? "border-[var(--accent-color)] bg-[var(--accent-color)]/10 text-[var(--heading-color)]"
+                        : "border-[var(--border-color)] opacity-70"
                     }`}
                   >
                     Groq Cloud
@@ -304,12 +354,10 @@ export const AuthModal: React.FC<AuthModalProps> = ({
               </div>
 
               <div>
-                <label className="block text-xs font-mono uppercase tracking-wider mb-1.5 opacity-80">
-                  API Key
-                </label>
+                <label className="block text-xs font-mono uppercase tracking-wider mb-1.5 opacity-80">API Key</label>
                 <input
                   type="password"
-                  value={apiKey || currentVaultData.apiKey || ''}
+                  value={apiKey || currentVaultData.apiKey || ""}
                   onChange={(e) => setApiKey(e.target.value)}
                   placeholder="Paste your API key..."
                   className="w-full px-4 py-2.5 rounded-xl bg-[var(--bg-secondary)] border border-[var(--border-color)] text-sm font-mono focus:outline-none focus:border-[var(--accent-color)]"
@@ -325,21 +373,19 @@ export const AuthModal: React.FC<AuthModalProps> = ({
                 </button>
                 <button
                   type="button"
-                  onClick={() => setActiveTab('unlock')}
+                  onClick={() => setActiveTab("unlock")}
                   className="px-4 py-2.5 rounded-xl border border-[var(--border-color)] text-xs opacity-75 hover:opacity-100"
                 >
                   Back
                 </button>
               </div>
             </form>
-          ) : activeTab === 'backup' ? (
+          ) : activeTab === "backup" ? (
             /* Backup / Restore */
             <div className="space-y-4">
               <div className="p-3 rounded-xl bg-[var(--bg-secondary)] border border-[var(--border-color)] text-xs space-y-1">
                 <p className="font-semibold text-[var(--heading-color)]">Encrypted Data Portability</p>
-                <p className="opacity-75">
-                  Export your encrypted learning state to keep a safe backup across devices.
-                </p>
+                <p className="opacity-75">Export your encrypted learning state to keep a safe backup across devices.</p>
               </div>
 
               <button
@@ -351,9 +397,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({
               </button>
 
               <div className="pt-2 border-t border-[var(--border-color)]">
-                <label className="block text-xs font-mono uppercase tracking-wider mb-1.5 opacity-80">
-                  Restore from JSON Backup
-                </label>
+                <label className="block text-xs font-mono uppercase tracking-wider mb-1.5 opacity-80">Restore from JSON Backup</label>
                 <textarea
                   rows={3}
                   value={backupJson}
@@ -371,25 +415,81 @@ export const AuthModal: React.FC<AuthModalProps> = ({
               </div>
 
               {currentVaultData && (
-                <button
-                  type="button"
-                  onClick={() => setActiveTab('unlock')}
-                  className="w-full py-2 text-xs opacity-60 hover:opacity-100"
-                >
+                <button type="button" onClick={() => setActiveTab("unlock")} className="w-full py-2 text-xs opacity-60 hover:opacity-100">
                   Back to Hub
                 </button>
               )}
             </div>
+          ) : activeTab === "password" && currentVaultData ? (
+            <form onSubmit={handleChangePassword} className="space-y-4">
+              <div className="p-3 rounded-xl bg-[var(--bg-secondary)] border border-[var(--border-color)] text-xs space-y-1">
+                <p className="font-semibold text-[var(--heading-color)]">Change master password</p>
+                <p className="opacity-75">
+                  Your existing password is verified first; the vault is then encrypted again using a new random salt. Export a backup before making
+                  this change.
+                </p>
+              </div>
+              <div>
+                <label className="block text-xs font-mono uppercase tracking-wider mb-1.5 opacity-80">Current Password</label>
+                <input
+                  type={showPassword ? "text" : "password"}
+                  value={currentPassword}
+                  onChange={(e) => setCurrentPassword(e.target.value)}
+                  placeholder="Required to preserve encrypted data"
+                  className="w-full px-4 py-2.5 rounded-xl bg-[var(--bg-secondary)] border border-[var(--border-color)] text-sm focus:outline-none focus:border-[var(--accent-color)]"
+                  required
+                />
+              </div>
+              <div>
+                <label className="block text-xs font-mono uppercase tracking-wider mb-1.5 opacity-80">New Password</label>
+                <input
+                  type={showPassword ? "text" : "password"}
+                  value={nextPassword}
+                  onChange={(e) => setNextPassword(e.target.value)}
+                  placeholder="At least 6 characters"
+                  className="w-full px-4 py-2.5 rounded-xl bg-[var(--bg-secondary)] border border-[var(--border-color)] text-sm focus:outline-none focus:border-[var(--accent-color)]"
+                  required
+                />
+              </div>
+              <div>
+                <label className="block text-xs font-mono uppercase tracking-wider mb-1.5 opacity-80">Confirm New Password</label>
+                <input
+                  type={showPassword ? "text" : "password"}
+                  value={confirmNextPassword}
+                  onChange={(e) => setConfirmNextPassword(e.target.value)}
+                  placeholder="Repeat new password"
+                  className="w-full px-4 py-2.5 rounded-xl bg-[var(--bg-secondary)] border border-[var(--border-color)] text-sm focus:outline-none focus:border-[var(--accent-color)]"
+                  required
+                />
+              </div>
+              <button type="button" onClick={() => setShowPassword(!showPassword)} className="text-xs opacity-70 hover:opacity-100">
+                {showPassword ? "Hide passwords" : "Show passwords"}
+              </button>
+              <div className="flex gap-3 pt-2">
+                <button
+                  type="submit"
+                  disabled={loading}
+                  className="flex-1 py-2.5 px-4 rounded-xl bg-[var(--accent-color)] text-black font-semibold text-xs hover:opacity-95 transition-all disabled:opacity-50"
+                >
+                  {loading ? "Re-encrypting…" : "Change & Re-encrypt"}
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setActiveTab("settings")}
+                  className="px-4 py-2.5 rounded-xl border border-[var(--border-color)] text-xs opacity-75 hover:opacity-100"
+                >
+                  Back
+                </button>
+              </div>
+            </form>
           ) : (
             /* Regular Unlock Gate */
             <form onSubmit={handleUnlock} className="space-y-4">
               <div>
-                <label className="block text-xs font-mono uppercase tracking-wider mb-1.5 opacity-80">
-                  Master Password
-                </label>
+                <label className="block text-xs font-mono uppercase tracking-wider mb-1.5 opacity-80">Master Password</label>
                 <div className="relative">
                   <input
-                    type={showPassword ? 'text' : 'password'}
+                    type={showPassword ? "text" : "password"}
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                     placeholder="Enter password to unlock vault..."
@@ -419,18 +519,10 @@ export const AuthModal: React.FC<AuthModalProps> = ({
               </div>
 
               <div className="flex justify-between items-center text-[11px] opacity-60 pt-2 border-t border-[var(--border-color)]">
-                <button
-                  type="button"
-                  onClick={handleResetVault}
-                  className="hover:text-red-400 underline cursor-pointer"
-                >
+                <button type="button" onClick={handleResetVault} className="hover:text-red-400 underline cursor-pointer">
                   Reset Local Vault
                 </button>
-                <button
-                  type="button"
-                  onClick={() => setActiveTab('backup')}
-                  className="hover:text-[var(--accent-color)] underline cursor-pointer"
-                >
+                <button type="button" onClick={() => setActiveTab("backup")} className="hover:text-[var(--accent-color)] underline cursor-pointer">
                   Import / Restore Backup
                 </button>
               </div>

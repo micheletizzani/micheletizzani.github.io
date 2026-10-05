@@ -1,12 +1,12 @@
-import type { VaultData } from './types';
+import type { VaultData } from "./types";
 
-const VAULT_STORAGE_KEY = 'mt_language_vault_v1';
-const SALT_STORAGE_KEY = 'mt_language_salt_v1';
+const VAULT_STORAGE_KEY = "mt_language_vault_v1";
+const SALT_STORAGE_KEY = "mt_language_salt_v1";
 const PBKDF2_ITERATIONS = 100000;
 
 function bufferToBase64(buf: ArrayBuffer): string {
   const bytes = new Uint8Array(buf);
-  let binary = '';
+  let binary = "";
   for (let i = 0; i < bytes.byteLength; i++) {
     binary += String.fromCharCode(bytes[i]);
   }
@@ -24,61 +24,47 @@ function base64ToBuffer(base64: string): ArrayBuffer {
 
 async function deriveKey(password: string, salt: Uint8Array): Promise<CryptoKey> {
   const enc = new TextEncoder();
-  const passwordKey = await window.crypto.subtle.importKey(
-    'raw',
-    enc.encode(password),
-    { name: 'PBKDF2' },
-    false,
-    ['deriveKey']
-  );
+  const passwordKey = await window.crypto.subtle.importKey("raw", enc.encode(password), { name: "PBKDF2" }, false, ["deriveKey"]);
 
   return window.crypto.subtle.deriveKey(
     {
-      name: 'PBKDF2',
+      name: "PBKDF2",
       salt: salt as BufferSource,
       iterations: PBKDF2_ITERATIONS,
-      hash: 'SHA-256',
+      hash: "SHA-256",
     },
     passwordKey,
-    { name: 'AES-GCM', length: 256 },
+    { name: "AES-GCM", length: 256 },
     false,
-    ['encrypt', 'decrypt']
+    ["encrypt", "decrypt"]
   );
 }
 
+async function encryptVault(password: string, data: VaultData, salt: Uint8Array): Promise<{ iv: string; data: string }> {
+  const iv = window.crypto.getRandomValues(new Uint8Array(12));
+  const key = await deriveKey(password, salt);
+  const plaintext = new TextEncoder().encode(JSON.stringify(data));
+  const ciphertext = await window.crypto.subtle.encrypt({ name: "AES-GCM", iv }, key, plaintext);
+  return { iv: bufferToBase64(iv.buffer), data: bufferToBase64(ciphertext) };
+}
+
 export function isVaultInitialized(): boolean {
-  if (typeof window === 'undefined') return false;
+  if (typeof window === "undefined") return false;
   return !!localStorage.getItem(VAULT_STORAGE_KEY) && !!localStorage.getItem(SALT_STORAGE_KEY);
 }
 
 export function resetVault(): void {
-  if (typeof window === 'undefined') return;
+  if (typeof window === "undefined") return;
   localStorage.removeItem(VAULT_STORAGE_KEY);
   localStorage.removeItem(SALT_STORAGE_KEY);
 }
 
 export async function initializeVault(password: string, initialData: VaultData): Promise<void> {
   const salt = window.crypto.getRandomValues(new Uint8Array(16));
-  const iv = window.crypto.getRandomValues(new Uint8Array(12));
-  const key = await deriveKey(password, salt);
-
-  const enc = new TextEncoder();
-  const plaintext = enc.encode(JSON.stringify(initialData));
-
-  const ciphertext = await window.crypto.subtle.encrypt(
-    { name: 'AES-GCM', iv },
-    key,
-    plaintext
-  );
+  const payload = await encryptVault(password, initialData, salt);
 
   localStorage.setItem(SALT_STORAGE_KEY, bufferToBase64(salt.buffer));
-  localStorage.setItem(
-    VAULT_STORAGE_KEY,
-    JSON.stringify({
-      iv: bufferToBase64(iv.buffer),
-      data: bufferToBase64(ciphertext),
-    })
-  );
+  localStorage.setItem(VAULT_STORAGE_KEY, JSON.stringify(payload));
 }
 
 export async function unlockVault(password: string): Promise<VaultData> {
@@ -86,7 +72,7 @@ export async function unlockVault(password: string): Promise<VaultData> {
   const payloadStr = localStorage.getItem(VAULT_STORAGE_KEY);
 
   if (!saltB64 || !payloadStr) {
-    throw new Error('Vault has not been initialized.');
+    throw new Error("Vault has not been initialized.");
   }
 
   const { iv: ivB64, data: dataB64 } = JSON.parse(payloadStr);
@@ -97,51 +83,42 @@ export async function unlockVault(password: string): Promise<VaultData> {
   const key = await deriveKey(password, salt);
 
   try {
-    const decryptedBuffer = await window.crypto.subtle.decrypt(
-      { name: 'AES-GCM', iv },
-      key,
-      ciphertext
-    );
+    const decryptedBuffer = await window.crypto.subtle.decrypt({ name: "AES-GCM", iv }, key, ciphertext);
 
     const dec = new TextDecoder();
     const jsonStr = dec.decode(decryptedBuffer);
     return JSON.parse(jsonStr) as VaultData;
   } catch {
-    throw new Error('Incorrect password or cryptographic verification failed.');
+    throw new Error("Incorrect password or cryptographic verification failed.");
   }
 }
 
 export async function saveVault(password: string, data: VaultData): Promise<void> {
   const saltB64 = localStorage.getItem(SALT_STORAGE_KEY);
   if (!saltB64) {
-    throw new Error('Vault salt not found. Re-initialization required.');
+    throw new Error("Vault salt not found. Re-initialization required.");
   }
 
   const salt = new Uint8Array(base64ToBuffer(saltB64));
-  const iv = window.crypto.getRandomValues(new Uint8Array(12));
-  const key = await deriveKey(password, salt);
+  const payload = await encryptVault(password, data, salt);
+  localStorage.setItem(VAULT_STORAGE_KEY, JSON.stringify(payload));
+}
 
-  const enc = new TextEncoder();
-  const plaintext = enc.encode(JSON.stringify(data));
+/** Verify the existing password, generate a new salt, then atomically replace the encrypted vault. */
+export async function changeVaultPassword(currentPassword: string, nextPassword: string): Promise<VaultData> {
+  const data = await unlockVault(currentPassword);
+  const nextSalt = window.crypto.getRandomValues(new Uint8Array(16));
+  const nextPayload = await encryptVault(nextPassword, data, nextSalt);
 
-  const ciphertext = await window.crypto.subtle.encrypt(
-    { name: 'AES-GCM', iv },
-    key,
-    plaintext
-  );
-
-  localStorage.setItem(
-    VAULT_STORAGE_KEY,
-    JSON.stringify({
-      iv: bufferToBase64(iv.buffer),
-      data: bufferToBase64(ciphertext),
-    })
-  );
+  // Write only after encryption succeeds, so a bad input never destroys the existing vault.
+  localStorage.setItem(SALT_STORAGE_KEY, bufferToBase64(nextSalt.buffer));
+  localStorage.setItem(VAULT_STORAGE_KEY, JSON.stringify(nextPayload));
+  return data;
 }
 
 export function exportEncryptedVault(): string {
-  const salt = localStorage.getItem(SALT_STORAGE_KEY) || '';
-  const vault = localStorage.getItem(VAULT_STORAGE_KEY) || '';
+  const salt = localStorage.getItem(SALT_STORAGE_KEY) || "";
+  const vault = localStorage.getItem(VAULT_STORAGE_KEY) || "";
   return JSON.stringify({ salt, vault, exportedAt: new Date().toISOString() }, null, 2);
 }
 
