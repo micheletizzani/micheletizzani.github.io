@@ -33,8 +33,10 @@ await p.addInitScript(() => {
     this.text = t;
   };
 });
-await p.goto(BASE + "/tools/maru/", { waitUntil: "networkidle" });
-await p.evaluate(() => {
+// Seed the save before the app first runs (a running page would overwrite a late seed with its own state).
+await p.addInitScript(() => {
+  if (localStorage.getItem("e2e-seeded")) return;
+  localStorage.setItem("e2e-seeded", "1");
   const w = (hyp) => ({ heard: true, sound: true, hintsUsed: 0, hypothesis: hyp });
   localStorage.setItem("language-quest-pack", "da");
   localStorage.setItem(
@@ -60,7 +62,7 @@ await p.evaluate(() => {
     })
   );
 });
-await p.reload({ waitUntil: "networkidle" });
+await p.goto(BASE + "/tools/maru/", { waitUntil: "networkidle" });
 await p.getByText("Archive Door").first().click(); // choose destination on the map: starts at its approach point
 await p.waitForTimeout(3000);
 await p.keyboard.press("e");

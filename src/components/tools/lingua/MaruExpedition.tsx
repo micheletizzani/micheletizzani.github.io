@@ -372,11 +372,11 @@ export const MaruExpedition: React.FC<{ onExit?: () => void }> = ({ onExit }) =>
   const pack = getPack(packId);
   const [progress, setProgress] = useState<Progress>(emptyProgress);
   const [loaded, setLoaded] = useState(false);
-  const [nearby, setNearby] = useState<EncounterId | null>(null);
+  const [nearbyRaw, setNearby] = useState<EncounterId | null>(null);
   const [message, setMessage] = useState(
     "Click the ground to walk, then click the glowing gold marker to take a closer look. Nothing makes a sound until you ask."
   );
-  const [lesson, setLesson] = useState<{ id: EncounterId; tab?: LessonTab } | null>(null);
+  const [lessonRaw, setLesson] = useState<{ id: EncounterId; tab?: LessonTab } | null>(null);
   const [finaleOpen, setFinaleOpen] = useState(false);
   const [notebook, setNotebook] = useState<{ tab: NotebookTab } | null>(null);
   const [dictionary, setDictionary] = useState<{ insert?: (symbol: string) => void } | null>(null);
@@ -388,13 +388,19 @@ export const MaruExpedition: React.FC<{ onExit?: () => void }> = ({ onExit }) =>
   const afterStory = useRef<"notebook" | null>(null);
   const storyBeat = queue[0];
   const [keys, setKeys] = useState<Record<ActionId, string>>(defaultKeys);
-  const [destination, setDestination] = useState<EncounterId | null>(null);
+  const [destinationRaw, setDestination] = useState<EncounterId | null>(null);
   const [playerPosition, setPlayerPosition] = useState<[number, number]>([0, 4.6]);
   const [isTouch, setIsTouch] = useState(false);
   const [isFs, setIsFs] = useState(false);
   const [soundOn, setSoundOn] = useState(true);
   const [pings, setPings] = useState(false);
   const [debug, setDebug] = useState(false);
+
+  // Encounter ids differ between packs: while the pack is being switched, ids of the previous pack must not be used.
+  const known = (id: EncounterId | null | undefined) => (id && pack.encounters.some((x) => x.id === id) ? id : null);
+  const nearby = known(nearbyRaw);
+  const destination = known(destinationRaw);
+  const lesson = lessonRaw && known(lessonRaw.id) ? lessonRaw : null;
 
   const voice = useVoiceReport(pack);
   const done = progress.done;
