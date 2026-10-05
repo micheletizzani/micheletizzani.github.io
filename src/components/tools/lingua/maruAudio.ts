@@ -4,6 +4,7 @@
 
 import { pickVoice, rankVoices, type VoiceStatus } from "./maruVoices";
 import { NATIVE_AUDIO_CLIPS } from "./audioManifest";
+import { ipaToPronounceable } from "./maruPhonetics";
 
 let ctx: AudioContext | null = null;
 let muted = false;
@@ -42,6 +43,11 @@ const VOICE_KEY = (lang: string) => `language-quest-voice:${lang}`;
 type VoiceListener = () => void;
 const voiceListeners = new Set<VoiceListener>();
 const blockedListeners = new Set<(lang: string) => void>();
+
+export function hasNativeAudio(lang: string): boolean {
+  const code = lang.split("-")[0].toLowerCase();
+  return Boolean(NATIVE_AUDIO_CLIPS[code] ?? NATIVE_AUDIO_CLIPS[lang]);
+}
 
 const synth = () => (typeof window === "undefined" ? undefined : window.speechSynthesis);
 export const voices = (): SpeechSynthesisVoice[] => synth()?.getVoices() ?? [];
@@ -86,12 +92,18 @@ export interface VoiceReport {
   /** True when the voice was chosen by the player and is not a voice for this language. */
   override: boolean;
   total: number;
+  /** True when high-fidelity Studio Neural Voice clips power this language. */
+  isStudio?: boolean;
 }
 
 export function voiceReport(lang: string): VoiceReport {
-  if (!synth()) return { status: "unsupported", voice: null, override: false, total: 0 };
   const all = voices();
   const chosen = chosenVoiceName(lang);
+  const isStudio = hasNativeAudio(lang) && (!chosen || chosen === "studio");
+  if (isStudio) {
+    return { status: "ok", voice: null, override: false, total: all.length, isStudio: true };
+  }
+  if (!synth()) return { status: "unsupported", voice: null, override: false, total: 0 };
   const voice = pickVoice(all, lang, chosen);
   const override =
     !!voice &&
@@ -100,7 +112,7 @@ export function voiceReport(lang: string): VoiceReport {
     !rankVoices(all, lang)
       .exact.concat(rankVoices(all, lang).sameLanguage)
       .some((v) => v.name === chosen);
-  return { status: all.length === 0 ? "loading" : voice ? "ok" : "missing", voice, override, total: all.length };
+  return { status: all.length === 0 ? "loading" : voice ? "ok" : "missing", voice, override, total: all.length, isStudio: false };
 }
 
 /** Subscribe to voice-list changes (installation, loading, a new choice). Returns an unsubscribe function. */
@@ -136,7 +148,10 @@ function speakNow(text: string, { lang, rate = 0.75, strict = false }: SpeakOpti
   const s = synth();
   if (!s) return "unsupported";
   const voice = pickVoice(s.getVoices(), lang, chosenVoiceName(lang));
-  if (!voice && strict) {
+  const isDanish = lang.toLowerCase().startsWith("da");
+  const isVoiceDanish = Boolean(voice?.lang?.toLowerCase().startsWith("da"));
+  // Strictly prevent non-Danish (e.g. English) local voices from pronouncing Danish
+  if ((!voice && strict) || (isDanish && !isVoiceDanish)) {
     blockedListeners.forEach((fn) => fn(lang));
     return "no-voice";
   }
@@ -155,7 +170,25 @@ export function getNativeClipUrl(text: string, lang: string): string | null {
   if (!clips) return null;
   const key = text.trim().toLowerCase();
   const keyNoPunct = key.replace(/[.,!?;:]/g, "");
-  return clips[key] ?? clips[keyNoPunct] ?? null;
+  if (clips[key]) return clips[key];
+  if (clips[keyNoPunct]) return clips[keyNoPunct];
+
+  // Clean IPA symbols, brackets, stress, stød
+  const cleanIpa = key.replace(/[\[\]/ˈˌ.ːˑˀʰ\s]/g, "");
+  if (clips[cleanIpa]) return clips[cleanIpa];
+  if (clips[`[${cleanIpa}]`]) return clips[`[${cleanIpa}]`];
+
+  // Try Danish pronounceable orthography mapping
+  if (code === "da") {
+    const orth = ipaToPronounceable(key, "da");
+    if (orth) {
+      const orthLower = orth.toLowerCase();
+      if (clips[orthLower]) return clips[orthLower];
+      const orthClean = orthLower.replace(/[.,!?;:]/g, "");
+      if (clips[orthClean]) return clips[orthClean];
+    }
+  }
+  return null;
 }
 
 export function playNativeClip(url: string, rate = 1): boolean {
@@ -198,6 +231,32 @@ export function speakText(text: string, options: SpeakOptions): SpeakResult {
         (window as unknown as { __spoken: unknown[] }).__spoken.push(`${text}|${options.lang}`);
       }
       if (ok) return "spoken";
+    }
+
+    // Try dynamic on-demand Edge TTS endpoint (active in dev mode)
+    if (typeof window !== "undefined" && options.lang.startsWith("da") && text.trim()) {
+      const endpoint = `/api/tts?text=${encodeURIComponent(text.trim())}&lang=${encodeURIComponent(options.lang)}`;
+      try {
+        const a = new Audio(endpoint);
+        a.playbackRate = options.rate ?? 1;
+        const p = a.play();
+        if (p !== undefined) {
+          p.then(() => {
+            if (currentAudio) {
+              currentAudio.pause();
+            }
+            currentAudio = a;
+          }).catch(() => {
+            // Dynamic endpoint unavailable, fallback gracefully
+          });
+        }
+        if ((window as unknown as { __spoken?: unknown[] }).__spoken) {
+          (window as unknown as { __spoken: unknown[] }).__spoken.push(`${text}|${options.lang}`);
+        }
+        return "spoken";
+      } catch {
+        // Fall through
+      }
     }
   }
 

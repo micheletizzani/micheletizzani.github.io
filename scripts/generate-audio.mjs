@@ -5,7 +5,7 @@ import { execSync } from "node:child_process";
 import { existsSync, mkdirSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 
-// 1. Bundle and extract all Danish phrases
+// 1. Bundle and extract all Danish phrases and phonetics
 const bundleDir = "/tmp/da-audio-extract";
 mkdirSync(bundleDir, { recursive: true });
 const bundleFile = join(bundleDir, "extract.mjs");
@@ -22,6 +22,7 @@ buildSync({
       });
       da.lexicon.forEach(l => {
         phrases.add(l.written);
+        if (l.speak) phrases.add(l.speak);
       });
       da.phonology?.forEach(ph => {
         ph.keywords?.forEach(k => phrases.add(k.written));
@@ -32,7 +33,22 @@ buildSync({
       phrases.add("Porten er lukket");
       phrases.add("Jeg har brug for en nøgle, fordi porten er lukket");
       phrases.add("Jeg har brug for en nøgle fordi porten er lukket");
+
+      // common learner test hypotheses and syllables
+      phrases.add("væn");
+      phrases.add("farn");
+      phrases.add("fan");
+      phrases.add("kåb");
+      phrases.add("båd");
+      phrases.add("pål");
+      phrases.add("pol");
+      phrases.add("syl");
+      phrases.add("hæd");
+      phrases.add("gæde");
+
       export const phraseList = Array.from(phrases);
+      export const lexicon = da.lexicon.map(l => ({ written: l.written, speak: l.speak, sound: l.sound, alsoAccept: l.alsoAccept }));
+      export const phonology = da.phonology.map(ph => ({ symbol: ph.symbol, keywords: ph.keywords }));
     `,
     resolveDir: process.cwd(),
     loader: "ts",
@@ -44,7 +60,7 @@ buildSync({
   logLevel: "error",
 });
 
-const { phraseList: out } = await import(bundleFile);
+const { phraseList: out, lexicon, phonology } = await import(bundleFile);
 
 // Helper to make a URL-friendly, safe filename slug with Danish transliteration
 export function slugify(text) {
@@ -97,6 +113,62 @@ for (const phrase of out) {
   }
 }
 
+// 2. Map all phonetic transcriptions directly to their audio clips
+const cleanIpa = (s) => s.toLowerCase().replace(/[\[\]/ˈˌ.ːˀ\s]/g, "");
+
+for (const l of lexicon) {
+  const primaryText = l.speak ?? l.written;
+  const url = manifest[primaryText.toLowerCase()] ?? manifest[l.written.toLowerCase()];
+  if (!url) continue;
+
+  if (l.sound) {
+    const s = l.sound.toLowerCase();
+    manifest[s] = url;
+    manifest[`[${s}]`] = url;
+    manifest[cleanIpa(s)] = url;
+  }
+  if (l.alsoAccept) {
+    for (const a of l.alsoAccept) {
+      const s = a.toLowerCase();
+      manifest[s] = url;
+      manifest[`[${s}]`] = url;
+      manifest[cleanIpa(s)] = url;
+    }
+  }
+}
+
+// 3. Map phonology keywords and individual phonemes
+for (const ph of phonology) {
+  if (ph.keywords?.[0]) {
+    const kwUrl = manifest[ph.keywords[0].written.toLowerCase()];
+    if (kwUrl) {
+      manifest[ph.symbol.toLowerCase()] = kwUrl;
+      manifest[`[${ph.symbol.toLowerCase()}]`] = kwUrl;
+    }
+  }
+  if (ph.keywords) {
+    for (const k of ph.keywords) {
+      const kwUrl = manifest[k.written.toLowerCase()];
+      if (kwUrl && k.sound) {
+        const s = k.sound.toLowerCase();
+        manifest[s] = kwUrl;
+        manifest[`[${s}]`] = kwUrl;
+        manifest[cleanIpa(s)] = kwUrl;
+      }
+    }
+  }
+}
+
+// 4. Map common phonetic approximations
+manifest["fɑn"] = manifest["farn"] || manifest["far"];
+manifest["[fɑn]"] = manifest["fɑn"];
+manifest["kʰɔb̥"] = manifest["kop"];
+manifest["[kʰɔb̥]"] = manifest["kop"];
+manifest["kɔp"] = manifest["kop"];
+manifest["[kɔp]"] = manifest["kop"];
+manifest["bɔːð"] = manifest["båd"];
+manifest["[bɔːð]"] = manifest["båd"];
+
 // Write the audio manifest
 writeFileSync(join(outDir, "manifest.json"), JSON.stringify(manifest, null, 2));
 console.log("Audio manifest written to public/audio/da/manifest.json");
@@ -109,4 +181,4 @@ export const NATIVE_AUDIO_CLIPS: Record<string, Record<string, string>> = {
 };
 `
 );
-console.log("TypeScript audio manifest written to src/components/tools/lingua/audioManifest.ts");
+console.log(`TypeScript audio manifest written with ${Object.keys(manifest).length} mapped keys to src/components/tools/lingua/audioManifest.ts`);
