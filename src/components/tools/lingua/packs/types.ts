@@ -19,6 +19,27 @@ export interface Meaning {
 
 export type PartOfSpeech = "noun" | "verb" | "pron" | "adj" | "conj" | "adv" | "prep" | "det";
 
+/** Where a fact about a word comes from, so that a reviewer can check it. Names and identifiers only: never invent a reference. */
+export interface SourceRef {
+  /** Short name of the reference work or person, e.g. "Den Danske Ordbog". */
+  work: string;
+  /** Entry, page, headword or URL the reviewer can open. */
+  locator?: string;
+  /** What it backs: spelling, pronunciation, meaning, grammar or etymology. */
+  supports: ("spelling" | "sound" | "meaning" | "grammar" | "etymology")[];
+}
+
+/** One step in a word's history, shown only in etymology mode. Older forms are written evidence, never spoken. */
+export interface EtymologyStep {
+  /** Language of the form, as a name or code ("Old Norse", "Old English", "German"). */
+  language: string;
+  form: string;
+  /** Approximate period, e.g. "c. 1100". Leave empty if not known. */
+  period?: string;
+  /** What it meant or referred to then. */
+  gloss?: string;
+}
+
 export interface LexiconEntry {
   id: WordId;
   /** How the word is written in the world (spelling for alphabetic scripts; for glyph scripts the romanisation the glyph renderer draws). */
@@ -38,6 +59,12 @@ export interface LexiconEntry {
   note?: string;
   /** True only after a native speaker / authoritative dictionary confirmed `sound` and `speak`. */
   verified?: boolean;
+  /** References a reviewer can use to check this entry. Empty until someone adds them. */
+  sources?: SourceRef[];
+  /** History of the word (oldest first), used by etymology mode and the cross-language notebook. */
+  etymology?: EtymologyStep[];
+  /** Ids of related words in other packs ("cognates"), as "packId:wordId". Drives the cross-language notebook. */
+  cognates?: string[];
 }
 
 /**
@@ -237,6 +264,8 @@ export interface LanguagePack {
   city: string;
   /** Where the story is set, shown on the map screen. */
   district: string;
+  /** The map-screen paragraph: who the player is and what to do. Written per pack so the engine has no language-specific text. */
+  intro: string;
   script: "latin" | "glyph";
   speech: {
     /** BCP-47 tag for speech synthesis (what the player hears). */

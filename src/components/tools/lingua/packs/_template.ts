@@ -19,6 +19,7 @@ export const template: LanguagePack = {
   nativeName: "Xx", // REPLACE: endonym shown in the HUD
   city: "Copenhagen", // REPLACE: the story's city (the map art is Copenhagen; see §9 of the guide for a new city)
   district: "Højbro Plads", // REPLACE: where the story is set
+  intro: "REPLACE: who the player is and what to do, in two sentences. Say that nobody translates.",
   script: "latin", // "latin" draws painted lettering; "glyph" draws the invented glyphs in maruGlyphs.tsx
 
   // ---------------------------------------------------------------- speech

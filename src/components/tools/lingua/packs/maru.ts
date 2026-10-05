@@ -29,6 +29,7 @@ export const maru: LanguagePack = {
   nativeName: "Maru",
   city: "Copenhagen",
   district: "Højbro Plads",
+  intro: "An invented language in a sunlit Copenhagen. Nobody will translate: watch, listen, write down the sounds, and decipher it.",
   script: "glyph",
   speech: { synth: "da-DK", recog: "da-DK", rate: 0.7, testPhrase: "kopo" },
   notation: {

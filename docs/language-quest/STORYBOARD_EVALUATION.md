@@ -102,9 +102,21 @@ I checked what I could with web searches (below). Nothing here replaces a histor
 | Harbour gate (porten er lukket, fordi) | First "because" sentence; the gate is where the first time-slip begins |
 | Archive door (finale) | Reappears in Act V as the hidden archive; the archivist is the recurring guide |
 
-## 7. Decisions needed from you
+## 7. Decisions needed from you (answered: see section 8)
 1. Real or fictional first text (suggest: fictional manuscript, real tradition).
 2. Past-era speech policy (suggest option (a) in L1).
 3. Include recreation and a second location now or later?
 4. Accept the 9-chapter cut and the staged delivery?
 5. Who verifies Danish content (native speaker), and when?
+
+## 8. Decisions log (owner answers)
+1. Fictional manuscript within a real tradition: accepted.
+2. Archaic forms only in etymology mode (cross-linguistic links allowed there); cross-language notebook when several languages are played: accepted. See [OPEN_WORLD_AND_QUESTS.md](./OPEN_WORLD_AND_QUESTS.md).
+3. Recreation and a second location now: added to the revised map ([NARRATIVE_DESIGN.md](./NARRATIVE_DESIGN.md) section 8.1).
+4. Nine chapters for now; open to LLM-driven side quests: designed with constraints ([OPEN_WORLD_AND_QUESTS.md](./OPEN_WORLD_AND_QUESTS.md) section 3).
+5. All linguistic references gathered; content independent of dynamics: [CONTENT_ARCHITECTURE.md](./CONTENT_ARCHITECTURE.md). Reviewer: the owner, later.
+
+Open concerns that the decisions do not remove:
+- **LLM-generated side quests are the highest-risk item**: Danish accuracy and answer leakage. The design only works if target-language text comes from verified data (closed vocabulary and sentence bank), not from the model.
+- Scope: 9 chapters plus open-ended quests is still many times the pilot. Stage it as in section 6.
+- Real-time generation needs a backend or a user key; the current site appears static.

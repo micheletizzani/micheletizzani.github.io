@@ -124,8 +124,35 @@ This agrees with the existing art direction (flat pastel isometric terraces; [GA
 | Many chapters with carry-over vocabulary | Single pack per language | Chapters sharing one lexicon and progress; unlock rules across chapters |
 | Past-era speech | Browser voices for modern Danish only | Rule for archaic speech (see evaluation, risk L1) |
 
-## 8. Open decisions for the owner
-1. Is "the first written tale" a real work (for example a medieval chronicle) or deliberately fictional?
-2. How much of the story is the pilot, and which chapters ship first?
-3. How strictly must past-era characters speak a historically accurate language?
-4. Which cultural areas beyond Copenhagen (see evaluation) belong in scope?
+## 8. Owner decisions (applied)
+
+| # | Decision | Effect on the design |
+| --- | --- | --- |
+| 1 | The manuscript is **fictional, within a real tradition** | Anchor it in real text families (runic inscriptions such as Jelling; medieval chronicle tradition such as Saxo's *Gesta Danorum*) while the manuscript itself is invented. The twist ("the notebook becomes the manuscript") reads as joining a real tradition of retelling |
+| 2 | Archaic forms **only in etymology mode**, to connect to modern words; cross-linguistic influence allowed there. When several languages are played, records from other languages appear in the notebook so the player can guess by etymology and similarity | Past-era characters speak modern Danish only. See [OPEN_WORLD_AND_QUESTS.md](./OPEN_WORLD_AND_QUESTS.md) sections 1 and 2 |
+| 3 | Add **recreation and a second location now** | Tivoli and harbour life become a chapter; a train journey to Helsingør (Kronborg and Holger) becomes the territory beat. See the revised map below |
+| 4 | The 9-chapter plan is acceptable for now; the game must be **open to side quests** that improve and test the language, ideally an open world with interactions loaded by an LLM from small instructions on the interactive elements | See [OPEN_WORLD_AND_QUESTS.md](./OPEN_WORLD_AND_QUESTS.md) section 3 |
+| 5 | Include **all linguistic references** to make the Danish as accurate as possible (the owner will review later); the structure must let content change without affecting dynamics or design | See [CONTENT_ARCHITECTURE.md](./CONTENT_ARCHITECTURE.md) |
+
+### 8.1 Revised chapter map (9 chapters, Calvino themes)
+Theme names follow the groups of *Invisible Cities* as I recall them (to be checked against the book). Time-slips and etymology
+are side content inside chapters; the main chain stays in modern Danish.
+
+| Ch | Place and layer | Calvino theme | Culture | Language function | Recall level after |
+| --- | --- | --- | --- | --- | --- |
+| 1 | Airport and metro | Signs | Modern Copenhagen, transport | Survival words, reading signs | |
+| 2 | Nyhavn (the built pilot) | Names | Harbour, bicycles, coffee; the city's name | Objects, plural, negation, "because" | R1 (short) |
+| 3 | Slotsholmen, the medieval city, and the fire | Memory | Origins; a real manuscript-loss history (to be verified) | Questions, directions | |
+| 4 | Market and bakery | Desire | Food: bread, pastries, open sandwiches, coffee | Offers, wants, quantities | R2 |
+| 5 | Shoreline and Gefion | Hidden cities | Myth; landscape | Actions, land and water words | |
+| 6 | **Tivoli and the harbour** (new) | Trading | **Recreation**: amusement, harbour swimming, cycling | Tickets, prices, games, invitations | R3 |
+| 7 | Andersen's Copenhagen (the fairy-tale chapter) | Eyes | Literature; the Little Mermaid, the Emperor's New Clothes (authored tales) | Describing, true and false | |
+| 8 | **The train north**: Helsingør, Kronborg, Holger Danske | The Dead | **Territory**; national myth | Time, memory, identity | R4 (the big one) |
+| 9 | The archive and the first story | Continuous cities | All layers | Complex sentences, finale | final |
+Side quests, anywhere: the nisse (household vocabulary), more recall errands, etymology doorways, culture errands (all card-driven; see the open-world design).
+
+### 8.2 Still open
+1. Which real texts exactly anchor the manuscript (a historian should advise).
+2. Exact word list per chapter (target about 15 words per 5 encounters, as in the pilot).
+3. Whether the 20th century stays out of scope (the owner accepted the current plan).
+4. Reviewer for Danish and for history.

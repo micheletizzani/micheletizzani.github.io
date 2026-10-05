@@ -64,7 +64,7 @@ function MapScreen({
             aria-label={`Stylised map of central ${pack.city}`}
           >
             <rect width="100" height="100" fill="#dccfac" />
-            <CityMapArt water={pack.id === "da" ? "#6fa3bd" : "#82afb6"} />
+            <CityMapArt water={pack.world.palette.water} />
             {pack.encounters.map((e, index) => {
               const point = mapCoordinates(e.position);
               const available = isUnlocked(pack, e.id, done);
@@ -100,9 +100,7 @@ function MapScreen({
             Start with the city, not the answer.
           </h1>
           <p className="mt-5 text-sm leading-relaxed text-[var(--mx-paper)]/85 [@media(max-height:480px)]:hidden">
-            {pack.id === "da"
-              ? "You have just arrived at Nyhavn and you speak no Danish. Nobody will translate. Watch what people do, listen, write down the sounds, and work out what the words mean."
-              : "An invented language in a sunlit Copenhagen. Nobody will translate: watch, listen, write down the sounds, and decipher it."}{" "}
+            {pack.intro}{" "}
             Nothing makes a sound until you ask for it.
           </p>
           <div className="mt-4 flex items-center gap-2" role="group" aria-label="Language">
