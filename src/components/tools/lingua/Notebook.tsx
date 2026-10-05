@@ -28,7 +28,8 @@ export function Notebook({
   const [tab, setTab] = useState<NotebookTab>(initialTab);
   const known = allWords(pack).filter((id) => progress.words[id]);
   const [selected, setSelected] = useState<WordId | undefined>(known[0]);
-  const say = (text: string, rate?: number) => speakText(text, { lang: pack.speech.synth, rate: rate ?? pack.speech.rate ?? 0.75 });
+  const say = (text: string, rate?: number) =>
+    speakText(text, { lang: pack.speech.synth, rate: rate ?? pack.speech.rate ?? 0.75, strict: pack.speech.strict });
   const verdictOf = new Map(verdicts(pack, progress).map((v) => [v.word, v]));
   const tabs: { id: NotebookTab; label: string }[] = [
     { id: "words", label: `Words (${known.length})` },

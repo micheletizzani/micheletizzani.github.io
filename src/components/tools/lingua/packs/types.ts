@@ -211,6 +211,13 @@ export interface LanguagePack {
     /** BCP-47 tag for speech recognition (what the player says). Use the nearest real language for invented ones. */
     recog: string;
     rate?: number;
+    /**
+     * Real languages should set this: without a voice for `synth` the game stays silent (and explains how to install
+     * one) instead of letting the browser read the text with its default, usually English, voice.
+     */
+    strict?: boolean;
+    /** A short, certainly-correct phrase used by the voice test button. Required when `strict`. */
+    testPhrase?: string;
   };
   notation: Notation;
   phonology: PhonemeEntry[];

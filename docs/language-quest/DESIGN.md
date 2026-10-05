@@ -108,6 +108,13 @@ Sound is produced only by: Listen/Slowly, a word chip, a dictionary example, a c
 **guide ping** (a soft tone from the direction of the next marker, **off by default**). Nothing plays on approach, on
 opening a lesson or on load. A global mute exists. Voices come from the browser, so quality varies by device.
 
+**Voice honesty.** A pronunciation game must not teach the wrong sounds. If no voice for the pack's language is installed,
+browsers silently fall back to their default voice (usually English) and read the text with its sound rules. A *strict* pack
+(`speech.strict`, set for Danish) therefore stays **silent** and opens the Voice panel, which names the voice in use,
+lets the player test and change it, and lists install steps for the player's platform. Voices load asynchronously, so a
+press that arrives before the list is ready waits for it instead of guessing. An invented language is not strict: it is
+read by the nearest voice as an approximation. A player may deliberately pick another voice; the panel then says it is not native.
+
 ## 6. Progression and fairness
 
 - Encounters unlock in a chain (`requires`). Locked markers explain why.
@@ -182,7 +189,10 @@ Key decisions:
    `verified: false` and labelled in the UI. This must be reviewed before the pack is trusted (see PACK_TEMPLATE §7).
 2. **Real-device performance is untested.** Development used software rendering (about 5 fps). Use `?debug` on the real
    device to read fps and the GPU name. Outlines roughly double the geometry; a cheaper mode for phones is a likely next step.
-3. **Speech depends on the browser.** Synthesis quality varies; recognition exists in Chrome and Edge only, needs HTTPS or
+3. **Speech depends on the device.** The game cannot ship a Danish voice; the player's system must provide one (the Voice panel
+   explains how). Even a Danish synthetic voice can mispronounce words and should be checked against a native speaker. Recordings
+   of the core words by a native speaker would be better than synthesis and are the recommended next step.
+   Other speech limits: Synthesis quality varies; recognition exists in Chrome and Edge only, needs HTTPS or
    localhost and microphone permission, and is not a pronunciation scorer.
 4. **IPA grading is lenient by design** because the reference may be imperfect: stops are merged (b≈p, d≈t≈ð, g≈k) and
    rounded back vowels are one class. This accepts some real errors. Tighten the classes once the data is verified.

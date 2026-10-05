@@ -2,6 +2,8 @@
 // only in response to what the player does (a click on Listen, a word chip, a correct answer).
 // The one exception is the optional guide-ping, which is off by default.
 
+import { pickVoice, rankVoices, type VoiceStatus } from "./maruVoices";
+
 let ctx: AudioContext | null = null;
 let muted = false;
 let pingsOn = false;
@@ -25,27 +27,132 @@ export const setPingsEnabled = (value: boolean) => {
   pingsOn = value;
 };
 
+// ---------- voices ----------
+const VOICE_KEY = (lang: string) => `language-quest-voice:${lang}`;
+type VoiceListener = () => void;
+const voiceListeners = new Set<VoiceListener>();
+const blockedListeners = new Set<(lang: string) => void>();
+
+const synth = () => (typeof window === "undefined" ? undefined : window.speechSynthesis);
+export const voices = (): SpeechSynthesisVoice[] => synth()?.getVoices() ?? [];
+export const chosenVoiceName = (lang: string): string | null => {
+  try {
+    return localStorage.getItem(VOICE_KEY(lang));
+  } catch {
+    return null;
+  }
+};
+export function chooseVoice(lang: string, name: string | null) {
+  try {
+    if (name) localStorage.setItem(VOICE_KEY(lang), name);
+    else localStorage.removeItem(VOICE_KEY(lang));
+  } catch {
+    /* choice lasts for this session only */
+  }
+  voiceListeners.forEach((fn) => fn());
+}
+
+/** Voice lists load asynchronously (Chrome returns an empty list at first). Resolves when voices exist or after `ms`. */
+export function whenVoicesReady(ms = 2000): Promise<SpeechSynthesisVoice[]> {
+  const s = synth();
+  if (!s) return Promise.resolve([]);
+  if (s.getVoices().length) return Promise.resolve(s.getVoices());
+  return new Promise((resolve) => {
+    const done = () => {
+      s.removeEventListener?.("voiceschanged", done);
+      window.clearTimeout(timer);
+      voiceListeners.forEach((fn) => fn());
+      resolve(s.getVoices());
+    };
+    const timer = window.setTimeout(done, ms);
+    s.addEventListener?.("voiceschanged", done);
+  });
+}
+
+export interface VoiceReport {
+  status: VoiceStatus;
+  /** The voice that will be used for this language, if any. */
+  voice: SpeechSynthesisVoice | null;
+  /** True when the voice was chosen by the player and is not a voice for this language. */
+  override: boolean;
+  total: number;
+}
+
+export function voiceReport(lang: string): VoiceReport {
+  if (!synth()) return { status: "unsupported", voice: null, override: false, total: 0 };
+  const all = voices();
+  const chosen = chosenVoiceName(lang);
+  const voice = pickVoice(all, lang, chosen);
+  const override =
+    !!voice &&
+    !!chosen &&
+    voice.name === chosen &&
+    !rankVoices(all, lang)
+      .exact.concat(rankVoices(all, lang).sameLanguage)
+      .some((v) => v.name === chosen);
+  return { status: all.length === 0 ? "loading" : voice ? "ok" : "missing", voice, override, total: all.length };
+}
+
+/** Subscribe to voice-list changes (installation, loading, a new choice). Returns an unsubscribe function. */
+export function onVoicesChanged(fn: VoiceListener) {
+  voiceListeners.add(fn);
+  const s = synth();
+  s?.addEventListener?.("voiceschanged", fn);
+  return () => {
+    voiceListeners.delete(fn);
+    s?.removeEventListener?.("voiceschanged", fn);
+  };
+}
+/** Subscribe to "a strict language had no voice, so nothing was spoken". */
+export function onSpeechBlocked(fn: (lang: string) => void) {
+  blockedListeners.add(fn);
+  return () => void blockedListeners.delete(fn);
+}
+
 export interface SpeakOptions {
   /** BCP-47 tag of the voice to use, e.g. "da-DK". */
   lang: string;
   rate?: number;
+  /**
+   * When true and no voice for `lang` is installed, stay silent and report it instead of letting the browser read the
+   * text with its default (usually English) voice. Use it for real languages. Invented languages leave it off.
+   */
+  strict?: boolean;
 }
 
-/** Speak written text with a voice for `lang`. For an invented language the nearest real voice reads it as syllables. */
-export function speakText(text: string, { lang, rate = 0.75 }: SpeakOptions) {
-  if (muted || typeof window === "undefined" || !window.speechSynthesis) return;
-  const synth = window.speechSynthesis;
-  synth.cancel();
+export type SpeakResult = "spoken" | "muted" | "unsupported" | "no-voice";
+
+function speakNow(text: string, { lang, rate = 0.75, strict = false }: SpeakOptions): SpeakResult {
+  const s = synth();
+  if (!s) return "unsupported";
+  const voice = pickVoice(s.getVoices(), lang, chosenVoiceName(lang));
+  if (!voice && strict) {
+    blockedListeners.forEach((fn) => fn(lang));
+    return "no-voice";
+  }
+  s.cancel();
   const utterance = new SpeechSynthesisUtterance(text.replace(/[·…]/g, ",").replace(/-/g, ""));
-  utterance.lang = lang;
-  const prefix = lang.toLowerCase().split("-")[0];
-  const voice =
-    synth.getVoices().find((item) => item.lang.toLowerCase() === lang.toLowerCase()) ??
-    synth.getVoices().find((item) => item.lang.toLowerCase().startsWith(prefix));
+  utterance.lang = voice?.lang ?? lang;
   if (voice) utterance.voice = voice;
   utterance.rate = rate;
-  utterance.pitch = 0.95;
-  synth.speak(utterance);
+  s.speak(utterance);
+  return "spoken";
+}
+
+/**
+ * Speak written text. Without a matching voice a strict language is not spoken at all (see `SpeakOptions.strict`);
+ * a non-strict one (an invented language) is read by the browser's default voice as syllables.
+ */
+export function speakText(text: string, options: SpeakOptions): SpeakResult {
+  if (muted) return "muted";
+  const s = synth();
+  if (!s) return "unsupported";
+  if (s.getVoices().length === 0) {
+    // The list has not loaded yet: wait for it instead of guessing.
+    void whenVoicesReady().then(() => speakNow(text, options));
+    return "spoken";
+  }
+  return speakNow(text, options);
 }
 
 /** Short soft tone. `pan` in [-1, 1] (left to right), `gain` in [0, 1]. */
@@ -81,5 +188,5 @@ export function chime() {
 export const unlockAudio = () => {
   audioContext();
   // Some browsers only populate voices after the first call.
-  if (typeof window !== "undefined") window.speechSynthesis?.getVoices();
+  void whenVoicesReady();
 };

@@ -15,7 +15,7 @@ let failed = 0;
 const ok = (c, m) => (console.log(c ? "PASS" : "FAIL", m), c || (failed += 1));
 const p = await b.newPage({ viewport: { width: 1280, height: 720 } });
 p.on("pageerror", e => console.log("ERR:", e.message.slice(0,500)));
-await p.addInitScript(() => { window.__spoken=[]; Object.defineProperty(window,"speechSynthesis",{value:{speak(u){window.__spoken.push(u.text+"|"+u.lang)},cancel(){},getVoices:()=>[]},configurable:true}); window.SpeechSynthesisUtterance=function(t){this.text=t}; });
+await p.addInitScript(() => { window.__spoken=[]; Object.defineProperty(window,"speechSynthesis",{value:{speak(u){window.__spoken.push(u.text+"|"+u.lang)},cancel(){},getVoices:()=>[{name:"Sara",lang:"da-DK",localService:true}],addEventListener(){},removeEventListener(){}},configurable:true}); window.SpeechSynthesisUtterance=function(t){this.text=t}; });
 await p.goto(BASE + "/tools/maru/", { waitUntil: "networkidle" });
 await p.evaluate(() => localStorage.clear()); await p.reload({ waitUntil: "networkidle" });
 await p.getByRole("button", { name: "Maru", exact: true }).click();

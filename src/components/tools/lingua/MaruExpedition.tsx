@@ -1,5 +1,6 @@
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import {
+  AudioLines,
   BookOpen,
   Bell,
   BellOff,
@@ -22,11 +23,12 @@ import { Lesson, type LessonTab } from "./Lesson";
 import { MaruWorld } from "./MaruWorld";
 import { Notebook, type NotebookTab } from "./Notebook";
 import { PhoneticDictionary } from "./PhoneticDictionary";
-import { setMuted, setPingsEnabled, unlockAudio } from "./maruAudio";
+import { onSpeechBlocked, setMuted, setPingsEnabled, unlockAudio } from "./maruAudio";
 import { DEFAULT_PACK_ID, PACKS, encounter as encounterOf, getPack, isUnlocked, nextEncounter } from "./packs";
 import type { EncounterId, LanguagePack } from "./packs/types";
 import { emptyProgress, loadProgress, clearProgress, saveProgress, type Progress } from "./progress";
 import { CloseButton, Overlay, themeVars } from "./ui";
+import { VoicePanel, useVoiceReport } from "./VoicePanel";
 
 const mapCoordinates = ([x, , z]: [number, number, number]) => ({ x: 51 + x * 2.45, y: 52 + z * 2.28 });
 const PACK_STORE = "language-quest-pack";
@@ -339,6 +341,7 @@ export const MaruExpedition: React.FC<{ onExit?: () => void }> = ({ onExit }) =>
   const [notebook, setNotebook] = useState<{ tab: NotebookTab } | null>(null);
   const [dictionary, setDictionary] = useState<{ insert?: (symbol: string) => void } | null>(null);
   const [helpOpen, setHelpOpen] = useState(false);
+  const [voicePanel, setVoicePanel] = useState<{ reason?: "blocked" } | null>(null);
   const [mapOpen, setMapOpen] = useState(true);
   const [keys, setKeys] = useState<Record<ActionId, string>>(defaultKeys);
   const [destination, setDestination] = useState<EncounterId | null>(null);
@@ -349,11 +352,12 @@ export const MaruExpedition: React.FC<{ onExit?: () => void }> = ({ onExit }) =>
   const [pings, setPings] = useState(false);
   const [debug, setDebug] = useState(false);
 
+  const voice = useVoiceReport(pack);
   const done = progress.done;
   const current = nearby ? encounterOf(pack, nearby) : undefined;
   const unlocked = !!current && isUnlocked(pack, current.id, done);
   const target = nextEncounter(pack, done)?.id ?? null;
-  const playing = !mapOpen && !notebook && !dictionary && !lesson && !finaleOpen && !helpOpen;
+  const playing = !mapOpen && !notebook && !dictionary && !lesson && !finaleOpen && !helpOpen && !voicePanel;
   const focus: EncounterId | null = lesson?.id ?? (finaleOpen ? pack.finale.encounter : null);
   const key = (id: ActionId) => keyLabel(keys[id]);
 
@@ -463,6 +467,7 @@ export const MaruExpedition: React.FC<{ onExit?: () => void }> = ({ onExit }) =>
     }
   }, [keys]);
   useEffect(() => setMuted(!soundOn), [soundOn]);
+  useEffect(() => onSpeechBlocked(() => setVoicePanel({ reason: "blocked" })), []);
   useEffect(() => setPingsEnabled(pings), [pings]);
   useEffect(() => {
     if (window.location.hash === "#street") setMapOpen(false);
@@ -484,7 +489,8 @@ export const MaruExpedition: React.FC<{ onExit?: () => void }> = ({ onExit }) =>
   useEffect(() => {
     const handle = (event: KeyboardEvent) => {
       if (event.key === "Escape") {
-        if (dictionary) setDictionary(null);
+        if (voicePanel) setVoicePanel(null);
+        else if (dictionary) setDictionary(null);
         else if (helpOpen) setHelpOpen(false);
         else if (notebook) setNotebook(null);
         else if (lesson) setLesson(null);
@@ -526,7 +532,7 @@ export const MaruExpedition: React.FC<{ onExit?: () => void }> = ({ onExit }) =>
     window.addEventListener("keydown", handle);
     return () => window.removeEventListener("keydown", handle);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [keys, nearby, playing, mapOpen, helpOpen, lesson, finaleOpen, notebook, dictionary, pack, openEncounter]);
+  }, [keys, nearby, playing, mapOpen, helpOpen, lesson, finaleOpen, notebook, dictionary, voicePanel, pack, openEncounter]);
 
   const begin = (id?: EncounterId) => {
     unlockAudio();
@@ -598,6 +604,17 @@ export const MaruExpedition: React.FC<{ onExit?: () => void }> = ({ onExit }) =>
         <div className="pointer-events-auto flex gap-2">
           <button onClick={() => setHelpOpen(true)} aria-label="Commands" className={`${hud} flex items-center gap-2 px-3 py-2`}>
             <Keyboard size={15} /> <span className="hidden lg:inline">Commands</span>
+          </button>
+          <button
+            onClick={() => setVoicePanel({})}
+            aria-label={voice.status === "missing" ? `No ${pack.speech.synth} voice installed` : voice.voice ? `Voice: ${voice.voice.name}` : "Voice"}
+            title={voice.status === "missing" ? "No voice for this language: click for help" : voice.voice ? `Voice: ${voice.voice.name}` : "Voice"}
+            className={`${hud} relative px-3 py-2`}
+          >
+            <AudioLines size={15} />
+            <span
+              className={`absolute -right-1 -top-1 h-2.5 w-2.5 rounded-full border border-[var(--mx-ink)] ${voice.status === "ok" ? (voice.override ? "bg-[var(--mx-gold)]" : "bg-[var(--mx-good)]") : voice.status === "missing" ? "bg-[var(--mx-accent)]" : "bg-[var(--mx-muted)]"}`}
+            />
           </button>
           <button
             onClick={() => setPings((v) => !v)}
@@ -707,6 +724,7 @@ export const MaruExpedition: React.FC<{ onExit?: () => void }> = ({ onExit }) =>
           <PhoneticDictionary pack={pack} progress={progress} onClose={() => setDictionary(null)} insert={dictionary.insert} />
         </Overlay>
       )}
+      {voicePanel && <VoicePanel pack={pack} reason={voicePanel.reason} onClose={() => setVoicePanel(null)} />}
       {helpOpen && (
         <CommandsPanel
           keys={keys}

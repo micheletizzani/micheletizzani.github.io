@@ -117,6 +117,10 @@ export function validatePack(pack: LanguagePack): Report {
   if ([...f.target].sort().join() !== [...f.shuffled].sort().join()) err(`finale "shuffled" must be a permutation of "target"`);
   if (f.target.join() === f.shuffled.join()) warn(`finale "shuffled" is in the correct order`);
 
+  // --- speech ---
+  if (pack.speech.strict && !pack.speech.testPhrase?.trim())
+    err(`speech.strict needs a speech.testPhrase (a short phrase that is certainly correct)`);
+
   // --- notation and phonetic dictionary ---
   const rules = { kind: pack.notation.kind, ignore: pack.notation.ignore, equivalent: pack.notation.equivalent };
   const keyboard = new Set(pack.notation.keyboard.map((k) => normalizeSound(k, rules)));

@@ -52,7 +52,7 @@ export const da: LanguagePack = {
   city: "Copenhagen",
   district: "Nyhavn",
   script: "latin",
-  speech: { synth: "da-DK", recog: "da-DK", rate: 0.75 },
+  speech: { synth: "da-DK", recog: "da-DK", rate: 0.75, strict: true, testPhrase: "Goddag" },
   notation: {
     kind: "ipa",
     label: "IPA",

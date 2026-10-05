@@ -15,7 +15,7 @@ export function Finale({ pack, onDone, onClose }: { pack: LanguagePack; onDone: 
   const [note, setNote] = useState<string | null>(null);
   const mic = useMic(pack.speech.recog);
   const input = useRef<HTMLInputElement>(null);
-  const say = (t: string, rate = pack.speech.rate ?? 0.75) => speakText(t, { lang: pack.speech.synth, rate });
+  const say = (t: string, rate = pack.speech.rate ?? 0.75) => speakText(t, { lang: pack.speech.synth, rate, strict: pack.speech.strict });
 
   const verify = (guess: string, spoken: boolean, heard?: string[]) => {
     const result = grade(target, guess, spoken);

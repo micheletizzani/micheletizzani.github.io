@@ -44,7 +44,7 @@ export function PhoneticDictionary({
     { title: "Consonants", kind: "consonant" },
     { title: "Prosody", kind: "prosody" },
   ];
-  const say = (text: string, rate = 0.7) => speakText(text, { lang: pack.speech.synth, rate });
+  const say = (text: string, rate = 0.7) => speakText(text, { lang: pack.speech.synth, rate, strict: pack.speech.strict });
   /** A keyword that is also a game word is masked until the player has done its sound task. */
   const hidden = (written: string) => {
     const w = lexicon.get(written.toLowerCase());

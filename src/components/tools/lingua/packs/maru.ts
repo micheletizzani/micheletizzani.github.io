@@ -29,7 +29,7 @@ export const maru: LanguagePack = {
   city: "Copenhagen",
   district: "Højbro Plads",
   script: "glyph",
-  speech: { synth: "da-DK", recog: "da-DK", rate: 0.7 },
+  speech: { synth: "da-DK", recog: "da-DK", rate: 0.7, testPhrase: "kopo" },
   notation: {
     kind: "romanisation",
     label: "Maru spelling",

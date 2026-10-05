@@ -41,7 +41,10 @@ export function Lesson({ pack, encounter, progress, update, initialTab = "observ
   const [tab, setTab] = useState<LessonTab>(initialTab);
   const drills = encounter.drills;
   const allWords = useMemo(() => wordsOf(pack, encounter), [pack, encounter]);
-  const say = useCallback((text: string, rate = pack.speech.rate ?? 0.75) => speakText(text, { lang: pack.speech.synth, rate }), [pack]);
+  const say = useCallback(
+    (text: string, rate = pack.speech.rate ?? 0.75) => speakText(text, { lang: pack.speech.synth, rate, strict: pack.speech.strict }),
+    [pack]
+  );
 
   // Words enter the notebook the moment the player meets them.
   useEffect(() => {

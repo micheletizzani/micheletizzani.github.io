@@ -28,6 +28,7 @@ automatically.
 | `id`, `name`, `nativeName` | identity | ids unique |
 | `script` | `"latin"` (painted lettering) or `"glyph"` (invented glyphs) | |
 | `speech.synth` / `speech.recog` | BCP-47 tags for the voice the player hears / the recogniser | |
+| `speech.strict`, `speech.testPhrase` | for REAL languages: stay silent and explain when no voice for `synth` is installed (instead of an English voice reading it); `testPhrase` is a short, certainly-correct phrase for the voice test button | `strict` requires `testPhrase` |
 | `notation` | how sounds are written (`ipa` or `romanisation`), on-screen keys, ignored marks, equivalence classes | keyboard and dictionary must cover every symbol used in `sound` (warning) |
 | `phonology[]` | the phonetic dictionary: symbol, name, how to make it, real keywords | every keyword list non-empty; a symbol used by a word should have an entry (warning) |
 | `meanings[]` | picture cards (use `MEANING_LIBRARY`) | each picture exists |
@@ -152,7 +153,7 @@ A game that teaches pronunciation must not teach the wrong thing. Treat every it
 | spelling, meaning, grammar note | a standard dictionary (for Danish: *Retskrivningsordbogen*, *Den Danske Ordbog* at ordnet.dk) | you |
 | `sound` (IPA), `alsoAccept` | a pronunciation dictionary or a native speaker | native speaker |
 | phoneme descriptions and keywords | a phonetics reference for the language, or a native speaker | native speaker or phonetician |
-| the voice reads each word correctly | listen on the target devices (voices differ by OS and browser) | you |
+| a voice for the language exists and reads each word correctly | listen on the target devices; set `speech.strict: true` so a missing voice is reported instead of an English one reading it | you |
 | recognition accepts a correct pronunciation | try it in Chrome with a real voice | native speaker |
 
 Set `verified: true` on a word only after its `sound` and `speak` are confirmed, then set `verification.status` to

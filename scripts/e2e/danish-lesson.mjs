@@ -18,7 +18,7 @@ const p = await ctx.newPage();
 p.on("pageerror", e => console.log("ERR:", e.message.slice(0,500)));
 await p.addInitScript(() => {
   window.__spoken=[]; window.__osc=0; window.__heard="vand";
-  Object.defineProperty(window,"speechSynthesis",{value:{speak(u){window.__spoken.push(u.text+"|"+u.lang)},cancel(){},getVoices:()=>[]},configurable:true});
+  Object.defineProperty(window,"speechSynthesis",{value:{speak(u){window.__spoken.push(u.text+"|"+u.lang)},cancel(){},getVoices:()=>[{name:"Sara",lang:"da-DK",localService:true}],addEventListener(){},removeEventListener(){}},configurable:true});
   window.SpeechSynthesisUtterance=function(t){this.text=t};
   const Fake = function(){ this.start=()=>setTimeout(()=>{ this.onresult({results:[[{transcript:window.__heard},{transcript:"x"}]]}); this.onend&&this.onend(); },50); };
   window.SpeechRecognition=Fake; window.webkitSpeechRecognition=Fake;

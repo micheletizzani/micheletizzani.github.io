@@ -4,6 +4,7 @@ import { PACKS, da, maru, template } from "./_packs";
 import { validatePack, contrast } from "../../src/components/tools/lingua/packs/validate";
 import { grade, gradeSound, normalizeSound, syllablesOf } from "../../src/components/tools/lingua/maruPhonetics";
 import { findPath, buildGrid } from "../../src/components/tools/lingua/maruNav";
+import { pickVoice, rankVoices, installHints } from "../../src/components/tools/lingua/maruVoices";
 import { candidatesFor, emptyProgress, evidenceFor, verdicts, compatibility } from "../../src/components/tools/lingua/progress";
 import type { LanguagePack } from "../../src/components/tools/lingua/packs/types";
 
@@ -140,4 +141,33 @@ test("the template pack is a valid, working example", () => {
   assert.deepEqual(report.errors, []);
   assert.deepEqual(report.warnings, []);
   assert.ok(!PACKS.some((p) => p.id === template.id), "the template must not be registered in the game");
+});
+
+const V = (name: string, lang: string, localService = true) => ({ name, lang, localService });
+
+test("voice selection never silently falls back to a voice of another language", () => {
+  const english = [V("Daniel", "en-GB"), V("Samantha", "en-US")];
+  assert.equal(pickVoice(english, "da-DK"), null, "only English voices: report 'no Danish voice'");
+  assert.equal(pickVoice([], "da-DK"), null, "no voices loaded yet");
+  const withDanish = [...english, V("Sara", "da-DK")];
+  assert.equal(pickVoice(withDanish, "da-DK")?.name, "Sara");
+  assert.equal(pickVoice([V("Greenlandic-ish", "da-GL")], "da-DK")?.name, "Greenlandic-ish", "same language, other region is acceptable");
+  assert.equal(pickVoice([V("Sara", "da_DK")], "da-DK")?.name, "Sara", "underscore tags are normalised");
+});
+
+test("voice choice: best quality first, the player's choice wins, a vanished choice is ignored", () => {
+  const voices = [V("Basic", "da-DK"), V("Christel Online (Natural)", "da-DK", false), V("Daniel", "en-GB")];
+  assert.equal(pickVoice(voices, "da-DK")?.name, "Christel Online (Natural)");
+  assert.equal(pickVoice(voices, "da-DK", "Daniel")?.name, "Daniel", "explicit 'use another voice anyway'");
+  assert.equal(pickVoice(voices, "da-DK", "Uninstalled")?.name, "Christel Online (Natural)");
+  const r = rankVoices(voices, "da-DK");
+  assert.deepEqual([r.exact.length, r.sameLanguage.length, r.other.length], [2, 0, 1]);
+});
+
+test("install hints are specific to the platform when it can be told", () => {
+  const mac = installHints("Danish", "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 Safari/605.1.15");
+  assert.deepEqual(mac.map((h) => h.platform), ["macOS"]);
+  const android = installHints("Danish", "Mozilla/5.0 (Linux; Android 14) Chrome/120 Mobile");
+  assert.deepEqual(android.map((h) => h.platform), ["Android"]);
+  assert.ok(installHints("Danish", "SomethingUnknown").length >= 4, "unknown platform lists all");
 });

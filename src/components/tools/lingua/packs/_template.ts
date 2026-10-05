@@ -25,6 +25,8 @@ export const template: LanguagePack = {
     synth: "da-DK", // REPLACE: BCP-47 tag of the voice players hear. Invented languages use the nearest real voice.
     recog: "da-DK", // REPLACE: tag for speech recognition (Chrome/Edge). Spoken answers are compared with `written`.
     rate: 0.75, // 0.5 (slow) – 1 (normal)
+    // strict: true,        // REAL languages: stay silent (and explain) when no voice for `synth` is installed,
+    // testPhrase: "…",       // instead of letting the browser read it with an English voice. Needs a correct test phrase.
   },
 
   // ---------------------------------------------------------------- how sounds are written
@@ -44,9 +46,21 @@ export const template: LanguagePack = {
   phonology: [
     { symbol: "a", kind: "vowel", name: "open vowel", how: "As in “father”.", keywords: [{ written: "alo", sound: "alo", gloss: "water" }] },
     { symbol: "e", kind: "vowel", name: "mid front vowel", how: "As in “bed”.", keywords: [{ written: "eki", sound: "eki" }] },
-    { symbol: "i", kind: "vowel", name: "close front vowel", how: "As in “see”, short.", keywords: [{ written: "tuki", sound: "tuki", gloss: "cup" }] },
+    {
+      symbol: "i",
+      kind: "vowel",
+      name: "close front vowel",
+      how: "As in “see”, short.",
+      keywords: [{ written: "tuki", sound: "tuki", gloss: "cup" }],
+    },
     { symbol: "o", kind: "vowel", name: "mid back vowel", how: "As in “more”.", keywords: [{ written: "alo", sound: "alo", gloss: "water" }] },
-    { symbol: "u", kind: "vowel", name: "close back vowel", how: "As in “moon”, short.", keywords: [{ written: "tuki", sound: "tuki", gloss: "cup" }] },
+    {
+      symbol: "u",
+      kind: "vowel",
+      name: "close back vowel",
+      how: "As in “moon”, short.",
+      keywords: [{ written: "tuki", sound: "tuki", gloss: "cup" }],
+    },
     { symbol: "k", kind: "consonant", name: "soft k", how: "As in “skip”.", keywords: [{ written: "tuki", sound: "tuki", gloss: "cup" }] },
     { symbol: "l", kind: "consonant", name: "clear l", how: "As in “light”.", keywords: [{ written: "alo", sound: "alo", gloss: "water" }] },
     { symbol: "t", kind: "consonant", name: "soft t", how: "As in “stop”.", keywords: [{ written: "tuki", sound: "tuki", gloss: "cup" }] },
@@ -87,10 +101,31 @@ export const template: LanguagePack = {
       clues: [
         // Each drilled word needs >= 2 clues that support its true meaning (ideally different kinds).
         // Include at least one decoy (supports: []) so observation involves noise.
-        { id: "t-drink", kind: "action", text: "The child drinks from the spout.", picture: "drink", supports: ["water", "drink", "cup"], about: ["alo", "tuki"] },
-        { id: "t-point", kind: "gesture", text: "They point at the stream and say the word again.", picture: "point", supports: ["water"], about: ["alo"] },
+        {
+          id: "t-drink",
+          kind: "action",
+          text: "The child drinks from the spout.",
+          picture: "drink",
+          supports: ["water", "drink", "cup"],
+          about: ["alo", "tuki"],
+        },
+        {
+          id: "t-point",
+          kind: "gesture",
+          text: "They point at the stream and say the word again.",
+          picture: "point",
+          supports: ["water"],
+          about: ["alo"],
+        },
         { id: "t-hold", kind: "object", text: "They lift the little cup and say a second word.", picture: "cup", supports: ["cup"], about: ["tuki"] },
-        { id: "t-mark", kind: "writing", text: "The same second word is painted on every cup.", picture: "writing", supports: ["cup", "drink"], about: ["tuki"] },
+        {
+          id: "t-mark",
+          kind: "writing",
+          text: "The same second word is painted on every cup.",
+          picture: "writing",
+          supports: ["cup", "drink"],
+          about: ["tuki"],
+        },
         { id: "t-bird", kind: "context", text: "A pigeon bathes at the edge.", picture: "bird", supports: [] },
       ],
       drills: ["alo", "tuki"], // words the player must transcribe
