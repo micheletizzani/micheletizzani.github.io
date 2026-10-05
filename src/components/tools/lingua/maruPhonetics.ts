@@ -60,3 +60,74 @@ export function grade(target: string, guess: string, spoken = false): Grade {
     .join("");
   return { verdict, passed: verdict === "exact" || verdict === "accepted", distance: d, pattern };
 }
+
+// ---------- notation-aware grading (IPA or romanisation) ----------
+
+export interface NotationRules {
+  kind: "ipa" | "romanisation";
+  /** Characters ignored when comparing (stress, length, glottal stop, spaces...). */
+  ignore: string;
+  /** Groups of symbols treated as one sound (the first symbol of a group is its representative). */
+  equivalent?: string[][];
+}
+
+const COMBINING = /[̀-ͯ͡]/g;
+
+/** Canonical comparison form of a transcription: no ignored marks, one symbol per sound class. */
+export function normalizeSound(text: string, rules: NotationRules): string {
+  const ignore = new Set(Array.from(rules.ignore));
+  const rep = new Map<string, string>();
+  for (const group of rules.equivalent ?? []) for (const symbol of group) if (!rep.has(symbol)) rep.set(symbol, group[0]);
+  return Array.from(text.normalize("NFD").replace(COMBINING, "").replace(/ɡ/g, "g").toLowerCase())
+    .filter((c) => !ignore.has(c) && /\S/.test(c))
+    .map((c) => rep.get(c) ?? c)
+    .join("");
+}
+
+export interface SoundGrade extends Grade {
+  /** The accepted transcription the guess came closest to. */
+  matched: string;
+}
+
+/**
+ * Grade a transcription against the main transcription and its accepted alternatives.
+ * IPA guesses get a small tolerance (one slip in five sounds) because transcription is hard and the
+ * reference may carry its own uncertainty; romanisation must match exactly.
+ */
+export function gradeSound(target: string, alsoAccept: readonly string[] | undefined, guess: string, rules: NotationRules): SoundGrade {
+  const g = normalizeSound(guess, rules);
+  let best: SoundGrade | null = null;
+  for (const candidate of [target, ...(alsoAccept ?? [])]) {
+    const t = normalizeSound(candidate, rules);
+    const d = distance(t, g);
+    const tolerance = rules.kind === "ipa" ? Math.floor(t.length / 5) : 0;
+    let verdict: Verdict = "miss";
+    if (d === 0) verdict = "exact";
+    else if (d <= tolerance) verdict = "accepted";
+    else if (d <= Math.max(1, Math.floor(t.length / 3))) verdict = "close";
+    const ignore = new Set(Array.from(rules.ignore));
+    const rep = new Map<string, string>();
+    for (const group of rules.equivalent ?? []) for (const symbol of group) if (!rep.has(symbol)) rep.set(symbol, group[0]);
+    let i = 0;
+    const pattern = Array.from(candidate)
+      .map((c) => {
+        if (ignore.has(c) || /\s/.test(c) || COMBINING.test(c)) return c;
+        COMBINING.lastIndex = 0;
+        const base = rep.get(c.toLowerCase() === "ɡ" ? "g" : c.toLowerCase()) ?? c.toLowerCase();
+        const ok = g[i] === base;
+        i += 1;
+        return ok ? c : "·";
+      })
+      .join("");
+    const result: SoundGrade = { verdict, passed: verdict === "exact" || verdict === "accepted", distance: d, pattern, matched: candidate };
+    if (!best || result.distance < best.distance) best = result;
+  }
+  return best!;
+}
+
+/** Syllable count of a written word, for the first hint. */
+export function syllablesOf(written: string, kind: "ipa" | "romanisation"): number {
+  const w = written.toLowerCase();
+  if (kind === "romanisation") return (w.match(/[ptkmnsvlrg]?[aeiou]/g) ?? []).length;
+  return Math.max(1, (w.match(/[aeiouyæøå]+/g) ?? []).length);
+}

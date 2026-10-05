@@ -121,3 +121,34 @@ export function reliefTexture(text: string, plaque = "#f7dc8a", ink = "#5a1f2e")
   cache.set(key, texture);
   return texture;
 }
+
+/** Painted lettering for alphabetic scripts: a plaque with the text centred in bold serif. */
+export function lettersTexture(text: string, plaque: string, ink: string): THREE.CanvasTexture {
+  const key = `L|${text}|${plaque}|${ink}`;
+  const hit = cache.get(key);
+  if (hit) return hit;
+  const canvas = document.createElement("canvas");
+  const size = Math.max(14, Math.min(44, 520 / Math.max(3, text.length) + 10));
+  const px = size * 2.4;
+  const ctx0 = canvas.getContext("2d")!;
+  ctx0.font = `700 ${px}px Georgia, 'Times New Roman', serif`;
+  const width = Math.ceil(ctx0.measureText(text).width) + 90;
+  canvas.width = Math.max(256, width);
+  canvas.height = Math.round(px * 1.9);
+  const ctx = canvas.getContext("2d")!;
+  ctx.fillStyle = plaque;
+  ctx.fillRect(0, 0, canvas.width, canvas.height);
+  ctx.strokeStyle = ink;
+  ctx.lineWidth = 8;
+  ctx.strokeRect(8, 8, canvas.width - 16, canvas.height - 16);
+  ctx.fillStyle = ink;
+  ctx.font = `700 ${px}px Georgia, 'Times New Roman', serif`;
+  ctx.textAlign = "center";
+  ctx.textBaseline = "middle";
+  ctx.fillText(text, canvas.width / 2, canvas.height / 2 + px * 0.04);
+  const texture = new THREE.CanvasTexture(canvas);
+  texture.colorSpace = THREE.SRGBColorSpace;
+  texture.anisotropy = 4;
+  cache.set(key, texture);
+  return texture;
+}

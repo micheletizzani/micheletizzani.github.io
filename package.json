@@ -9,7 +9,9 @@
     "dev": "astro dev",
     "build": "astro build",
     "preview": "astro preview",
-    "astro": "astro"
+    "astro": "astro",
+    "packs:check": "node scripts/validate-packs.mjs",
+    "test:lingua": "node scripts/run-tests.mjs"
   },
   "dependencies": {
     "@astrojs/mdx": "^5.0.6",

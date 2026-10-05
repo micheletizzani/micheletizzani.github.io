@@ -451,7 +451,7 @@ export const GamesView: React.FC<GamesViewProps> = ({ environment, onUpdateEnvir
             activeGame === "maru" ? "border-[var(--accent-color)] text-[var(--accent-color)]" : "border-transparent opacity-60 hover:opacity-100"
           }`}
         >
-          <Gamepad2 className="w-3.5 h-3.5" /> 6. Maru City Quest
+          <Gamepad2 className="w-3.5 h-3.5" /> 6. Language Quest
         </button>
       </div>
 
@@ -1021,19 +1021,20 @@ export const GamesView: React.FC<GamesViewProps> = ({ environment, onUpdateEnvir
         <div className="p-6 md:p-8 rounded-2xl bg-[var(--bg-secondary)] border border-[var(--border-color)] text-center space-y-5">
           <div className="mx-auto max-w-xl space-y-3">
             <span className="text-[10px] font-mono uppercase tracking-wider text-[var(--accent-color)] font-bold">
-              First-person language exploration
+              Point-and-click language exploration
             </span>
-            <h3 className="text-3xl font-serif font-bold text-[var(--heading-color)]">Maru: The North Gate</h3>
+            <h3 className="text-3xl font-serif font-bold text-[var(--heading-color)]">Language Quest: Nyhavn</h3>
             <p className="text-sm opacity-75 leading-relaxed">
-              Walk through an original low-poly city, observe people and places, then piece together enough Maru to pass the closed north gate. The
-              game opens as an immersive full-screen expedition.
+              Arrive in Copenhagen knowing no Danish. Watch what people do, listen, write down the sounds with the help of a phonetic dictionary, and
+              work out what the words mean from your own notes. An invented language, Maru, is included as a second pack. Nothing makes a sound until
+              you ask for it.
             </p>
           </div>
           <button
             onClick={openMaru}
             className="px-6 py-3 rounded-xl bg-[var(--accent-color)] text-black font-mono font-bold text-xs uppercase tracking-wider hover:opacity-90 inline-flex items-center gap-2"
           >
-            <Gamepad2 className="w-4 h-4" /> Enter Maru
+            <Gamepad2 className="w-4 h-4" /> Start the quest
           </button>
         </div>
       )}
