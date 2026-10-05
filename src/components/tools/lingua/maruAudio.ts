@@ -20,7 +20,7 @@ export const setMuted = (value: boolean) => {
 };
 
 /** Maru is invented, so no voice knows it. A Danish voice reads the romanisation as pronounced syllables. */
-export function speakMaru(text: string) {
+export function speakMaru(text: string, rate = 0.7) {
   if (muted || typeof window === "undefined" || !window.speechSynthesis) return;
   const synth = window.speechSynthesis;
   synth.cancel();
@@ -29,7 +29,7 @@ export function speakMaru(text: string) {
   utterance.lang = "da-DK";
   const voice = synth.getVoices().find((item) => item.lang.toLowerCase().startsWith("da"));
   if (voice) utterance.voice = voice;
-  utterance.rate = 0.7;
+  utterance.rate = rate;
   utterance.pitch = 0.95;
   synth.speak(utterance);
 }
