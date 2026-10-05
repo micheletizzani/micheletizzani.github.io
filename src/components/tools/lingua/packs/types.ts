@@ -125,13 +125,16 @@ export interface Finale {
 }
 
 export interface PaletteSpec {
-  /** Ground, street, plaza, water, sky/fog colours of the 3D world. */
+  /** Colours of the 3D world. Pastel, flat and tied to the place (see docs/language-quest/PACK_TEMPLATE.md §8). */
   ground: string;
   street: string;
   plaza: string;
+  /** The sea around the floating terraces. */
   water: string;
+  /** Background gradient behind the scene, top to bottom. Also the colour distant things fade into. */
+  sky: [string, string];
   fog: string;
-  /** Outline ink. */
+  /** Colour of fine detail: window glass, shadows of openings. */
   ink: string;
   /** Hex colours of figures' cloaks etc. */
   cloaks: string[];
@@ -177,6 +180,7 @@ export interface BuildingSpec {
   size: [number, number, number];
   color: string;
   roof: string;
+  /** Position[1] is the height of the terrace the building stands on. */
   /** Which sides carry windows (sandstone scenery) or which side the gable faces (nyhavn scenery). */
   faces?: ("n" | "s" | "e" | "w")[];
   /** Optional shop awning / door colour (nyhavn). */
@@ -187,8 +191,37 @@ export interface BuildingSpec {
 
 export type SceneryKey = "sandstone" | "nyhavn";
 
+/**
+ * A flat terrace floating above the sea. Terraces are stacked in height and joined by stairs, and are laid out so
+ * that every walkable surface is visible from the isometric camera: tall things stand only on the far edges
+ * (smaller x and smaller z), never on the near edges.
+ */
+export interface Tier {
+  id: string;
+  /** Extent in metres: [min, max]. x is east, z is south. */
+  x: [number, number];
+  z: [number, number];
+  /** Height of the walking surface. */
+  y: number;
+  /** Colour of the walking surface and of the side walls (the walls fade towards the sea). */
+  color: string;
+  side: string;
+}
+
+/** A ramp (drawn as steps) between two heights. `y0` is at the smaller coordinate of `axis`, `y1` at the larger. */
+export interface Stair {
+  axis: "x" | "z";
+  x: [number, number];
+  z: [number, number];
+  y0: number;
+  y1: number;
+  color?: string;
+}
+
 export interface WorldSpec {
   scenery: SceneryKey;
+  tiers: Tier[];
+  stairs: Stair[];
   palette: PaletteSpec;
   buildings: BuildingSpec[];
   npcs: NpcSpec[];

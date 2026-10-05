@@ -4,6 +4,9 @@ import { PACKS, da, maru, template } from "./_packs";
 import { validatePack, contrast } from "../../src/components/tools/lingua/packs/validate";
 import { grade, gradeSound, normalizeSound, syllablesOf, ipaToPronounceable, resolvePhoneticAudio } from "../../src/components/tools/lingua/maruPhonetics";
 import { findPath, buildGrid } from "../../src/components/tools/lingua/maruNav";
+import { hiddenGround } from "../../src/components/tools/lingua/packs/visibility";
+import { makeTerrain } from "../../src/components/tools/lingua/maruTerrain";
+import { packGrid, packTerrain } from "../../src/components/tools/lingua/packs/navgrid";
 import { pickVoice, rankVoices, installHints } from "../../src/components/tools/lingua/maruVoices";
 import { candidatesFor, emptyProgress, evidenceFor, verdicts, compatibility } from "../../src/components/tools/lingua/progress";
 import type { LanguagePack } from "../../src/components/tools/lingua/packs/types";
@@ -143,16 +146,6 @@ test("phonetic audio test resolution finds exact targets, lexicon words, keyword
   assert.ok(resMaru);
   assert.equal(resMaru.speakable, "tala");
 });
-
-test("every drilled word is reachable on the nav grid from its encounter approach point", () => {
-  for (const pack of PACKS) {
-    const solid = (x: number, z: number) =>
-      x < -14.6 || x > 14.6 || z < -17 || z > 7.85 || pack.world.buildings.some((b) => Math.abs(x - b.position[0]) < b.size[0] / 2 + 0.45 && Math.abs(z - b.position[2]) < b.size[2] / 2 + 0.45);
-    const grid = buildGrid(-15, 15, -17, 9.3, 0.5, solid);
-    for (const e of pack.encounters) assert.ok(findPath(grid, [0, 6.4], e.approach).length > 0, `${pack.id}: no route to ${e.id}`);
-  }
-});
-
 test("meaning cards always include the truth and every rival the clues allow", () => {
   for (const pack of PACKS)
     for (const e of pack.encounters)
@@ -220,4 +213,73 @@ test("install hints are specific to the platform when it can be told", () => {
   const android = installHints("Danish", "Mozilla/5.0 (Linux; Android 14) Chrome/120 Mobile");
   assert.deepEqual(android.map((h) => h.platform), ["Android"]);
   assert.ok(installHints("Danish", "SomethingUnknown").length >= 4, "unknown platform lists all");
+});
+
+test("terrain: heights of terraces, stairs interpolate, the sea has no ground", () => {
+  const t = packTerrain(da);
+  assert.equal(t.groundY(0, 5), 0, "quay");
+  assert.equal(t.groundY(-8, -8), 1.2, "terrace");
+  assert.equal(t.groundY(0, -14), 2.4, "upper terrace");
+  assert.equal(t.groundY(0, 12), null, "sea south of the quay");
+  assert.equal(t.groundY(12, 0), null, "sea east of the quay");
+  assert.ok(Math.abs((t.groundY(0, -4.5) ?? 99) - 0.6) < 1e-9, "halfway up the first stairs");
+  assert.ok(Math.abs((t.groundY(0, -11.1) ?? 99) - 1.8) < 1e-9, "halfway up the second stairs");
+  assert.equal(t.walkable(-13.7, 0, 0.4), false, "too close to the edge");
+  const tiny = makeTerrain([{ id: "a", x: [0, 2], z: [0, 2], y: 1, color: "#fff", side: "#fff" }], []);
+  assert.equal(tiny.groundY(1, 1), 1);
+  assert.equal(tiny.groundY(3, 1), null);
+});
+
+test("every encounter is reachable on foot, and only by the stairs", () => {
+  for (const pack of PACKS) {
+    const { grid } = packGrid(pack);
+    for (const e of pack.encounters) assert.ok(findPath(grid, [0, 6.4], e.approach).length > 0, `${pack.id}: no route to ${e.id}`);
+    // the terrace is a wall away from the quay except at the stairs: a route from the west quay to the west terrace must pass them
+    const route = findPath(grid, [-10, 0], [-10, -8]);
+    assert.ok(route.length > 0, `${pack.id}: west terrace unreachable`);
+    assert.ok(route.some(([x, z]) => Math.abs(x) <= 2 && z > -5.6 && z < -3.4), `${pack.id}: route to the terrace did not use the stairs: ${JSON.stringify(route)}`);
+  }
+});
+
+test("validator catches a layered world that does not hang together", () => {
+  const noStairs = clone(da);
+  noStairs.world.stairs = [];
+  const r1 = validatePack(noStairs);
+  assert.ok(r1.errors.some((e) => e.includes('encounter "guard" cannot be reached')), "terraces without stairs strand the story");
+
+  const wrongHeight = clone(da);
+  wrongHeight.world.stairs[0].y0 = 2.0;
+  assert.ok(validatePack(wrongHeight).errors.some((e) => e.includes("does not meet a terrace")), "stair that ends in mid-air");
+
+  const floating = clone(da);
+  floating.encounters[0].position = [30, 0, 30];
+  assert.ok(validatePack(floating).errors.some((e) => e.includes("not on any terrace")));
+
+  const offGround = clone(maru);
+  offGround.encounters[0].approach = [0, 12];
+  assert.ok(validatePack(offGround).errors.some((e) => e.includes("not on walkable ground")));
+
+  const wrongBase = clone(da);
+  wrongBase.world.buildings[0].position[1] = 1.2;
+  assert.ok(validatePack(wrongBase).errors.some((e) => e.includes("stands at height")));
+
+  const nearEdge = clone(da);
+  nearEdge.world.buildings.push({ position: [8, 0, 6], size: [3, 6, 3], color: "#fff", roof: "#fff", faces: ["w"], kind: "house" });
+  const rn = validatePack(nearEdge);
+  assert.ok([...rn.errors, ...rn.warnings].some((m) => m.includes("hidden behind buildings")), "a tall building on the near edge hides ground and is reported");
+});
+
+test("visibility: the shipped layout hides no walkable ground, and the check can see a hiding building", () => {
+  for (const pack of PACKS) {
+    const v = hiddenGround(pack);
+    assert.ok(v.total > 300, `${pack.id}: expected a few hundred walkable points, got ${v.total}`);
+    assert.equal(v.hidden.length, 0, `${pack.id}: hidden ${JSON.stringify(v.hidden.slice(0, 5))}`);
+  }
+  const bad = clone(da);
+  bad.world.buildings.push({ position: [5, 0, 3], size: [3, 6, 3], color: "#fff", roof: "#fff", faces: ["w"], kind: "house" });
+  assert.ok(hiddenGround(bad).hidden.length > 20, "a tall building near the camera hides ground behind it");
+  // a tall building on the far (west) edge hides nothing that can be walked on
+  const far = clone(da);
+  far.world.buildings = far.world.buildings.filter((b) => b.position[0] > 0 || b.position[2] < 0);
+  assert.equal(hiddenGround(far).hidden.length, 0);
 });

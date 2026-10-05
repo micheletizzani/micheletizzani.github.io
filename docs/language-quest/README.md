@@ -25,8 +25,10 @@ The game also opens from the Study Hub: **Games → 6. Language Quest**.
 ```
 src/components/tools/lingua/
   packs/            language packs (data) + types, helpers, validator, template
-  world/            3D scenery per art style (nyhavn, sandstone) + shared pieces
-  MaruWorld.tsx     canvas, camera, point-and-click walking
+  world/            3D scenery per art style (nyhavn, sandstone), terraces, sea, props
+  MaruWorld.tsx     canvas, isometric camera, point-and-click walking
+  maruTerrain.ts    terraces + stairs: ground height at a point
+  maruCamera.ts     the isometric camera angle, shared with the visibility check
   MaruExpedition.tsx  the game shell: map, HUD, commands, wiring
   Lesson.tsx        Observe / Sound / Meaning for one encounter
   Notebook.tsx      words, guesses, observations, story

@@ -1,43 +1,75 @@
 import React, { useEffect, useMemo, useRef } from "react";
 import { Canvas, useFrame, useThree, type ThreeEvent } from "@react-three/fiber";
 import * as THREE from "three";
-import { WORLD, clamp } from "./maruData";
-import { buildGrid, findPath, type NavGrid } from "./maruNav";
+import { clamp } from "./maruData";
+import { CAMERA, towardCamera } from "./maruCamera";
+import { findPath } from "./maruNav";
 import { ping } from "./maruAudio";
 import { encounter as encounterOf, isUnlocked } from "./packs/helpers";
+import { packGrid, packSolid } from "./packs/navgrid";
 import type { EncounterId, LanguagePack } from "./packs/types";
+import type { Terrain } from "./maruTerrain";
+import { LOW_FURNITURE } from "./packs/visibility";
 import { NyhavnScenery } from "./world/Nyhavn";
 import { SandstoneScenery } from "./world/Sandstone";
-import { Ball, PackCtx, Round } from "./world/toon";
-import { Bubble, Marker, People } from "./world/shared";
+import { Ball, PackCtx, Round, TerrainCtx } from "./world/toon";
+import { Blob, Bubble, Marker, People } from "./world/shared";
 
-// ---------- the player, camera and movement ----------
-const CAM_OFFSET = new THREE.Vector3(11.4, 16.8, 16.4);
-const FOCUS_OFFSET = new THREE.Vector3(6.6, 5.4, 9.8);
-export const CAMERA_YAW = Math.atan2(CAM_OFFSET.x, CAM_OFFSET.z);
+export const CAMERA_YAW = CAMERA.azimuth;
+const TOWARD = new THREE.Vector3(...towardCamera());
+// Screen axes of the isometric camera, in world space.
+const RIGHT = new THREE.Vector3(Math.cos(CAMERA.azimuth), 0, -Math.sin(CAMERA.azimuth));
+const UP = new THREE.Vector3().crossVectors(TOWARD, RIGHT).normalize();
+const CAMERA_DISTANCE = 120;
 
-/** Where the player cannot stand: the world edge, the canal, buildings, set pieces and people. */
-function makeSolid(pack: LanguagePack) {
-  return (x: number, z: number) => {
-    if (x < WORLD.minX + 0.4 || x > WORLD.maxX - 0.4 || z < WORLD.minZ || z > WORLD.quayZ - 0.45) return true;
-    for (const b of pack.world.buildings)
-      if (Math.abs(x - b.position[0]) < b.size[0] / 2 + 0.45 && Math.abs(z - b.position[2]) < b.size[2] / 2 + 0.45) return true;
-    if (Math.hypot(x, z - 2) < 2.4) return true; // fountain / pump
-    if (Math.abs(x + 6) < 1.7 && Math.abs(z + 2) < 1.1) return true; // stall / kiosk
-    for (const n of pack.world.npcs) if (Math.hypot(x - n.position[0], z - n.position[2]) < 0.65) return true;
-    if (Math.abs(Math.abs(x) - 1.9) < 0.5 && Math.abs(z + 8.3) < 0.5) return true; // booth pillars
-    return false;
-  };
+/** The zoom (pixels per metre) at which everything in the world fits the screen: terraces, their sides and every roof. */
+function fitView(pack: LanguagePack, terrain: Terrain, width: number, height: number) {
+  const boxes: [number, number, number, number, number, number][] = pack.world.tiers.map((t) => [t.x[0], t.x[1], -2.2, t.y, t.z[0], t.z[1]]);
+  for (const bd of pack.world.buildings)
+    boxes.push([
+      bd.position[0] - bd.size[0] / 2,
+      bd.position[0] + bd.size[0] / 2,
+      bd.position[1],
+      bd.position[1] + bd.size[1] + 2.2,
+      bd.position[2] - bd.size[2] / 2,
+      bd.position[2] + bd.size[2] / 2,
+    ]);
+  let minX = Infinity;
+  let maxX = -Infinity;
+  let minY = Infinity;
+  let maxY = -Infinity;
+  const v = new THREE.Vector3();
+  for (const [x0, x1, y0, y1, z0, z1] of boxes)
+    for (const x of [x0, x1])
+      for (const y of [y0, y1])
+        for (const z of [z0, z1]) {
+          v.set(x, y, z);
+          const sx = v.dot(RIGHT);
+          const sy = v.dot(UP);
+          minX = Math.min(minX, sx);
+          maxX = Math.max(maxX, sx);
+          minY = Math.min(minY, sy);
+          maxY = Math.max(maxY, sy);
+        }
+  // Keep clear of the top bar and the bottom message: the world is framed in what is left between them.
+  const top = Math.min(72, height * 0.1);
+  const bottom = Math.min(150, height * 0.2);
+  const zoom = Math.min((width * 0.94) / (maxX - minX), ((height - top - bottom) * 0.98) / (maxY - minY));
+  const shift = (bottom - top) / 2 / zoom; // metres on screen: the world centre sits this far above the screen centre
+  const centre = new THREE.Vector3().addScaledVector(RIGHT, (minX + maxX) / 2).addScaledVector(UP, (minY + maxY) / 2 - shift);
+  return { zoom, centre };
 }
 
 interface WalkerProps {
   pack: LanguagePack;
+  terrain: Terrain;
   pings: boolean;
   active: boolean;
   focus: EncounterId | null;
   destination: EncounterId | null;
   target: EncounterId | null;
   visited: EncounterId[];
+  zoomRef: React.MutableRefObject<number>;
   poseRef: React.MutableRefObject<{ x: number; z: number; yaw: number }>;
   onNearby: (id: EncounterId | null) => void;
   onArrive: (id: EncounterId, distance: number) => void;
@@ -45,10 +77,24 @@ interface WalkerProps {
   walkRef: React.MutableRefObject<((x: number, z: number, then?: EncounterId) => void) | null>;
 }
 
-function Walker({ pack, pings, active, focus, destination, target, poseRef, onNearby, onArrive, onPosition, walkRef }: WalkerProps) {
-  const { camera } = useThree();
-  const solidAt = useMemo(() => makeSolid(pack), [pack]);
-  const grid = useMemo<NavGrid>(() => buildGrid(WORLD.minX, WORLD.maxX, WORLD.minZ, WORLD.quayZ + 1, 0.5, solidAt), [solidAt]);
+function Walker({
+  pack,
+  terrain,
+  pings,
+  active,
+  focus,
+  destination,
+  target,
+  zoomRef,
+  poseRef,
+  onNearby,
+  onArrive,
+  onPosition,
+  walkRef,
+}: WalkerProps) {
+  const { camera, size } = useThree();
+  const solidAt = useMemo(() => packSolid(pack, terrain), [pack, terrain]);
+  const grid = useMemo(() => packGrid(pack).grid, [pack]);
   const pingsRef = useRef(pings);
   pingsRef.current = pings;
   const body = useRef<THREE.Group>(null);
@@ -57,8 +103,7 @@ function Walker({ pack, pings, active, focus, destination, target, poseRef, onNe
   const path = useRef<[number, number][]>([]);
   const pending = useRef<EncounterId | null>(null);
   const keys = useRef(new Set<string>());
-  const zoom = useRef(1);
-  const look = useRef(new THREE.Vector3(0, 0.8, 6.4));
+  const look = useRef<THREE.Vector3 | null>(null);
   const lastNearby = useRef<EncounterId | null>(null);
   const lastReport = useRef<[number, number]>([0, 6.4]);
   const pingClock = useRef(0);
@@ -67,20 +112,15 @@ function Walker({ pack, pings, active, focus, destination, target, poseRef, onNe
   const targetRef = useRef(target);
   targetRef.current = target;
   const markerLife = useRef(0);
+  const groundAt = (x: number, z: number) => terrain.groundY(x, z) ?? 0;
 
   useEffect(() => {
-    const cam = camera as THREE.PerspectiveCamera;
-    cam.fov = 30;
-    cam.near = 0.5;
-    cam.far = 120;
-    cam.position.copy(new THREE.Vector3(0, 0, 6.4).add(CAM_OFFSET));
-    cam.updateProjectionMatrix();
     const down = (event: KeyboardEvent) => {
       if (activeRef.current && !event.ctrlKey && !event.metaKey && !event.altKey) keys.current.add(event.key.toLowerCase());
     };
     const up = (event: KeyboardEvent) => keys.current.delete(event.key.toLowerCase());
     const wheel = (event: WheelEvent) => {
-      if (activeRef.current) zoom.current = clamp(zoom.current * (event.deltaY > 0 ? 1.08 : 0.92), 0.5, 1.7);
+      if (activeRef.current) zoomRef.current = clamp(zoomRef.current * (event.deltaY > 0 ? 0.92 : 1.08), 1, 2.6);
     };
     window.addEventListener("keydown", down);
     window.addEventListener("keyup", up);
@@ -90,7 +130,7 @@ function Walker({ pack, pings, active, focus, destination, target, poseRef, onNe
       window.removeEventListener("keyup", up);
       window.removeEventListener("wheel", wheel);
     };
-  }, [camera]);
+  }, [zoomRef]);
 
   useEffect(() => {
     walkRef.current = (x, z, then) => {
@@ -98,14 +138,14 @@ function Walker({ pack, pings, active, focus, destination, target, poseRef, onNe
       path.current = findPath(grid, [pos.current.x, pos.current.z], [x, z]);
       const end = path.current[path.current.length - 1];
       if (end && marker.current && !then) {
-        marker.current.position.set(end[0], 0.06, end[1]);
+        marker.current.position.set(end[0], groundAt(end[0], end[1]) + 0.08, end[1]);
         markerLife.current = 1;
       }
     };
     return () => {
       walkRef.current = null;
     };
-  }, [grid, walkRef]);
+  }, [grid, walkRef, terrain]);
 
   useEffect(() => {
     const spot = destination ? encounterOf(pack, destination).approach : null;
@@ -134,8 +174,14 @@ function Walker({ pack, pings, active, focus, destination, target, poseRef, onNe
         path.current = [];
         pending.current = null;
         const step = (delta * 4.4) / len;
-        if (!solidAt(p.x + mx * step, p.z)) p.x += mx * step;
-        if (!solidAt(p.x, p.z + mz * step)) p.z += mz * step;
+        // A step is allowed if the spot is free and the ground does not jump (a terrace wall is not a staircase).
+        const canStep = (nx: number, nz: number) => {
+          if (solidAt(nx, nz)) return false;
+          const to = terrain.groundY(nx, nz);
+          return to !== null && Math.abs(to - groundAt(p.x, p.z)) < 0.45;
+        };
+        if (canStep(p.x + mx * step, p.z)) p.x += mx * step;
+        if (canStep(p.x, p.z + mz * step)) p.z += mz * step;
         p.heading = Math.atan2(mx, mz);
         p.walking = 1;
       }
@@ -168,11 +214,11 @@ function Walker({ pack, pings, active, focus, destination, target, poseRef, onNe
     } else if (!k.size) {
       p.walking = 0;
     }
+    const py = groundAt(p.x, p.z);
     // --- figure ---
     if (body.current) {
-      body.current.position.set(p.x, Math.abs(Math.sin(state.clock.elapsedTime * 9)) * 0.07 * p.walking, p.z);
-      const target = p.heading;
-      let diff = target - body.current.rotation.y;
+      body.current.position.set(p.x, py + Math.abs(Math.sin(state.clock.elapsedTime * 9)) * 0.07 * p.walking, p.z);
+      let diff = p.heading - body.current.rotation.y;
       diff = Math.atan2(Math.sin(diff), Math.cos(diff));
       body.current.rotation.y += diff * Math.min(1, delta * 10);
       body.current.rotation.z = Math.sin(state.clock.elapsedTime * 9) * 0.06 * p.walking;
@@ -183,38 +229,33 @@ function Walker({ pack, pings, active, focus, destination, target, poseRef, onNe
       marker.current.scale.set(s, s, s);
       (marker.current.material as THREE.MeshBasicMaterial).opacity = markerLife.current;
     }
-    // --- camera: follow, or zoom in on what you are studying ---
+    // --- camera: the whole world, or the player when zoomed in, or the thing being studied ---
+    const cam = camera as THREE.OrthographicCamera;
+    const fit = fitView(pack, terrain, size.width, size.height);
     const focused = focus ? encounterOf(pack, focus) : undefined;
-    const rate = 1 - Math.exp(-delta * 3.2);
-    const cam = camera as THREE.PerspectiveCamera;
-    let desiredPos: THREE.Vector3;
-    let desiredLook: THREE.Vector3;
-    let fov = 30;
+    let desiredZoom = fit.zoom * zoomRef.current;
+    const desired = fit.centre.clone();
     if (focused) {
-      // aim below the subject so it sits in the upper half of the screen, above the journal sheet
-      desiredLook = new THREE.Vector3(focused.position[0], 0.4, focused.position[2] + 1.1);
-      // Encounters on the east side face west: view them from the west so the camera is not behind a building.
-      const side = focused.position[0] > 4 ? -1 : 1;
-      desiredPos = new THREE.Vector3(focused.position[0], 1.2, focused.position[2]).add(
-        new THREE.Vector3(FOCUS_OFFSET.x * side, FOCUS_OFFSET.y, FOCUS_OFFSET.z)
-      );
-      fov = 32;
-    } else {
-      desiredLook = new THREE.Vector3(p.x, 0.8, p.z);
-      desiredPos = new THREE.Vector3(p.x, 0, p.z).add(CAM_OFFSET.clone().multiplyScalar(zoom.current));
+      desiredZoom = Math.max(fit.zoom * 1.5, size.height / 13);
+      const subject = new THREE.Vector3(focused.position[0], focused.position[1] + 1.2, focused.position[2]);
+      // aim below the subject so it sits in the upper part of the screen, above the journal sheet
+      desired.copy(subject).addScaledVector(UP, -(size.height / desiredZoom) * 0.28);
+    } else if (zoomRef.current > 1.03) {
+      desired.set(p.x, py + 1, p.z);
     }
-    cam.position.lerp(desiredPos, rate);
-    look.current.lerp(desiredLook, rate);
+    const rate = 1 - Math.exp(-delta * 3.4);
+    if (!look.current) look.current = desired.clone();
+    look.current.lerp(desired, rate);
+    cam.zoom += (desiredZoom - cam.zoom) * rate;
+    cam.position.copy(look.current).addScaledVector(TOWARD, CAMERA_DISTANCE);
     cam.lookAt(look.current);
-    if (Math.abs(cam.fov - fov) > 0.05) {
-      cam.fov += (fov - cam.fov) * rate;
-      cam.updateProjectionMatrix();
-    }
+    cam.updateProjectionMatrix();
     poseRef.current = { x: p.x, z: p.z, yaw: CAMERA_YAW };
     // --- nearby landmark + spatial beacon ---
     let closest: EncounterId | null = null;
     let best = 3.2;
     for (const lm of pack.encounters) {
+      if (Math.abs(lm.position[1] - py) > 1.5) continue; // another terrace: not "nearby"
       const d = Math.hypot(p.x - lm.position[0], p.z - lm.position[2]);
       if (d < best) ((best = d), (closest = lm.id));
     }
@@ -241,26 +282,87 @@ function Walker({ pack, pings, active, focus, destination, target, poseRef, onNe
     }
   });
 
+  const hood = new THREE.Color(pack.world.palette.accent).lerp(new THREE.Color("#ffffff"), 0.2).getStyle();
   return (
     <>
-      <group ref={body} position={[0, 0, 6.4]}>
-        <Round position={[0, 0.85, 0]} radius={0.5} top={0.22} height={1.7} color={pack.world.palette.accent} segments={10} ink={0.045} />
-        <Ball position={[0, 1.86, 0]} radius={0.3} color={pack.world.palette.accent} ink={0.045} />
-        <mesh position={[0, 1.83, 0.22]}>
-          <circleGeometry args={[0.17, 10]} />
-          <meshBasicMaterial color="#2a0f1a" />
-        </mesh>
-        <mesh position={[0, 0.02, 0]} rotation={[-Math.PI / 2, 0, 0]}>
-          <circleGeometry args={[0.6, 16]} />
-          <meshBasicMaterial color="#8a4a1a" transparent opacity={0.28} depthWrite={false} />
+      <group ref={body} position={[0, 0, 6.4]} userData={{ noOcclude: true }}>
+        <Blob radius={0.62} opacity={0.22} />
+        <Round position={[0, 0.85, 0]} radius={0.5} top={0.22} height={1.7} color={pack.world.palette.accent} segments={10} />
+        <Ball position={[0, 1.86, 0]} radius={0.33} color={hood} />
+        <mesh position={[0, 1.82, 0.22]}>
+          <circleGeometry args={[0.16, 12]} />
+          <meshBasicMaterial color="#fbe9dc" />
         </mesh>
       </group>
-      <mesh ref={marker} rotation={[-Math.PI / 2, 0, 0]}>
+      <mesh ref={marker} rotation={[-Math.PI / 2, 0, 0]} userData={{ noOcclude: true }}>
         <ringGeometry args={[0.35, 0.5, 24]} />
-        <meshBasicMaterial color="#4a1626" transparent opacity={0} depthWrite={false} />
+        <meshBasicMaterial color={pack.world.palette.ink} transparent opacity={0} depthWrite={false} />
       </mesh>
     </>
   );
+}
+
+/**
+ * Debug and test hooks on window.__lq: project a world point to the screen, and measure how much of the walkable
+ * ground the camera really sees (ray from every ground point toward the camera: does the first solid thing hit belong
+ * to something other than the ground?). Only installed with ?debug or under automation.
+ */
+function Hooks({ pack, terrain, poseRef }: { pack: LanguagePack; terrain: Terrain; poseRef: WalkerProps["poseRef"] }) {
+  const { camera, gl, scene } = useThree();
+  useEffect(() => {
+    const project = (x: number, y: number, z: number) => {
+      camera.updateMatrixWorld();
+      const v = new THREE.Vector3(x, y, z).project(camera);
+      const r = gl.domElement.getBoundingClientRect();
+      return { x: r.left + ((v.x + 1) / 2) * r.width, y: r.top + ((1 - v.y) / 2) * r.height };
+    };
+    const solid = packSolid(pack, terrain);
+    const visibility = () => {
+      scene.updateMatrixWorld(true);
+      camera.updateMatrixWorld();
+      const ray = new THREE.Raycaster();
+      const dir = TOWARD.clone().negate();
+      const blockers: THREE.Object3D[] = [];
+      scene.traverse((o) => {
+        const mesh = o as THREE.Mesh;
+        if (!mesh.isMesh) return;
+        const mat = mesh.material as THREE.Material | THREE.Material[];
+        if (!Array.isArray(mat) && mat.transparent) return;
+        for (let n: THREE.Object3D | null = o; n; n = n.parent) if (n.userData.noOcclude) return;
+        // Same rule as the validator: furniture lower than a person-plus-margin hides a strip of floor, not a place.
+        if (new THREE.Box3().setFromObject(o).getSize(new THREE.Vector3()).y < LOW_FURNITURE) return;
+        blockers.push(o);
+      });
+      const b = terrain.bounds;
+      let total = 0;
+      const hidden: [number, number][] = [];
+      for (let x = b.minX; x <= b.maxX; x += 0.5)
+        for (let z = b.minZ; z <= b.maxZ; z += 0.5) {
+          if (!terrain.walkable(x, z, 0.4) || solid(x, z)) continue;
+          total += 1;
+          const y = terrain.groundY(x, z) ?? 0;
+          const origin = new THREE.Vector3(x, y, z).addScaledVector(TOWARD, 100);
+          ray.set(origin, dir);
+          const hit = ray.intersectObjects(blockers, false)[0];
+          if (hit && hit.distance < 100 - 0.9) hidden.push([x, z]);
+        }
+      return { total, hidden, fraction: total ? 1 - hidden.length / total : 1 };
+    };
+    (window as unknown as { __lq: unknown }).__lq = {
+      project,
+      visibility,
+      pose: () => poseRef.current,
+      marker: (id: EncounterId) => {
+        const e = encounterOf(pack, id);
+        return project(e.position[0], e.position[1] + 1.2, e.position[2]);
+      },
+      ground: (x: number, z: number) => project(x, terrain.groundY(x, z) ?? 0, z),
+    };
+    return () => {
+      delete (window as unknown as { __lq?: unknown }).__lq;
+    };
+  }, [camera, gl, scene, pack, terrain, poseRef]);
+  return null;
 }
 
 function DebugProbe() {
@@ -291,6 +393,8 @@ export interface MaruWorldProps {
   debug: boolean;
   /** Spatial "ping" beacon toward the next encounter. Off by default: sound should follow the player's actions. */
   pings: boolean;
+  /** Zoom relative to "the whole world fits the screen" (1). The shell's +/- buttons and the wheel change it. */
+  zoomRef: React.MutableRefObject<number>;
   poseRef: React.MutableRefObject<{ x: number; z: number; yaw: number }>;
   onNearby: (id: EncounterId | null) => void;
   /** The player walked up to an encounter they clicked (or tapped). */
@@ -309,74 +413,70 @@ export function MaruWorld({
   lite,
   debug,
   pings,
+  zoomRef,
   poseRef,
   onNearby,
   onArrive,
   onPosition,
 }: MaruWorldProps) {
   const walkRef = useRef<((x: number, z: number, then?: EncounterId) => void) | null>(null);
+  const terrain = useMemo(() => packGrid(pack).terrain, [pack]);
   const select = (id: EncounterId) => {
     if (!active) return;
     const [ax, az] = encounterOf(pack, id).approach;
     walkRef.current?.(ax, az, id);
   };
   const bubbleId = focus ?? (nearby && isUnlocked(pack, nearby, visited) ? nearby : null);
-  const { light, fog } = { light: pack.world.palette.light, fog: pack.world.palette.fog };
+  const { light } = pack.world.palette;
+  const hooks = debug || (typeof navigator !== "undefined" && navigator.webdriver);
   return (
     <Canvas
-      shadows
-      dpr={[1, lite ? 1.5 : 1.75]}
+      orthographic
+      flat
+      dpr={[1, lite ? 1.5 : 2]}
       gl={{ alpha: true, antialias: true }}
       style={{ touchAction: "none" }}
-      camera={{ fov: 30, position: [11.4, 16.8, 22.8] }}
+      camera={{ zoom: 30, near: 0.1, far: 400, position: [0, 0, 0].map((_, i) => TOWARD.toArray()[i] * CAMERA_DISTANCE) as [number, number, number] }}
     >
       <PackCtx.Provider value={pack}>
-        <ambientLight color={light.ambient} intensity={1.05} />
-        <hemisphereLight args={[light.hemiSky, light.hemiGround, 0.7]} />
-        <directionalLight
-          castShadow
-          position={[-9, 17, 8]}
-          intensity={2.3}
-          color={light.sun}
-          shadow-mapSize={lite ? [1024, 1024] : [2048, 2048]}
-          shadow-camera-left={-24}
-          shadow-camera-right={24}
-          shadow-camera-top={24}
-          shadow-camera-bottom={-24}
-          shadow-camera-near={1}
-          shadow-camera-far={60}
-          shadow-bias={-0.0006}
-        />
-        <fog attach="fog" args={[fog, 38, 90]} />
-        {/* clicking anywhere in the world (ground, walls, water) walks to the nearest open spot */}
-        <group
-          onClick={(event: ThreeEvent<MouseEvent>) => {
-            event.stopPropagation();
-            if (active) walkRef.current?.(event.point.x, event.point.z);
-          }}
-        >
-          {pack.world.scenery === "nyhavn" ? <NyhavnScenery /> : <SandstoneScenery />}
-        </group>
-        <People />
-        {pack.encounters.map((e) => (
-          <Marker key={e.id} id={e.id} state={visited.includes(e.id) ? "done" : e.id === target ? "next" : "locked"} onSelect={select} />
-        ))}
-        {bubbleId && <Bubble id={bubbleId} />}
-        <Walker
-          pack={pack}
-          pings={pings}
-          active={active}
-          focus={focus}
-          destination={destination}
-          target={target}
-          visited={visited}
-          poseRef={poseRef}
-          onNearby={onNearby}
-          onArrive={onArrive}
-          onPosition={onPosition}
-          walkRef={walkRef}
-        />
-        {debug && <DebugProbe />}
+        <TerrainCtx.Provider value={terrain}>
+          {/* Flat shading: one soft ambient plus one sun gives each box its three tones (top, south face, east face). */}
+          <ambientLight color={light.ambient} intensity={0.5 * Math.PI} />
+          <hemisphereLight args={[light.hemiSky, light.hemiGround, 0.12 * Math.PI]} />
+          <directionalLight position={[3, 8.5, 5]} intensity={0.5 * Math.PI} color={light.sun} />
+          {/* clicking anywhere in the world (ground, walls) walks to the nearest open spot */}
+          <group
+            onClick={(event: ThreeEvent<MouseEvent>) => {
+              event.stopPropagation();
+              if (active) walkRef.current?.(event.point.x, event.point.z);
+            }}
+          >
+            {pack.world.scenery === "nyhavn" ? <NyhavnScenery /> : <SandstoneScenery />}
+          </group>
+          <People />
+          {pack.encounters.map((e) => (
+            <Marker key={e.id} id={e.id} state={visited.includes(e.id) ? "done" : e.id === target ? "next" : "locked"} onSelect={select} />
+          ))}
+          {bubbleId && <Bubble id={bubbleId} />}
+          <Walker
+            pack={pack}
+            terrain={terrain}
+            pings={pings}
+            active={active}
+            focus={focus}
+            destination={destination}
+            target={target}
+            visited={visited}
+            zoomRef={zoomRef}
+            poseRef={poseRef}
+            onNearby={onNearby}
+            onArrive={onArrive}
+            onPosition={onPosition}
+            walkRef={walkRef}
+          />
+          {hooks && <Hooks pack={pack} terrain={terrain} poseRef={poseRef} />}
+          {debug && <DebugProbe />}
+        </TerrainCtx.Provider>
       </PackCtx.Provider>
     </Canvas>
   );

@@ -1,5 +1,6 @@
 import { MEANING_LIBRARY } from "../maruPictureData";
-import type { BuildingSpec, LanguagePack, PhonemeEntry } from "./types";
+import { NPC_SPOTS, SPOTS, archiveHouse, gateWall, terraces, westHouses } from "./layout";
+import type { LanguagePack, PhonemeEntry } from "./types";
 
 /**
  * Danish pack, set on the Nyhavn quay in Copenhagen.
@@ -9,24 +10,8 @@ import type { BuildingSpec, LanguagePack, PhonemeEntry } from "./types";
  */
 
 // Nyhavn façade colours: mustard, brick red, harbour blue, cream, orange, sage, rose, navy.
-const FACADE = ["#f2c14e", "#c8523a", "#4a7aa6", "#eadfc4", "#d9803f", "#82a68f", "#b5485d", "#35566b"];
-const ROOFS = ["#8a3b2c", "#5f4b46", "#3d4f61"];
-
-const row = (x: number, face: "e" | "w", skip?: number): BuildingSpec[] =>
-  [-11, -7.7, -4.4, -1.1, 2.2, 5.5]
-    .map((z, i): BuildingSpec | null =>
-      skip === i
-        ? null
-        : {
-            position: [x, 0, z],
-            size: [4.4, 6.2 + ((i * 7 + (face === "e" ? 0 : 3)) % 4) * 0.55, 3.2],
-            color: FACADE[(i * 3 + (face === "e" ? 0 : 5)) % FACADE.length],
-            roof: ROOFS[(i + (face === "e" ? 0 : 1)) % ROOFS.length],
-            faces: [face === "e" ? "e" : "w"],
-            kind: "house",
-          }
-    )
-    .filter((b): b is BuildingSpec => b !== null);
+const FACADE = ["#f3d98b", "#e9a59c", "#9fc3de", "#f4ead2", "#f2b88c", "#b8d4bf", "#e7b6c4", "#9fb0cf"];
+const ROOFS = ["#d98a7d", "#8d9bb0", "#b58e86"];
 
 const vowel = (symbol: string, name: string, how: string, keywords: PhonemeEntry["keywords"], extra: Partial<PhonemeEntry> = {}): PhonemeEntry => ({
   symbol,
@@ -423,8 +408,8 @@ export const da: LanguagePack = {
       id: "fountain",
       name: "Quay Water Pump",
       phase: "Observe",
-      position: [0, 0, 2],
-      approach: [0, 4.6],
+      position: SPOTS.fountain.position,
+      approach: SPOTS.fountain.approach,
       scene: "At the Nyhavn quay a brass pump drips into a stone basin. A child fills a cup, drinks, and says one word as they point at the stream.",
       say: ["Vand."],
       clues: [
@@ -472,8 +457,8 @@ export const da: LanguagePack = {
       id: "vendor",
       name: "Coffee Kiosk",
       phase: "Connect",
-      position: [-6, 0, -2],
-      approach: [-4.1, -0.6],
+      position: SPOTS.vendor.position,
+      approach: SPOTS.vendor.approach,
       requires: "fountain",
       scene:
         "At a red kiosk on the quay the vendor lifts one steaming cup and names it, then sweeps her hand over a tray of cups and names them again with a small change.",
@@ -517,8 +502,8 @@ export const da: LanguagePack = {
       id: "guard",
       name: "Harbour Master",
       phase: "Hear",
-      position: [0, 0, -7],
-      approach: [0, -4.8],
+      position: SPOTS.guard.position,
+      approach: SPOTS.guard.approach,
       requires: "vendor",
       scene:
         "The harbour master raises a brass key and speaks. Then he turns to an empty-handed traveller and speaks the same sentence again, with one extra word.",
@@ -586,8 +571,8 @@ export const da: LanguagePack = {
       id: "gate",
       name: "Harbour Gate",
       phase: "Compose",
-      position: [0, 0, -13],
-      approach: [0, -11.1],
+      position: SPOTS.gate.position,
+      approach: SPOTS.gate.approach,
       requires: "guard",
       scene:
         "The iron harbour gate hangs shut with a padlock and a lettered tag. The harbour master pulls at it, then points at his key and at the gate, palm up, and gives a reason in one long sentence.",
@@ -662,8 +647,8 @@ export const da: LanguagePack = {
       id: "archive",
       name: "Archive Door",
       phase: "Speak",
-      position: [8, 0, -7],
-      approach: [7.7, -7],
+      position: SPOTS.archive.position,
+      approach: SPOTS.archive.approach,
       requires: "gate",
       scene:
         "The archivist waits at the door with her arms folded. She does not translate anything. She wants to hear you say what the harbour master said.",
@@ -701,39 +686,34 @@ export const da: LanguagePack = {
   },
   world: {
     scenery: "nyhavn",
+    // Three floating terraces joined by stairs (see packs/layout.ts), in pastel versions of the Nyhavn colours.
+    ...terraces({ a: ["#efe2cf", "#dcc6b4"], b: ["#f2d9c6", "#d9b8a8"], d: ["#ecd3d0", "#cfa9a6"], stairs: "#f8eee2" }),
     palette: {
-      ground: "#b9ab98",
-      street: "#a99a86",
-      plaza: "#d3c7b2",
-      water: "#3b7f98",
-      fog: "#cfe0ea",
-      ink: "#1f2c3d",
-      cloaks: ["#c8102e", "#2b4a6f", "#d9a21b", "#2a7f7a", "#7a3b5e"],
-      accent: "#c8102e",
-      light: { ambient: "#e8eff6", hemiSky: "#dbe9f5", hemiGround: "#c9a98b", sun: "#fff1d6" },
+      ground: "#efe2cf",
+      street: "#e6d5bd",
+      plaza: "#f7efe0",
+      water: "#a6d0df",
+      sky: ["#b9d9ea", "#e9f1ee"],
+      fog: "#dcecef",
+      ink: "#6f86a6",
+      cloaks: ["#e8828a", "#7f9cc4", "#e8c36a", "#8cc4b4", "#b79bc9"],
+      accent: "#df6670",
+      light: { ambient: "#fff4ee", hemiSky: "#ffffff", hemiGround: "#cddcf0", sun: "#fffaf0" },
     },
-    buildings: [
-      ...row(-11.6, "e"),
-      ...row(11.6, "w", 1),
-      // The archive stands in the east row (the skipped slot).
-      { position: [11.6, 0, -7.7], size: [4.4, 6.4, 3.2], color: "#eadfc4", roof: "#5f4b46", faces: ["w"], kind: "house" },
-      // Harbour wall with the gate.
-      { position: [0, 0, -14.4], size: [19, 5.2, 1.4], color: "#b9a48a", roof: "#6c5d4d", faces: ["s"], kind: "wall" },
-    ],
+    buildings: [...westHouses(FACADE, ROOFS), archiveHouse("#f4ead2", "#b58e86"), gateWall("#d9cbb6", "#bfae96")],
     npcs: [
-      { position: [1.4, 0, 3.1], color: "#c8102e", scale: 0.7, facing: -0.6, tool: "cup" },
-      { position: [-6, 0, -3.15], color: "#2a7f7a", facing: 0, tool: "cup" },
-      { position: [0, 0, -6.7], color: "#2b4a6f", scale: 1.1, facing: 0, tool: "key" },
-      { position: [-1.9, 0, -5.7], color: "#7a3b5e", facing: 0.9 },
-      { position: [8.2, 0, -7], color: "#d9a21b", facing: -Math.PI / 2 },
+      { ...NPC_SPOTS.child, color: "#e8828a", tool: "cup" },
+      { ...NPC_SPOTS.vendor, color: "#8cc4b4", tool: "cup" },
+      { ...NPC_SPOTS.guard, color: "#7f9cc4", tool: "key" },
+      { ...NPC_SPOTS.traveller, color: "#b79bc9" },
+      { ...NPC_SPOTS.archivist, color: "#e8c36a" },
     ],
     signs: [
-      { words: ["vand"], position: [0, 0.34, 1.97], width: 1.1 },
-      { words: ["vand"], position: [-11.0, 3.0, 5.5], rotationY: Math.PI / 2, width: 1.6 },
-      { words: ["kop"], position: [-6, 0.5, -1.42], width: 0.9 },
-      { words: ["lukket"], position: [0, 2.3, -13.6], width: 1.5 },
-      { text: "Nyhavn", position: [11.0, 4.7, 5.5], rotationY: -Math.PI / 2, width: 1.7 },
-      { text: "Arkivet", position: [9.38, 3.3, -7.7], rotationY: -Math.PI / 2, width: 1.5 },
+      { words: ["vand"], position: [0, 0.34, 3.97], width: 1.1 },
+      { words: ["kop"], position: [-7.6, 0.62, 0.2], width: 0.9 },
+      { words: ["lukket"], position: [0, 4.9, -15.2], width: 1.5 },
+      { text: "Nyhavn", position: [-4.4, 5.6, -15.32], width: 1.7 },
+      { text: "Arkivet", position: [-9.33, 4.7, -7.4], rotationY: Math.PI / 2, width: 1.5 },
     ],
   },
   verification: {

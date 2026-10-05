@@ -4,6 +4,7 @@
 //   CHROMIUM_PATH=/path/to/chromium BASE_URL=http://localhost:4321 node scripts/e2e/danish-lesson.mjs
 // Software WebGL flags are used so it also runs on machines without a GPU (slowly).
 import { chromium } from "playwright-core";
+import { clickMarker } from "./_lq.mjs";
 const BASE = process.env.BASE_URL ?? "http://localhost:4321";
 const launch = () =>
   chromium.launch({
@@ -32,7 +33,7 @@ ok(!(await p.evaluate(() => window.__spoken.length)), "walking near the pump mak
 
 // open the lesson by clicking the pump marker
 let opened = false;
-for (const [x,y] of [[640,330],[690,330],[600,340],[650,280]]) { await p.mouse.click(x,y); await p.waitForTimeout(1600); if (await p.getByRole("dialog").count()) { opened = true; break; } }
+await clickMarker(p, "fountain"); await p.waitForTimeout(2500); opened = (await p.getByRole("dialog").count()) > 0;
 ok(opened, "clicking the pump opens the guided lesson");
 ok((await p.evaluate(() => window.__spoken.length)) === 0, "opening the lesson does not autoplay audio");
 await p.waitForTimeout(1500);

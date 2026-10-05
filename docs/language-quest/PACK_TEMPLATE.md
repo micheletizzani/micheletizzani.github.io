@@ -173,9 +173,12 @@ spoken. Process used for Danish / Nyhavn:
    harbour blue, cream, orange, sage, rose, navy; the red-and-white Dannebrog; harbour teal; cobble grey).
 2. Put the wall colours in `world.buildings[].color`, the ground and water in `world.palette`, figures' clothes in
    `palette.cloaks`.
-3. Pick **ink** (outline and text) as a dark version of the place's darkest colour and **paper** as a warm light.
+   **Make every colour pastel**: lighten and soften the real colours (roughly lightness 75–90 %, saturation under 60 %).
+   Flat faces on a pale sea read well; strong saturated colours look harsh without outlines. `palette.sky` is the
+   background gradient (top, bottom); `palette.water` is the sea.
+3. Pick **ink** (text, window glass) as a dark-ish version of the place's darkest colour and **paper** as a warm light.
    Check contrast (§2). The Danish pack uses navy ink on warm white with Danish red as the accent.
-4. Set `ui.wash` (corner colour) low-opacity and `ui.halftone` to the ink colour.
+4. Set `ui.wash` low-opacity (it is no longer drawn over the scene, but the field stays in the type for now).
 
 Do not use national symbols carelessly: use them as they appear in the real place (flags on poles at the quay), not as
 decoration everywhere.
@@ -191,21 +194,25 @@ The 3D world is drawn by a **scenery** component chosen with `pack.world.scenery
 
 **A new scenery component**
 
-1. Create `world/<Name>.tsx` exporting `<Name>Scenery`. Build it from the primitives in `world/toon.tsx`:
-   `Box`, `Round` (cylinder/cone), `Ball`, `Gable` (pitched roof), `Toon` (material). They draw the flat shading and the
-   ink outline for you. Read colours from `usePack().world.palette`.
-2. Draw the ground, water, buildings from `pack.world.buildings`, props, and `pack.world.signs` (use `<Sign sign={s} />`).
-3. Add your key to `SceneryKey` in `packs/types.ts` and to the conditional in `MaruWorld.tsx`.
-4. Keep these fixed so collisions and cameras stay right: the central piece at (0, 0, 2) with radius 2.4; the kiosk/stall
-   at (−6, 0, −2); the booth pillars at (±1.9, 0, −8.3); the canal from z = 8.3; the gate wall near z = −14.4.
-   (They are constants in `makeSolid` in `MaruWorld.tsx`; make them data when a pack needs to move them.)
-5. Test with `?debug` on a phone: outlines double the geometry, so keep props modest.
+1. Create `world/<Name>.tsx` exporting `<Name>Scenery`. Render `<Sea />` and `<Terrain pattern="cobble" | "tiles" />` first (they
+   draw the floating terraces and stairs from `world.tiers` / `world.stairs`), then buildings from `pack.world.buildings`
+   (their `position[1]` is the terrace height), props, and `pack.world.signs` (use `<Sign sign={s} />`).
+   Build from the flat primitives in `world/toon.tsx` (`Box`, `Round`, `Ball`, `Gable`) and `world/Props.tsx` (benches, lamps,
+   planters, boats, a fountain). No outlines: use `lighten`/`darken` for trim. Windows and doors are flat `meshBasicMaterial`
+   planes a hair in front of the wall.
+2. Add your key to `SceneryKey` in `packs/types.ts` and to the conditional in `MaruWorld.tsx`.
+3. **Layout.** Use `terraces({...colours})` and the `SPOTS` / `NPC_SPOTS` / `westHouses` / `archiveHouse` / `gateWall` helpers from
+   `packs/layout.ts`. They already satisfy the visibility rule: tall things only on the west and north edges, only low things
+   (planters, benches, a counter, the kiosk) on the south and east edges, and every set piece under 2.2 m high where it
+   stands in front of something. If you draw your own layout, run `npm run packs:check` (exact ray test) and
+   `node scripts/e2e/visibility.mjs` (the real scene, needs a browser): both must report at least 98 % of walkable ground visible.
+4. Fixed positions (data in `packs/navgrid.ts`): the central piece at (0, 0, 2) with radius 2.4 and the kiosk at (−7.6, 0, −0.4).
+5. Test with `?debug` on a phone; `window.__lq.visibility()` in the console reports what the camera sees.
 
 **Props worth adding for a place** (Nyhavn as the example): transport (boats, bicycles), signage (flags, painted signs),
 street furniture (benches, lamps, bollards), vegetation, and one food or drink stand.
 
-**A new city (not only a new language).** The map screen (`CityMapArt.tsx`), the world bounds (`maruData.ts`) and the camera
-framing are Copenhagen-specific and are **not pack data yet**. For another city: draw a new map SVG, add a `mapArt` key to the
+**A new city (not only a new language).** The map screen (`CityMapArt.tsx`) and the terrace layout (`packs/layout.ts`) are Copenhagen-specific and are **not pack data yet**. For another city: draw a new map SVG, add a `mapArt` key to the
 pack and select it in `MapScreen`, and decide whether the 30 × 25 m world is enough. This is the main extension point not yet built.
 
 **Pictograms.** To add a picture card or clue icon: add a `PICTURES` entry (a list of `{ d, fill? }` shapes on a 48-unit grid) and,
@@ -237,6 +244,8 @@ Right-to-left or non-Latin real scripts are not supported yet.
 - [ ] You listened to every word with the target voice on at least two browsers/devices.
 - [ ] `verified` flags and `verification.note` are honest; unverified content is visible as such.
 - [ ] Contrast checked; text readable on the 3D scene at both zoom levels.
+- [ ] The whole walkable world is on screen at zoom 1, on desktop and in phone landscape (`node scripts/e2e/visibility.mjs`).
+- [ ] The palette is pastel and tied to the place.
 - [ ] `?debug` shows an acceptable frame rate on a mid-range phone.
 - [ ] No copyrighted assets, brand logos or real people were used. Place-inspired art is stylised, not copied.
 

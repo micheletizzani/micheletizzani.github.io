@@ -9,6 +9,7 @@
  * It is NOT registered in the game.
  */
 import { MEANING_LIBRARY } from "../maruPictureData";
+import { NPC_SPOTS, SPOTS, archiveHouse, gateWall, terraces, westHouses } from "./layout";
 import type { LanguagePack } from "./types";
 
 export const template: LanguagePack = {
@@ -94,8 +95,8 @@ export const template: LanguagePack = {
       id: "fountain",
       name: "The Fountain",
       phase: "Observe", // short label in the HUD
-      position: [0, 0, 2], // metres on the ground plane: x east, z south. The map screen is drawn from this too.
-      approach: [0, 4.6], // where the player stands to study it (must not be inside a building)
+      position: SPOTS.fountain.position, // metres: x east, z south. The map screen is drawn from this too.
+      approach: SPOTS.fountain.approach, // where the player stands to study it: on walkable ground, not inside a building
       scene: "A child fills a cup at the fountain and says one word as they drink.", // MUST NOT contain the target word
       say: ["alo", "tuki"], // what is said, as written text; spoken only when the player presses Listen
       clues: [
@@ -136,8 +137,8 @@ export const template: LanguagePack = {
       id: "archive",
       name: "The Archive Door",
       phase: "Speak",
-      position: [8, 0, -7],
-      approach: [7.7, -7],
+      position: SPOTS.archive.position,
+      approach: SPOTS.archive.approach,
       requires: "fountain",
       scene: "The archivist waits at the door and wants to hear what you learned.",
       say: [],
@@ -176,29 +177,32 @@ export const template: LanguagePack = {
 
   // ---------------------------------------------------------------- the 3D world
   world: {
-    scenery: "sandstone", // "nyhavn" (gabled colourful houses, boats) or "sandstone"; add your own in world/
+    scenery: "sandstone", // "nyhavn" (gabled houses, boats, flags) or "sandstone" (arched façades); add your own in world/
+    // Three floating terraces joined by stairs. Reuse the layout so encounters, the map and collision stay consistent.
+    ...terraces({ a: ["#f3e0c0", "#e3c5a6"], b: ["#f5d6b8", "#dfb497"], d: ["#f1cfc4", "#d9a69c"], stairs: "#faefdc" }),
     palette: {
-      ground: "#f3cf63",
-      street: "#eaa94a",
-      plaza: "#f9e393",
-      water: "#45bdb2",
-      fog: "#f6c27f",
-      ink: "#4a1626", // outline colour
-      cloaks: ["#c8452e", "#2f6f8f", "#8a1c33", "#6b4a7a", "#2a5f56"],
-      accent: "#b33a4a",
-      light: { ambient: "#ffd6a0", hemiSky: "#fff0b8", hemiGround: "#d8506a", sun: "#fff4d0" },
+      ground: "#f3e0c0",
+      street: "#ecd2ac",
+      plaza: "#f8ecd2",
+      water: "#b5ddd9", // the sea around the terraces
+      sky: ["#c7e3e8", "#f3e5d1"], // background gradient, top to bottom (pastel)
+      fog: "#efe3d2",
+      ink: "#8a6f8c", // fine detail: window glass
+      cloaks: ["#e58c7c", "#7fb0c4", "#d17a8c", "#a89cc9", "#7fbfa5"],
+      accent: "#e07a8a",
+      light: { ambient: "#fff1e6", hemiSky: "#fffaf0", hemiGround: "#e2c4d4", sun: "#fff6e4" },
     },
-    // Buildings are also the collision geometry. Keep the street between x=-9 and x=9 clear, and the centre pieces
-    // (fountain, kiosk, booth) in place: scenery draws them at fixed positions.
+    // Tall buildings stand ONLY on the far (west and north) edges so nothing hides a walkable surface.
+    // position[1] is the height of the terrace the building stands on (0 quay, 1.2 terrace, 2.4 upper).
     buildings: [
-      { position: [-10, 0, 6], size: [5.4, 4.6, 4.5], color: "#f1bd4a", roof: "#b33a4a", faces: ["e", "s"] },
-      { position: [10.6, 0, -7], size: [3, 5, 3.2], color: "#f9e29a", roof: "#7c2a3e", faces: ["w"] },
-      { position: [0, 0, -14.4], size: [10, 6.4, 1.4], color: "#e6a43c", roof: "#7c2a3e", faces: ["s"], kind: "wall" },
+      ...westHouses(["#f6dca4", "#f3c78f", "#f5e3b5", "#efb9a0"], ["#e9a89c", "#d99a90"]),
+      archiveHouse("#f8e8c8", "#d99a90"),
+      gateWall("#f1c9a8", "#d99a90"),
     ],
     // One person per encounter is a good rule. `tool` adds a key, spear or cup.
     npcs: [
-      { position: [1.4, 0, 3.1], color: "#c8452e", scale: 0.7, facing: -0.6, tool: "cup" },
-      { position: [8.2, 0, -7], color: "#2a5f56", facing: -Math.PI / 2 },
+      { ...NPC_SPOTS.child, color: "#e58c7c", tool: "cup" },
+      { ...NPC_SPOTS.archivist, color: "#7fbfa5" },
     ],
     // Writing in the world. `words` are lexicon ids; `text` is decorative lettering (street or shop names).
     signs: [{ words: ["alo"], position: [0, 0.34, 3.97], width: 1.1 }],
