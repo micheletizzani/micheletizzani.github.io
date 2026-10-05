@@ -1,4 +1,7 @@
 import { PICTURES } from "../maruPictureData";
+import { findPath } from "../maruNav";
+import { packGrid, packTerrain } from "./navgrid";
+import { hiddenGround } from "./visibility";
 import { normalizeSound } from "../maruPhonetics";
 import type { Encounter, LanguagePack } from "./types";
 
@@ -6,8 +9,6 @@ export interface Report {
   errors: string[];
   warnings: string[];
 }
-
-const WORLD = { minX: -15, maxX: 15, minZ: -17, maxZ: 8.3 };
 
 function luminance(hex: string): number {
   const m = /^#?([0-9a-f]{6})$/i.exec(hex.trim());
@@ -41,6 +42,7 @@ export function validatePack(pack: LanguagePack): Report {
   ] as const)
     for (const d of new Set(dupes([...ids]))) err(`duplicate ${what} "${d}"`);
 
+  const terrain = packTerrain(pack);
   const words = new Map(pack.lexicon.map((w) => [w.id, w]));
   const meanings = new Set(pack.meanings.map((m) => m.id));
   const encounters = new Map(pack.encounters.map((e) => [e.id, e]));
@@ -96,8 +98,9 @@ export function validatePack(pack: LanguagePack): Report {
       warn(`encounter "${e.id}" has no decoy clue (supports: []); observation should include noise`);
     if (e.drills.length && !e.say.length) err(`encounter "${e.id}" has drills but nothing is said`);
     const [x, , z] = e.position;
-    if (x < WORLD.minX || x > WORLD.maxX || z < WORLD.minZ || z > WORLD.maxZ) err(`encounter "${e.id}" position is outside the world`);
+    if (terrain.groundY(x, z) === null) err(`encounter "${e.id}" is not on any terrace (position ${x}, ${z})`);
     const [ax, az] = e.approach;
+    if (!terrain.walkable(ax, az, 0.4)) err(`approach point of "${e.id}" is not on walkable ground (${ax}, ${az})`);
     for (const b of pack.world.buildings)
       if (Math.abs(ax - b.position[0]) < b.size[0] / 2 + 0.45 && Math.abs(az - b.position[2]) < b.size[2] / 2 + 0.45)
         err(`approach point of "${e.id}" is inside a building`);
@@ -138,6 +141,48 @@ export function validatePack(pack: LanguagePack): Report {
   if (missingKeys.size) warn(`on-screen keyboard lacks symbols used in the lexicon: ${[...missingKeys].join(" ")}`);
   if (missingEntries.size) warn(`phonetic dictionary lacks entries for: ${[...missingEntries].join(" ")}`);
   for (const p of pack.phonology) if (!p.keywords.length) err(`phoneme "${p.symbol}" has no keyword`);
+
+  // --- the layered world: terraces, stairs, reachability ---
+  if (!pack.world.tiers.length) err(`world.tiers is empty`);
+  for (const st of pack.world.stairs) {
+    const [lo, hi] = st.axis === "z" ? [Math.min(...st.z), Math.max(...st.z)] : [Math.min(...st.x), Math.max(...st.x)];
+    const mid = st.axis === "z" ? (st.x[0] + st.x[1]) / 2 : (st.z[0] + st.z[1]) / 2;
+    const at = (c: number) => (st.axis === "z" ? terrain.groundY(mid, c) : terrain.groundY(c, mid));
+    const below = at(lo - 0.3);
+    const above = at(hi + 0.3);
+    if (below === null || Math.abs(below - st.y0) > 0.05)
+      err(`stair at ${JSON.stringify([st.x, st.z])} does not meet a terrace at height ${st.y0} on its low side (found ${below})`);
+    if (above === null || Math.abs(above - st.y1) > 0.05)
+      err(`stair at ${JSON.stringify([st.x, st.z])} does not meet a terrace at height ${st.y1} on its high side (found ${above})`);
+  }
+  for (const b of pack.world.buildings) {
+    const base = terrain.groundY(b.position[0], b.position[2]);
+    if (base === null || Math.abs(base - b.position[1]) > 0.05)
+      err(`building at ${JSON.stringify([b.position[0], b.position[2]])} says it stands at height ${b.position[1]} but the ground there is ${base}`);
+    const corners = [
+      [-1, -1],
+      [1, -1],
+      [-1, 1],
+      [1, 1],
+    ].map(([sx, sz]) => terrain.groundY(b.position[0] + (sx * b.size[0]) / 2, b.position[2] + (sz * b.size[2]) / 2));
+    if (corners.some((c) => c === null)) err(`building at ${JSON.stringify([b.position[0], b.position[2]])} overhangs the sea`);
+  }
+  // Every walkable surface must be visible from the isometric camera (nothing may stand in front of it).
+  const vis = hiddenGround(pack);
+  if (vis.hidden.length) {
+    const pct = (100 * vis.hidden.length) / Math.max(1, vis.total);
+    const sample = vis.hidden
+      .slice(0, 3)
+      .map(([x, z]) => `(${x}, ${z})`)
+      .join(" ");
+    const msg = `${vis.hidden.length} of ${vis.total} walkable points (${pct.toFixed(1)}%) are hidden behind buildings, for example ${sample}: move tall buildings to the west/north edges`;
+    if (pct > 2) err(msg);
+    else warn(msg);
+  }
+  const { grid } = packGrid(pack);
+  for (const e of pack.encounters) {
+    if (!findPath(grid, [0, 6.4], e.approach).length) err(`encounter "${e.id}" cannot be reached on foot from the start (check stairs and heights)`);
+  }
 
   // --- signs and world ---
   for (const s of pack.world.signs) {

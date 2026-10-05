@@ -4,6 +4,7 @@
 //   CHROMIUM_PATH=/path/to/chromium BASE_URL=http://localhost:4321 node scripts/e2e/maru-pack.mjs
 // Software WebGL flags are used so it also runs on machines without a GPU (slowly).
 import { chromium } from "playwright-core";
+import { clickMarker } from "./_lq.mjs";
 const BASE = process.env.BASE_URL ?? "http://localhost:4321";
 const launch = () =>
   chromium.launch({
@@ -25,7 +26,7 @@ await p.getByRole("button", { name: /Enter Højbro Plads/i }).click();
 await p.waitForTimeout(3000);
 await p.screenshot({ path: (process.env.SHOTS ?? "/tmp") + "/m1_world.png" });
 let opened=false;
-for (const [x,y] of [[640,330],[690,330],[600,340]]) { await p.mouse.click(x,y); await p.waitForTimeout(1500); if (await p.getByRole("dialog").count()) { opened=true; break; } }
+await clickMarker(p, "fountain"); await p.waitForTimeout(2500); opened = (await p.getByRole("dialog").count()) > 0;
 ok(opened, "Maru: clicking the fountain opens the lesson");
 const dlg = p.getByRole("dialog").first();
 await dlg.getByRole("tab", { name: /Sound/ }).click(); await p.waitForTimeout(300);

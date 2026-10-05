@@ -16,6 +16,8 @@ import {
   Volume2,
   VolumeX,
   X,
+  ZoomIn,
+  ZoomOut,
 } from "lucide-react";
 import { CityMapArt } from "./CityMapArt";
 import { Finale } from "./Finale";
@@ -186,7 +188,7 @@ function CompassHud({
   }, [pack, poseRef, target]);
   if (!target) return null;
   return (
-    <div className="pointer-events-none absolute left-1/2 top-3 z-10 flex -translate-x-1/2 items-center gap-2 rounded-full border border-[var(--mx-gold)]/70 bg-[color-mix(in_srgb,var(--mx-ink)_88%,transparent)] px-3 py-1.5 text-[var(--mx-paper)] [@media(max-height:480px)]:top-2 portrait:top-[4.2rem]">
+    <div className="pointer-events-none absolute left-1/2 top-3 z-10 flex -translate-x-1/2 items-center gap-2 rounded-full border border-[var(--mx-gold)]/70 bg-[color-mix(in_srgb,var(--mx-ink)_88%,transparent)] px-3 py-1.5 text-[var(--mx-paper)] [@media(max-height:480px)]:bottom-28 [@media(max-height:480px)]:left-auto [@media(max-height:480px)]:right-3 [@media(max-height:480px)]:top-auto [@media(max-height:480px)]:translate-x-0 portrait:top-[4.2rem]">
       <div ref={arrow} data-testid="compass-arrow" className="text-[var(--mx-gold)]">
         <svg width="18" height="18" viewBox="0 0 18 18">
           <path d="M9 1 L14 15 L9 12 L4 15Z" fill="currentColor" />
@@ -328,6 +330,7 @@ function CommandsPanel({
 export const MaruExpedition: React.FC<{ onExit?: () => void }> = ({ onExit }) => {
   const shell = useRef<HTMLDivElement>(null);
   const poseRef = useRef({ x: 0, z: 6.4, yaw: 0 });
+  const zoomRef = useRef(1);
   const [packId, setPackId] = useState(DEFAULT_PACK_ID);
   const pack = getPack(packId);
   const [progress, setProgress] = useState<Progress>(emptyProgress);
@@ -551,7 +554,7 @@ export const MaruExpedition: React.FC<{ onExit?: () => void }> = ({ onExit }) =>
   return (
     <div
       ref={shell}
-      style={{ ...themeVars(pack), background: pack.world.palette.fog }}
+      style={{ ...themeVars(pack), background: `linear-gradient(to bottom, ${pack.world.palette.sky[0]}, ${pack.world.palette.sky[1]})` }}
       className="fixed inset-0 z-[200] overflow-hidden text-[var(--mx-ink)]"
       lang={pack.speech.synth}
     >
@@ -566,19 +569,11 @@ export const MaruExpedition: React.FC<{ onExit?: () => void }> = ({ onExit }) =>
         lite={isTouch}
         debug={debug}
         pings={pings}
+        zoomRef={zoomRef}
         poseRef={poseRef}
         onNearby={handleNearby}
         onArrive={arrived}
         onPosition={setPlayerPosition}
-      />
-      {/* print-like finish: halftone dots and a coloured wash in the corner */}
-      <div
-        className="pointer-events-none absolute inset-0 opacity-[.2] mix-blend-multiply"
-        style={{ backgroundImage: `radial-gradient(${pack.ui.halftone} 0.9px, transparent 1.1px)`, backgroundSize: "4px 4px" }}
-      />
-      <div
-        className="pointer-events-none absolute inset-0"
-        style={{ background: `linear-gradient(to top right, ${pack.ui.wash}, transparent 42%)` }}
       />
       {!mapOpen && !focus && <CompassHud pack={pack} poseRef={poseRef} target={target} />}
       <div className="pointer-events-none absolute inset-x-0 top-0 flex items-start justify-between p-3 sm:p-5 [@media(max-height:480px)]:p-2">
@@ -616,6 +611,22 @@ export const MaruExpedition: React.FC<{ onExit?: () => void }> = ({ onExit }) =>
               className={`absolute -right-1 -top-1 h-2.5 w-2.5 rounded-full border border-[var(--mx-ink)] ${voice.status === "ok" ? (voice.override ? "bg-[var(--mx-gold)]" : "bg-[var(--mx-good)]") : voice.status === "missing" ? "bg-[var(--mx-accent)]" : "bg-[var(--mx-muted)]"}`}
             />
           </button>
+          <div className="flex">
+            <button
+              onClick={() => (zoomRef.current = Math.max(1, zoomRef.current / 1.25))}
+              aria-label="Zoom out: see the whole place"
+              className={`${hud} px-2.5 py-2`}
+            >
+              <ZoomOut size={15} />
+            </button>
+            <button
+              onClick={() => (zoomRef.current = Math.min(2.6, zoomRef.current * 1.25))}
+              aria-label="Zoom in: follow the explorer"
+              className={`${hud} -ml-0.5 px-2.5 py-2`}
+            >
+              <ZoomIn size={15} />
+            </button>
+          </div>
           <button
             onClick={() => setPings((v) => !v)}
             aria-pressed={pings}
@@ -646,11 +657,11 @@ export const MaruExpedition: React.FC<{ onExit?: () => void }> = ({ onExit }) =>
       <div
         className={`pointer-events-none absolute bottom-3 flex items-end justify-between gap-3 ${focus ? "hidden" : ""} ${isTouch ? "left-3 right-28 portrait:bottom-24 portrait:right-3" : "left-4 right-4 sm:left-6 sm:right-6"}`}
       >
-        <div className="pointer-events-auto max-h-[38vh] max-w-2xl overflow-y-auto border-2 border-[var(--mx-ink)] bg-[var(--mx-paper)] p-3 shadow-[4px_4px_0_var(--mx-ink)] sm:p-4">
+        <div className="pointer-events-auto max-h-[38vh] max-w-md overflow-y-auto border-2 border-[var(--mx-ink)] bg-[var(--mx-paper)] p-3 shadow-[4px_4px_0_var(--mx-ink)] sm:p-3">
           <div className="flex items-center gap-2 font-mono text-[10px] uppercase tracking-[.16em] text-[var(--mx-accent)]">
             <MessageCircle size={14} /> {current?.phase ?? "Arrive"}
           </div>
-          <p className="mt-2 text-xs leading-relaxed sm:text-base">{message}</p>
+          <p className="mt-2 text-xs leading-relaxed sm:text-sm">{message}</p>
           {current && unlocked && !isTouch && (
             <div className="mt-3 flex flex-wrap items-center gap-2">
               <button
@@ -674,7 +685,7 @@ export const MaruExpedition: React.FC<{ onExit?: () => void }> = ({ onExit }) =>
         {!isTouch && (
           <button
             onClick={() => setHelpOpen(true)}
-            className="pointer-events-auto hidden border-2 border-[var(--mx-ink)] bg-[var(--mx-paper)] p-3 text-left font-mono text-[10px] shadow-[3px_3px_0_var(--mx-ink)] hover:bg-[var(--mx-gold)] md:block"
+            className="pointer-events-auto hidden border-2 border-[var(--mx-ink)] bg-[var(--mx-paper)] p-3 text-left font-mono text-[10px] shadow-[3px_3px_0_var(--mx-ink)] hover:bg-[var(--mx-gold)] md:block [@media(max-height:480px)]:!hidden"
           >
             <div className="flex items-center gap-2">
               <MousePointer2 size={14} /> click ground · walk (or W A S D)

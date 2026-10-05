@@ -1,42 +1,46 @@
 import React, { createContext, useContext, useMemo } from "react";
 import * as THREE from "three";
+import type { Terrain } from "../maruTerrain";
 import type { LanguagePack } from "../packs/types";
 
-/** The active pack: scenery, people, signs and colours all read from it. */
+/** The active pack and the terrain built from it. Both are provided inside the canvas by MaruWorld. */
 export const PackCtx = createContext<LanguagePack | null>(null);
+export const TerrainCtx = createContext<Terrain | null>(null);
 export const usePack = () => {
   const pack = useContext(PackCtx);
   if (!pack) throw new Error("usePack must be used inside <PackCtx.Provider>");
   return pack;
 };
+export const useTerrain = () => {
+  const terrain = useContext(TerrainCtx);
+  if (!terrain) throw new Error("useTerrain must be used inside <TerrainCtx.Provider>");
+  return terrain;
+};
 export const useInk = () => usePack().world.palette.ink;
 
 export type V3 = [number, number, number];
 
-export const toonGradient = (() => {
-  const data = new Uint8Array([70, 70, 70, 255, 150, 150, 150, 255, 215, 215, 215, 255, 255, 255, 255, 255]);
-  const texture = new THREE.DataTexture(data, 4, 1, THREE.RGBAFormat);
-  texture.minFilter = texture.magFilter = THREE.NearestFilter;
-  texture.needsUpdate = true;
-  return texture;
-})();
-
+/**
+ * Flat, matte colour. Lighting alone gives each box three tones (top light, left face medium, right face darker),
+ * which is the whole shading model of the art style: no outlines, no gradients, no textures on walls.
+ */
 export function Toon({ color, emissive }: { color: string; emissive?: string }) {
-  return <meshToonMaterial color={color} gradientMap={toonGradient} emissive={emissive} emissiveIntensity={emissive ? 0.9 : 0} />;
+  return <meshLambertMaterial color={color} emissive={emissive} emissiveIntensity={emissive ? 0.5 : 0} />;
 }
 
-function Outline() {
-  const ink = useInk();
-  return <meshBasicMaterial color={ink} side={THREE.BackSide} />;
+/** Places children on the ground at (x, z): the right height on whichever terrace or stair is there. */
+export function OnGround({ at, children, lift = 0 }: { at: [number, number]; children: React.ReactNode; lift?: number }) {
+  const terrain = useTerrain();
+  const y = terrain.groundY(at[0], at[1]) ?? 0;
+  return <group position={[at[0], y + lift, at[1]]}>{children}</group>;
 }
 
-/** Box with an inverted-hull ink outline of constant thickness. */
+/** Box. `ink` is accepted for older callers and ignored: the style has no outlines. */
 export function Box({
   position,
   size,
   color,
   rotation,
-  ink = 0.05,
   cast = true,
 }: {
   position: V3;
@@ -47,18 +51,10 @@ export function Box({
   cast?: boolean;
 }) {
   return (
-    <group position={position} rotation={rotation}>
-      <mesh castShadow={cast} receiveShadow>
-        <boxGeometry args={size} />
-        <Toon color={color} />
-      </mesh>
-      {ink > 0 && (
-        <mesh>
-          <boxGeometry args={[size[0] + ink * 2, size[1] + ink * 2, size[2] + ink * 2]} />
-          <Outline />
-        </mesh>
-      )}
-    </group>
+    <mesh position={position} rotation={rotation} castShadow={cast} receiveShadow>
+      <boxGeometry args={size} />
+      <Toon color={color} />
+    </mesh>
   );
 }
 
@@ -69,7 +65,6 @@ export function Round({
   color,
   top,
   segments = 14,
-  ink = 0.05,
   emissive,
 }: {
   position: V3;
@@ -81,37 +76,20 @@ export function Round({
   ink?: number;
   emissive?: string;
 }) {
-  const topRadius = top ?? radius;
   return (
-    <group position={position}>
-      <mesh castShadow receiveShadow>
-        <cylinderGeometry args={[topRadius, radius, height, segments]} />
-        <Toon color={color} emissive={emissive} />
-      </mesh>
-      {ink > 0 && (
-        <mesh>
-          <cylinderGeometry args={[topRadius + ink, radius + ink, height + ink * 2, segments]} />
-          <Outline />
-        </mesh>
-      )}
-    </group>
+    <mesh position={position} castShadow receiveShadow>
+      <cylinderGeometry args={[top ?? radius, radius, height, segments]} />
+      <Toon color={color} emissive={emissive} />
+    </mesh>
   );
 }
 
-export function Ball({ position, radius, color, ink = 0.04 }: { position: V3; radius: number; color: string; ink?: number }) {
+export function Ball({ position, radius, color }: { position: V3; radius: number; color: string; ink?: number }) {
   return (
-    <group position={position}>
-      <mesh castShadow>
-        <sphereGeometry args={[radius, 14, 12]} />
-        <Toon color={color} />
-      </mesh>
-      {ink > 0 && (
-        <mesh>
-          <sphereGeometry args={[radius + ink, 14, 12]} />
-          <Outline />
-        </mesh>
-      )}
-    </group>
+    <mesh position={position} castShadow>
+      <sphereGeometry args={[radius, 16, 12]} />
+      <Toon color={color} />
+    </mesh>
   );
 }
 
@@ -126,7 +104,6 @@ export function Gable({
   rise,
   color,
   rotationY = 0,
-  ink = 0.05,
 }: {
   position: V3;
   across: number;
@@ -152,11 +129,18 @@ export function Gable({
       <mesh geometry={geometry} castShadow receiveShadow>
         <Toon color={color} />
       </mesh>
-      {ink > 0 && (
-        <mesh geometry={geometry} scale={[1 + (ink * 2) / along, 1 + (ink * 2) / rise, 1 + (ink * 2) / across]} position={[0, -ink * 0.6, 0]}>
-          <Outline />
-        </mesh>
-      )}
     </group>
   );
 }
+
+// ---------- small colour helpers (everything is derived from the pack palette) ----------
+const clamp01 = (v: number) => Math.min(1, Math.max(0, v));
+
+/** Mix two #rrggbb colours: t = 0 gives a, t = 1 gives b. */
+export function mix(a: string, b: string, t: number): string {
+  const ca = new THREE.Color(a);
+  const cb = new THREE.Color(b);
+  return `#${ca.lerp(cb, clamp01(t)).getHexString()}`;
+}
+export const lighten = (hex: string, t: number) => mix(hex, "#ffffff", t);
+export const darken = (hex: string, t: number) => mix(hex, "#4a4258", t);

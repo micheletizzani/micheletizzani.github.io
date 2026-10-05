@@ -5,7 +5,7 @@ import * as THREE from "three";
 import { GlyphPhrase, lettersTexture, reliefTexture } from "../maruGlyphs";
 import { writtenOf, encounter as encounterOf, word as wordOf } from "../packs/helpers";
 import type { EncounterId, NpcSpec, SignSpec } from "../packs/types";
-import { Ball, Box, Round, toonGradient, usePack, type V3 } from "./toon";
+import { Ball, Box, Round, lighten, mix, usePack, type V3 } from "./toon";
 
 /** A carved or painted sign: glyph relief for glyph scripts, lettering for alphabetic ones. */
 export function Sign({ sign }: { sign: SignSpec }) {
@@ -24,13 +24,12 @@ export function Sign({ sign }: { sign: SignSpec }) {
       <Box
         position={[0, 0, 0]}
         size={[w + 0.26, h + 0.26, 0.1]}
-        color={pack.script === "glyph" ? "#c8782e" : pack.world.palette.ink}
-        ink={0.035}
+        color={pack.script === "glyph" ? mix(pack.world.palette.accent, "#ffffff", 0.35) : lighten(pack.world.palette.ink, 0.35)}
         cast={false}
       />
       <mesh position={[0, 0, 0.06]}>
         <planeGeometry args={[w, h]} />
-        <meshToonMaterial map={texture} gradientMap={toonGradient} />
+        <meshBasicMaterial map={texture} toneMapped={false} />
       </mesh>
     </group>
   );
@@ -41,25 +40,33 @@ export function Figure({ npc, idle = true }: { npc: NpcSpec; idle?: boolean }) {
   const phase = useMemo(() => Math.random() * 6, []);
   const base = npc.position[1];
   useFrame((s) => {
-    if (ref.current && idle) ref.current.position.y = base + Math.sin(s.clock.elapsedTime * 1.6 + phase) * 0.025;
+    if (ref.current && idle) ref.current.position.y = base + Math.sin(s.clock.elapsedTime * 1.6 + phase) * 0.02;
   });
+  const hood = lighten(npc.color, 0.18);
   return (
-    <group ref={ref} position={npc.position} rotation={[0, npc.facing ?? 0, 0]} scale={npc.scale ?? 1}>
-      <Round position={[0, 0.8, 0]} radius={0.5} top={0.2} height={1.6} color={npc.color} segments={10} ink={0.04} />
-      <Ball position={[0, 1.78, 0]} radius={0.27} color={npc.color} ink={0.04} />
-      <mesh position={[0, 1.75, 0.2]}>
-        <circleGeometry args={[0.15, 10]} />
-        <meshBasicMaterial color="#2a0f1a" />
+    <group ref={ref} position={npc.position} rotation={[0, npc.facing ?? 0, 0]} scale={npc.scale ?? 1} userData={{ noOcclude: true }}>
+      <Blob radius={0.62} />
+      {/* a tapering cloak, a round hood and a small pale face: the whole character */}
+      <Round position={[0, 0.8, 0]} radius={0.5} top={0.2} height={1.6} color={npc.color} segments={10} />
+      <Ball position={[0, 1.8, 0]} radius={0.32} color={hood} />
+      <mesh position={[0, 1.76, 0.2]}>
+        <circleGeometry args={[0.15, 12]} />
+        <meshBasicMaterial color="#fbe9dc" />
       </mesh>
-      {npc.tool === "key" && (
-        <>
-          <Round position={[0.5, 1.35, 0.25]} radius={0.06} height={0.5} color="#f6d878" segments={6} ink={0.02} />
-          <Round position={[0.62, 1.5, 0]} radius={0.04} height={3} color="#d9c27a" segments={5} ink={0.02} />
-        </>
-      )}
-      {npc.tool === "spear" && <Round position={[0.6, 1.5, 0]} radius={0.04} height={3} color="#f6d878" segments={5} ink={0.02} />}
-      {npc.tool === "cup" && <Round position={[0.45, 1.2, 0.3]} radius={0.1} top={0.13} height={0.2} color="#fff1d6" segments={8} ink={0.02} />}
+      {npc.tool === "key" && <Round position={[0.62, 1.4, 0]} radius={0.04} height={2.9} color="#e8c36a" segments={5} />}
+      {npc.tool === "cup" && <Round position={[0.45, 1.2, 0.3]} radius={0.1} top={0.13} height={0.2} color="#fff1d6" segments={8} />}
+      {npc.tool === "spear" && <Round position={[0.6, 1.5, 0]} radius={0.04} height={3} color="#e8c36a" segments={5} />}
     </group>
+  );
+}
+
+/** A soft round shadow under something standing on the ground. */
+export function Blob({ radius, opacity = 0.18 }: { radius: number; opacity?: number }) {
+  return (
+    <mesh position={[0, 0.03, 0]} rotation={[-Math.PI / 2, 0, 0]} userData={{ noOcclude: true }} raycast={() => null}>
+      <circleGeometry args={[radius, 20]} />
+      <meshBasicMaterial color="#5a4a6a" transparent opacity={opacity} depthWrite={false} />
+    </mesh>
   );
 }
 
@@ -89,19 +96,19 @@ export function Marker({ id, state, onSelect }: { id: EncounterId; state: Marker
       (ring.current.material as THREE.MeshBasicMaterial).opacity = state === "next" ? 0.95 - ((t * 0.9) % 1) * 0.8 : 0.6;
     }
     if (gem.current) {
-      gem.current.position.y = 3.5 + Math.sin(t * 2) * 0.12;
+      gem.current.position.y = 3.3 + Math.sin(t * 2) * 0.12;
       gem.current.rotation.y = t * 1.4;
     }
   });
-  const color = state === "next" ? pack.ui.gold : state === "done" ? pack.ui.good : "#a58d83";
-  const [x, , z] = encounter.position;
+  const color = state === "next" ? pack.ui.gold : state === "done" ? pack.ui.good : "#b9aab0";
+  const [x, y, z] = encounter.position;
   return (
-    <group position={[x, 0, z]}>
+    <group position={[x, y, z]} userData={{ noOcclude: true }}>
       <mesh ref={ring} rotation={[-Math.PI / 2, 0, 0]} position={[0, 0.05, 0]}>
         <ringGeometry args={[1.35, 1.6, 40]} />
         <meshBasicMaterial color={color} transparent opacity={0.9} depthWrite={false} />
       </mesh>
-      <mesh ref={gem} position={[0, 3.5, 0]}>
+      <mesh ref={gem} position={[0, 3.3, 0]}>
         <octahedronGeometry args={[state === "next" ? 0.32 : 0.2]} />
         <meshBasicMaterial color={color} />
       </mesh>
@@ -133,12 +140,12 @@ export function Bubble({ id }: { id: EncounterId }) {
   const pack = usePack();
   const encounter = encounterOf(pack, id);
   const first = encounter.drills[0];
-  const [x, , z] = encounter.position;
-  const lift = id === "fountain" ? 3.2 : id === "gate" ? 4.4 : 3.1;
+  const [x, y, z] = encounter.position;
+  const lift = y + 3.1;
   return (
     <Html position={[x, lift, z]} center zIndexRange={[10, 0]} style={{ pointerEvents: "none" }}>
       <div
-        className="relative -translate-y-6 rounded-full border-2 px-4 py-2 shadow-[3px_3px_0_var(--mx-ink)]"
+        className="relative -translate-y-6 rounded-full border-2 px-4 py-2 shadow-[0_3px_0_color-mix(in_srgb,var(--mx-ink)_35%,transparent)]"
         style={{ minWidth: 56, borderColor: "var(--mx-ink)", background: "var(--mx-paper)", color: "var(--mx-ink)" }}
       >
         {first ? (

@@ -57,9 +57,18 @@ built from words learned earlier.
 ## 5. Systems
 
 ### 5.1 Navigation and camera
-- High-angle follow camera (wheel zooms). Click/tap the ground to walk; grid A* routes around buildings and people.
-- Clicking a marker walks to the encounter's approach point, then opens it. WASD/arrows also work.
-- While a lesson is open the camera eases in on the subject, mirrored for east-side encounters so it is never behind a wall.
+- **Layered world.** The place is a stack of flat terraces floating over the sea (quay → terrace → upper terrace), joined
+  by two flights of stairs. Heights are data (`world.tiers`, `world.stairs`); walking, pathfinding and the validator all
+  read the same terrain.
+- **Isometric orthographic camera** (45° azimuth, 32° elevation, defined once in `maruCamera.ts`). By default the zoom is
+  chosen so the *whole* world is on screen, tall roofs included; the +/- buttons and the wheel zoom in, and then the camera
+  follows the explorer. Click/tap the ground to walk (height-aware A*); WASD/arrows move relative to the screen.
+- **Everything walkable must be visible.** Tall things (houses, the gate wall) stand only on the far edges (west and
+  north); the near edges (south and east) carry only low furniture. The validator checks this with exact ray tests
+  (`packs/visibility.ts`); `scripts/e2e/visibility.mjs` checks it again in the real scene (98 % required, 100 % today).
+  Furniture lower than 2.2 m is not counted: it hides a strip of floor, not a place.
+- Clicking a marker walks to the encounter's approach point, then opens it. A marker on another terrace is not "nearby".
+- While a lesson is open the camera eases in on the subject and shifts so it sits above the lesson sheet.
 - Why point-and-click: it works identically with a mouse and a thumb, needs no pointer lock, and keeps the HUD usable.
 
 ### 5.2 Observe: observational hints
@@ -125,16 +134,26 @@ read by the nearest voice as an approximation. A player may deliberately pick an
 
 ## 7. Art direction
 
-Shared: flat cel shading (toon materials with a 4-step ramp), constant-thickness ink outlines (inverted hull),
-a halftone dot overlay and a corner colour wash, a high-angle camera, hooded figures, hand-drawn pictograms, and
-paper-and-ink UI sheets. Each pack supplies its own colours and its own scenery.
+The look is a minimal indie style in the manner of *Monument Valley* (the concept, not its assets): isometric
+architecture floating over a calm sea, **flat pastel faces with no outlines**, soft light, simple shapes and arches.
+
+- **Flat shading.** Lambert materials under one soft ambient light and one sun give every box three tones (top, south
+  face, east face). No outlines, no halftone, no textures on walls. Colours are not tone-mapped (`<Canvas flat>`), so
+  the pastels on screen are the pastels in the pack.
+- **Terraces** have a paved top (cobbles or inlaid tiles, only a few percent lighter or darker than the base) and
+  sides that fade into the sea, with arched openings on the two faces the camera sees.
+- **Figures** are small hooded cloaks with a pale face and a blob shadow; the player is the same shape in the accent colour.
+- **Sea and sky** are one pastel gradient; there is no fog and no hard horizon.
+- **UI** keeps the paper-and-ink sheets so text stays readable (contrast checked by the validator).
+- **Palette rule.** Pastel means high lightness and low-to-medium saturation (the Danish wall colours are the real
+  Nyhavn colours lightened and softened). Each pack keeps its own palette, tied to the place and the language.
 
 | | Danish pack | Maru pack |
 | --- | --- | --- |
 | Place | Nyhavn, Copenhagen | Højbro Plads, Copenhagen |
 | Scenery key | `nyhavn` | `sandstone` |
 | Architecture | tall narrow gabled houses in mustard, brick red, harbour blue, orange, sage, rose and navy; white window frames; shopfronts with awnings | flat-roofed sandstone façades with arched windows and balustrades |
-| Palette | harbour teal, cobble grey, Dannebrog red and white, navy ink | warm yellow and crimson |
+| Palette | pastel Nyhavn: powder blue sea, blush and cream cobbles, house colours in rose, butter, sky blue, sage; a soft Dannebrog red | pastel sandstone: sand, apricot, mint water, dusty rose |
 | Props | moored wooden boats, Dannebrog flags, bicycles, a red kiosk, a brass water pump | palms, a stone fountain, a market stall |
 | Writing | Latin lettering (painted signs) | invented glyphs (carved reliefs) |
 
@@ -152,8 +171,8 @@ but is stylised, not surveyed.
    │        │       └── Lesson · Notebook · PhoneticDictionary · Finale   (React sheets, CSS variables from pack.ui)
    │        └────────── maruAudio.ts (speech, sound), maruPhonetics.ts (grading)
    ▼
- MaruWorld (R3F canvas) ── world/{Nyhavn,Sandstone,shared,toon}.tsx   (scenery chosen by pack.world.scenery)
-                       └── maruNav.ts (A*), camera, markers, speech bubbles
+ MaruWorld (R3F canvas) ── world/{Nyhavn,Sandstone,Terrain,Sea,Props,shared,toon}.tsx   (scenery chosen by pack.world.scenery)
+                       └── maruTerrain.ts (tiers, stairs), maruNav.ts (height-aware A*), maruCamera.ts, markers, bubbles
 ```
 
 Key decisions:

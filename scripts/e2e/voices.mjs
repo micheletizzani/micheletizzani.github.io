@@ -1,6 +1,7 @@
 // Voice selection: a real language must never be read by a wrong-language voice. Uses controlled voice lists.
 //   npm i -D playwright-core ; npm run dev ; CHROMIUM_PATH=... node scripts/e2e/voices.mjs
 import { chromium } from "playwright-core";
+import { clickMarker } from "./_lq.mjs";
 const BASE = process.env.BASE_URL ?? "http://localhost:4321";
 const SHOTS = process.env.SHOTS ?? "/tmp";
 let failed = 0;
@@ -38,11 +39,8 @@ async function open(opts, pack = "da") {
   await p.reload({ waitUntil: "networkidle" });
   await p.getByRole("button", { name: /^Enter / }).click();
   await p.waitForTimeout(2500);
-  for (const [x, y] of [[640, 330], [690, 330], [600, 340]]) {
-    await p.mouse.click(x, y);
-    await p.waitForTimeout(1500);
-    if (await p.getByRole("dialog", { name: /Pump|Fountain/ }).count()) break;
-  }
+  await clickMarker(p, "fountain");
+  await p.waitForTimeout(2500);
   const dlg = p.getByRole("dialog", { name: /Pump|Fountain/ });
   await dlg.getByRole("tab", { name: /Sound/ }).click();
   return { p, dlg };
