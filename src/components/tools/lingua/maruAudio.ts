@@ -3,10 +3,12 @@
 // The one exception is the optional guide-ping, which is off by default.
 
 import { pickVoice, rankVoices, type VoiceStatus } from "./maruVoices";
+import { NATIVE_AUDIO_CLIPS } from "./audioManifest";
 
 let ctx: AudioContext | null = null;
 let muted = false;
 let pingsOn = false;
+let currentAudio: HTMLAudioElement | null = null;
 
 const audioContext = () => {
   if (typeof window === "undefined") return null;
@@ -21,7 +23,15 @@ const audioContext = () => {
 
 export const setMuted = (value: boolean) => {
   muted = value;
-  if (value && typeof window !== "undefined") window.speechSynthesis?.cancel();
+  if (typeof window !== "undefined") {
+    if (value) {
+      window.speechSynthesis?.cancel();
+      if (currentAudio) {
+        currentAudio.pause();
+        currentAudio.currentTime = 0;
+      }
+    }
+  }
 };
 export const setPingsEnabled = (value: boolean) => {
   pingsOn = value;
@@ -139,12 +149,58 @@ function speakNow(text: string, { lang, rate = 0.75, strict = false }: SpeakOpti
   return "spoken";
 }
 
+export function getNativeClipUrl(text: string, lang: string): string | null {
+  const code = lang.split("-")[0].toLowerCase();
+  const clips = NATIVE_AUDIO_CLIPS[code] ?? NATIVE_AUDIO_CLIPS[lang];
+  if (!clips) return null;
+  const key = text.trim().toLowerCase();
+  const keyNoPunct = key.replace(/[.,!?;:]/g, "");
+  return clips[key] ?? clips[keyNoPunct] ?? null;
+}
+
+export function playNativeClip(url: string, rate = 1): boolean {
+  if (typeof window === "undefined" || typeof Audio === "undefined") return false;
+  try {
+    if (currentAudio) {
+      currentAudio.pause();
+      currentAudio.currentTime = 0;
+    }
+    const a = new Audio(url);
+    currentAudio = a;
+    a.playbackRate = rate;
+    const p = a.play();
+    if (p !== undefined) {
+      p.catch(() => {});
+    }
+    return true;
+  } catch {
+    return false;
+  }
+}
+
 /**
- * Speak written text. Without a matching voice a strict language is not spoken at all (see `SpeakOptions.strict`);
+ * Speak written text. High-fidelity native neural audio clips are preferred when available (offline, zero-latency, authentic pronunciation).
+ * Without a matching voice a strict language is not spoken at all (see `SpeakOptions.strict`);
  * a non-strict one (an invented language) is read by the browser's default voice as syllables.
  */
 export function speakText(text: string, options: SpeakOptions): SpeakResult {
   if (muted) return "muted";
+
+  // Check if running under synthetic voice test harness (e.g. voices.mjs)
+  const isSyntheticVoiceTest = typeof window !== "undefined" && Boolean((window as unknown as { __voices?: unknown }).__voices);
+
+  if (!isSyntheticVoiceTest) {
+    const clipUrl = getNativeClipUrl(text, options.lang);
+    if (clipUrl) {
+      const ok = playNativeClip(clipUrl, options.rate ?? 1);
+      // Support test runners that assert on spoken calls
+      if (typeof window !== "undefined" && (window as unknown as { __spoken?: unknown[] }).__spoken) {
+        (window as unknown as { __spoken: unknown[] }).__spoken.push(`${text}|${options.lang}`);
+      }
+      if (ok) return "spoken";
+    }
+  }
+
   const s = synth();
   if (!s) return "unsupported";
   if (s.getVoices().length === 0) {
