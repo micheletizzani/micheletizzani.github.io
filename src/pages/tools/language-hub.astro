@@ -1,0 +1,10 @@
+---
+import Layout from "../../layouts/Layout.astro";
+import { LanguageHubApp } from "../../components/tools/language/LanguageHubApp";
+---
+
+<Layout title="Language Learning Hub | Michele Tizzani">
+  <div class="fixed inset-0 w-screen h-screen overflow-y-auto bg-[var(--bg-color)] text-[var(--text-color)] z-[100] flex flex-col">
+    <LanguageHubApp client:load />
+  </div>
+</Layout>
