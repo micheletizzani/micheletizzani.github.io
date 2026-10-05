@@ -1,6 +1,5 @@
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import { Canvas, useFrame, useThree } from "@react-three/fiber";
-import { PointerLockControls } from "@react-three/drei";
 import * as THREE from "three";
 import { BookOpen, Compass, Crosshair, Expand, Map, MapPin, MessageCircle, MousePointer2, Move, X } from "lucide-react";
 
@@ -85,10 +84,10 @@ function CopenhagenMap({
 }) {
   const player = mapCoordinates([playerPosition[0], 0, playerPosition[1]]);
   return (
-    <section className="absolute inset-0 z-30 overflow-y-auto bg-[#172420] text-[#e7e4d7]">
+    <section className="absolute inset-0 z-30 overflow-y-auto pb-24 bg-[#172420] text-[#e7e4d7]">
       <div className="mx-auto grid min-h-full max-w-6xl items-center gap-8 px-5 py-10 lg:grid-cols-[minmax(0,1fr)_350px] lg:px-10">
         <div className="order-2 rounded-sm border border-[#d5b66b]/60 bg-[#e4dcc4] p-3 shadow-2xl lg:order-1">
-          <svg viewBox="0 0 100 100" className="block w-full" role="img" aria-label="Stylised map of central Copenhagen">
+          <svg viewBox="0 0 100 100" className="mx-auto block max-h-[78vh] w-full" role="img" aria-label="Stylised map of central Copenhagen">
             <rect width="100" height="100" fill="#dccfac" />
             <path d="M-6 74 C19 66 26 67 45 70 C63 73 79 68 106 75 L106 104 L-6 104Z" fill="#82afb6" />
             <path d="M62 -4 C59 21 59 35 63 50 C67 62 64 72 69 104" fill="none" stroke="#82afb6" strokeWidth="9" />
@@ -164,12 +163,18 @@ function CopenhagenMap({
         </div>
         <div className="order-1 lg:order-2">
           <p className="font-mono text-[10px] uppercase tracking-[.22em] text-[#e5bd6c]">Pilot city · Copenhagen, Indre By</p>
-          <h1 className="mt-3 font-serif text-4xl leading-tight sm:text-5xl">Start with the city, not the answer.</h1>
+          <h1 className="mt-3 font-serif text-4xl leading-tight text-[#f3efe2] sm:text-5xl">Start with the city, not the answer.</h1>
           <p className="mt-5 text-sm leading-relaxed text-[#c7d0c0]">
             This is an original, navigable interpretation of Copenhagen’s historic core: Gammel Strand, Højbro Plads, Slotsholmen, Kongens Nytorv, and
             the harbour. It is a game map—not a geographic survey—but the streets, water, and landmarks determine the 3D world you will enter.
           </p>
-          <div className="mt-7 space-y-2">
+          <button
+            onClick={onEnter}
+            className="mt-6 flex w-full items-center justify-center gap-2 bg-[#e5bd6c] px-5 py-3 font-mono text-xs font-bold uppercase tracking-wider text-[#172420] hover:bg-[#f4d58b]"
+          >
+            <Compass size={16} /> Enter street-level Copenhagen
+          </button>
+          <div className="mt-4 space-y-2">
             {LANDMARKS.map((landmark, index) => {
               const available = !landmark.requires || visited.includes(landmark.requires);
               const seen = visited.includes(landmark.id);
@@ -195,13 +200,7 @@ function CopenhagenMap({
               );
             })}
           </div>
-          <button
-            onClick={onEnter}
-            className="mt-7 flex w-full items-center justify-center gap-2 bg-[#e5bd6c] px-5 py-3 font-mono text-xs font-bold uppercase tracking-wider text-[#172420] hover:bg-[#f4d58b]"
-          >
-            <Compass size={16} /> Enter street-level Copenhagen
-          </button>
-          <p className="mt-3 text-center text-[11px] text-[#89998c]">Select an available marker to set your starting destination.</p>
+          <p className="mt-3 text-[11px] text-[#89998c]">Or pick a marker above to set your starting destination.</p>
         </div>
       </div>
     </section>
@@ -353,47 +352,101 @@ function LandmarkObject({
   );
 }
 
+const BUILDINGS: { position: [number, number, number]; size: [number, number, number]; color: string; roof: string }[] = [
+  { position: [-10, 0, 6], size: [5.4, 4.1, 4.5], color: "#d48b56", roof: "#5a3d38" },
+  { position: [9, 0, 6], size: [5.7, 4.8, 4.8], color: "#e0c186", roof: "#6d3d37" },
+  { position: [-10, 0, -4], size: [4.8, 4.9, 5.8], color: "#9bb4ad", roof: "#3e5c5b" },
+  { position: [10.7, 0, -2], size: [4.6, 5.5, 6.5], color: "#c96f54", roof: "#60413f" },
+  { position: [-8.5, 0, -12], size: [6.2, 5.1, 4.5], color: "#e0d0a8", roof: "#574d47" },
+  { position: [9, 0, -11], size: [5.5, 5.2, 4.5], color: "#9ab5a0", roof: "#3d5a55" },
+];
+
 function Player({
   onNearby,
   onPosition,
   destination,
+  active,
 }: {
   onNearby: (id: LandmarkId | null) => void;
   onPosition: (position: [number, number]) => void;
   destination: LandmarkId | null;
+  active: boolean;
 }) {
-  const { camera } = useThree();
+  const { camera, gl } = useThree();
+  const look = useRef({ yaw: 0, pitch: 0 });
+  const activeRef = useRef(active);
+  activeRef.current = active;
   const pressed = useRef(new Set<string>());
   const lastNearby = useRef<LandmarkId | null>(null);
   const lastReportedPosition = useRef<[number, number]>([0, 9.5]);
   useEffect(() => {
-    const down = (event: KeyboardEvent) => pressed.current.add(event.key.toLowerCase());
+    camera.rotation.order = "YXZ";
+    const down = (event: KeyboardEvent) => {
+      if (activeRef.current) pressed.current.add(event.key.toLowerCase());
+    };
     const up = (event: KeyboardEvent) => pressed.current.delete(event.key.toLowerCase());
     window.addEventListener("keydown", down);
     window.addEventListener("keyup", up);
+    const canvas = gl.domElement;
+    const turn = (dx: number, dy: number) => {
+      look.current.yaw -= dx * 0.0022;
+      look.current.pitch = clamp(look.current.pitch - dy * 0.0022, -1.2, 1.2);
+    };
+    let dragging = false;
+    const onDown = () => {
+      dragging = true;
+      // Pointer lock gives true mouse-look; if the browser refuses it, dragging still works.
+      Promise.resolve(canvas.requestPointerLock?.() as unknown).catch(() => undefined);
+    };
+    const onUp = () => (dragging = false);
+    const onMove = (event: MouseEvent) => {
+      if (!activeRef.current) return;
+      if (document.pointerLockElement === canvas || dragging) turn(event.movementX, event.movementY);
+    };
+    canvas.addEventListener("mousedown", onDown);
+    window.addEventListener("mouseup", onUp);
+    window.addEventListener("mousemove", onMove);
     return () => {
       window.removeEventListener("keydown", down);
       window.removeEventListener("keyup", up);
+      canvas.removeEventListener("mousedown", onDown);
+      window.removeEventListener("mouseup", onUp);
+      window.removeEventListener("mousemove", onMove);
+      if (document.pointerLockElement === canvas) document.exitPointerLock();
     };
-  }, []);
+  }, [camera, gl]);
+  useEffect(() => {
+    if (!active) {
+      pressed.current.clear();
+      if (document.pointerLockElement === gl.domElement) document.exitPointerLock();
+    }
+  }, [active, gl]);
   useEffect(() => {
     const landmark = LANDMARKS.find((item) => item.id === destination);
     if (landmark) {
       camera.position.set(landmark.position[0], 1.65, Math.min(10.5, landmark.position[2] + 3.1));
+      look.current = { yaw: 0, pitch: 0 };
     }
   }, [camera, destination]);
   useFrame((_, delta) => {
-    const forward = new THREE.Vector3();
-    camera.getWorldDirection(forward);
-    forward.y = 0;
-    forward.normalize();
+    if (pressed.current.has("arrowleft")) look.current.yaw += delta * 1.8;
+    if (pressed.current.has("arrowright")) look.current.yaw -= delta * 1.8;
+    camera.rotation.set(look.current.pitch, look.current.yaw, 0);
+    const forward = new THREE.Vector3(-Math.sin(look.current.yaw), 0, -Math.cos(look.current.yaw));
     const right = new THREE.Vector3().crossVectors(forward, new THREE.Vector3(0, 1, 0)).normalize();
     const movement = new THREE.Vector3();
     if (pressed.current.has("w") || pressed.current.has("arrowup")) movement.add(forward);
     if (pressed.current.has("s") || pressed.current.has("arrowdown")) movement.sub(forward);
-    if (pressed.current.has("d") || pressed.current.has("arrowright")) movement.add(right);
-    if (pressed.current.has("a") || pressed.current.has("arrowleft")) movement.sub(right);
-    if (movement.lengthSq() > 0) camera.position.addScaledVector(movement.normalize(), delta * 4.4);
+    if (pressed.current.has("d")) movement.add(right);
+    if (pressed.current.has("a")) movement.sub(right);
+    if (movement.lengthSq() > 0) {
+      const step = movement.normalize().multiplyScalar(delta * 4.4);
+      const blocked = (x: number, z: number) =>
+        BUILDINGS.some((b) => Math.abs(x - b.position[0]) < b.size[0] / 2 + 0.4 && Math.abs(z - b.position[2]) < b.size[2] / 2 + 0.4);
+      // Slide along walls: test each axis separately.
+      if (!blocked(camera.position.x + step.x, camera.position.z)) camera.position.x += step.x;
+      if (!blocked(camera.position.x, camera.position.z + step.z)) camera.position.z += step.z;
+    }
     camera.position.x = clamp(camera.position.x, -13.5, 13.5);
     camera.position.z = clamp(camera.position.z, -14.8, 11);
     camera.position.y = 1.65;
@@ -415,7 +468,7 @@ function Player({
       onPosition(lastReportedPosition.current);
     }
   });
-  return <PointerLockControls />;
+  return null;
 }
 
 function City({
@@ -425,7 +478,9 @@ function City({
   onInteract,
   destination,
   onPosition,
+  active,
 }: {
+  active: boolean;
   visited: LandmarkId[];
   nearby: LandmarkId | null;
   onNearby: (id: LandmarkId | null) => void;
@@ -457,12 +512,9 @@ function City({
         <planeGeometry args={[19, 5.5]} />
         <meshStandardMaterial color="#aa9679" roughness={1} />
       </mesh>
-      <Building position={[-10, 0, 6]} size={[5.4, 4.1, 4.5]} color="#d48b56" roof="#5a3d38" />
-      <Building position={[9, 0, 6]} size={[5.7, 4.8, 4.8]} color="#e0c186" roof="#6d3d37" />
-      <Building position={[-10, 0, -4]} size={[4.8, 4.9, 5.8]} color="#9bb4ad" roof="#3e5c5b" />
-      <Building position={[10.7, 0, -2]} size={[4.6, 5.5, 6.5]} color="#c96f54" roof="#60413f" />
-      <Building position={[-8.5, 0, -12]} size={[6.2, 5.1, 4.5]} color="#e0d0a8" roof="#574d47" />
-      <Building position={[9, 0, -11]} size={[5.5, 5.2, 4.5]} color="#9ab5a0" roof="#3d5a55" />
+      {BUILDINGS.map((b, i) => (
+        <Building key={i} {...b} />
+      ))}
       <mesh castShadow position={[0, 3.1, -14.2]}>
         <boxGeometry args={[10, 6.2, 1.2]} />
         <meshStandardMaterial color="#907b5d" />
@@ -476,7 +528,7 @@ function City({
           onInteract={() => onInteract(landmark.id)}
         />
       ))}
-      <Player onNearby={onNearby} onPosition={onPosition} destination={destination} />
+      <Player onNearby={onNearby} onPosition={onPosition} destination={destination} active={active} />
     </Canvas>
   );
 }
@@ -485,7 +537,9 @@ export const MaruExpedition: React.FC<{ onExit?: () => void }> = ({ onExit }) =>
   const shell = useRef<HTMLDivElement>(null);
   const [visited, setVisited] = useState<LandmarkId[]>([]);
   const [nearby, setNearby] = useState<LandmarkId | null>(null);
-  const [message, setMessage] = useState("You are at Højbro Plads. Click the city to look around, then walk with W A S D toward a gold circle.");
+  const [message, setMessage] = useState(
+    "You are at Højbro Plads. Click and drag (or use arrow keys) to look around, then walk with W A S D toward a gold circle."
+  );
   const [notebookOpen, setNotebookOpen] = useState(false);
   const [mapOpen, setMapOpen] = useState(true);
   const [destination, setDestination] = useState<LandmarkId | null>("fountain");
@@ -506,12 +560,12 @@ export const MaruExpedition: React.FC<{ onExit?: () => void }> = ({ onExit }) =>
   );
   useEffect(() => {
     const handleKey = (event: KeyboardEvent) => {
-      if (event.key.toLowerCase() === "e" && nearby) interact(nearby);
+      if (event.key.toLowerCase() === "e" && nearby && !mapOpen) interact(nearby);
       if (event.key === "Escape") setNotebookOpen(false);
     };
     window.addEventListener("keydown", handleKey);
     return () => window.removeEventListener("keydown", handleKey);
-  }, [nearby, interact]);
+  }, [nearby, interact, mapOpen]);
   useEffect(() => {
     // Useful for a bookmarked return to the street-level view; normal launches always begin on the map.
     if (window.location.hash === "#street") setMapOpen(false);
@@ -525,7 +579,15 @@ export const MaruExpedition: React.FC<{ onExit?: () => void }> = ({ onExit }) =>
   };
   return (
     <div ref={shell} className="fixed inset-0 z-[200] overflow-hidden bg-[#10191a] text-[#f3efe2]">
-      <City visited={visited} nearby={nearby} onNearby={setNearby} onInteract={interact} destination={destination} onPosition={setPlayerPosition} />
+      <City
+        visited={visited}
+        nearby={nearby}
+        onNearby={setNearby}
+        onInteract={interact}
+        destination={destination}
+        onPosition={setPlayerPosition}
+        active={!mapOpen && !notebookOpen}
+      />
       <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_center,transparent_45%,rgba(10,18,18,.48))]" />
       <div className="absolute inset-x-0 top-0 flex items-start justify-between p-4 sm:p-6 pointer-events-none">
         <div className="rounded bg-[#14201ddd]/95 border border-[#d9b566]/50 px-4 py-3 shadow-xl">
