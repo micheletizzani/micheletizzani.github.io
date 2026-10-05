@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { BookOpen, Check, Ear, Eye, Keyboard, Lightbulb, Mic, Volume2 } from "lucide-react";
 import { chime, speakText } from "./maruAudio";
-import { gradeSound, grade, normalizeSound, syllablesOf } from "./maruPhonetics";
+import { gradeSound, grade, normalizeSound, resolvePhoneticAudio, syllablesOf } from "./maruPhonetics";
 import { Picture } from "./maruPictures";
 import { candidatesFor, compatibility, evidenceFor, noteOf, type Progress } from "./progress";
 import { word as wordOf, wordsOf } from "./packs/helpers";
@@ -310,6 +310,22 @@ function SoundTab({
       (m) => setFeedback({ tone: "bad", text: m })
     );
   useChord("KeyT", startMic);
+  const testSound = () => {
+    const clean = text.trim();
+    if (!clean) {
+      setFeedback({ tone: "info", text: "Type or select phonetic symbols first to test the sound." });
+      return;
+    }
+    const resolved = resolvePhoneticAudio(clean, pack, id);
+    if (resolved) {
+      say(resolved.speakable);
+      setFeedback({ tone: "info", text: `Testing sound: ${resolved.label}` });
+    } else {
+      say(clean);
+      setFeedback({ tone: "info", text: `Testing sound: “${clean}”` });
+    }
+  };
+  useChord("KeyP", () => testSound());
   const insert = (symbol: string) => {
     setText((t) => t + symbol);
     inputRef.current?.focus();
@@ -378,6 +394,13 @@ function SoundTab({
                 autoFocus
                 className="min-w-0 flex-1 border-2 border-[var(--mx-ink)] bg-[var(--mx-paper-light)] px-3 py-2.5 font-serif text-xl text-[var(--mx-ink)] outline-none placeholder:text-[var(--mx-ink)]/40 focus:bg-white"
               />
+              <button
+                onClick={testSound}
+                title="Hear how your phonetic transcription sounds (Alt+P)"
+                className={BTN_PLAIN}
+              >
+                <Volume2 size={13} className="mr-1 inline" /> Test sound <span className="hidden opacity-50 sm:inline">Alt+P</span>
+              </button>
               <button onClick={submitText} className={BTN_PRIMARY}>
                 Check <span className="hidden opacity-70 sm:inline">↵</span>
               </button>
@@ -399,11 +422,12 @@ function SoundTab({
               <div className="mt-1.5 flex flex-wrap gap-1" aria-label="Symbol keys">
                 {pack.notation.keyboard.map((k) => {
                   const entry = pack.phonology.find((p) => normalizeSound(p.symbol, rules) === normalizeSound(k, rules));
+                  const kw = entry?.keywords[0]?.written;
                   return (
                     <button
                       key={k}
                       onClick={() => insert(k)}
-                      title={entry ? `${entry.name}` : k}
+                      title={entry ? `${entry.name}${kw ? ` · e.g. “${kw}”` : ""}` : k}
                       className="min-w-[2.1rem] border-2 border-[var(--mx-ink)] bg-[var(--mx-paper-light)] px-1.5 py-1 font-serif text-lg hover:bg-[var(--mx-gold)]"
                     >
                       {k}

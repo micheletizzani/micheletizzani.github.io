@@ -1,4 +1,5 @@
 // Grading for "write what you hear" and "say it" in Maru. Pure functions, no UI.
+import type { LanguagePack, WordId } from "./packs/types";
 
 const FOLD: Record<string, string> = { æ: "ae", ø: "o", å: "a", œ: "oe", ß: "ss" };
 
@@ -131,3 +132,128 @@ export function syllablesOf(written: string, kind: "ipa" | "romanisation"): numb
   if (kind === "romanisation") return (w.match(/[ptkmnsvlrg]?[aeiou]/g) ?? []).length;
   return Math.max(1, (w.match(/[aeiouyæøå]+/g) ?? []).length);
 }
+
+const IPA_DANISH_MAP: [string, string][] = [
+  ["pʰ", "p"], ["tˢ", "t"], ["kʰ", "k"],
+  ["b̥", "b"], ["d̥", "d"], ["ɡ̊", "g"],
+  ["iː", "i"], ["yː", "y"], ["eː", "e"], ["ɛː", "æ"],
+  ["øː", "ø"], ["œː", "ø"], ["aː", "a"], ["ɑː", "ar"],
+  ["uː", "u"], ["oː", "o"], ["ɔː", "å"],
+  ["ɛ", "æ"], ["ɑ", "ar"], ["ɔ", "å"], ["ʌ", "o"],
+  ["ə", "e"], ["ɐ", "er"], ["ð", "d"], ["ŋ", "ng"],
+  ["ʁ", "r"], ["ɡ", "g"], ["ˀ", ""], ["ː", ""]
+];
+
+/** Map common IPA sequences to pronounceable orthography for a target language */
+export function ipaToPronounceable(ipa: string, lang = "da"): string {
+  let s = ipa.replace(/[\[\]\/ˈˌ.]/g, "").toLowerCase();
+  if (lang.startsWith("da")) {
+    for (const [from, to] of IPA_DANISH_MAP) {
+      s = s.replaceAll(from, to);
+    }
+  } else {
+    s = s.replace(/ˀ/g, "").replace(/ː/g, "").replace(/ɡ/g, "g");
+  }
+  return s.trim();
+}
+
+export interface PhoneticAudioResolution {
+  speakable: string;
+  label: string;
+  source: "exact-target" | "lexicon" | "keyword" | "phoneme" | "synthesized";
+}
+
+/**
+ * Resolves a phonetic transcription input into speech-ready text and a descriptive label,
+ * preferring authentic words and phoneme keywords before synthesized fallback.
+ */
+export function resolvePhoneticAudio(
+  input: string,
+  pack: LanguagePack,
+  targetWordId?: WordId
+): PhoneticAudioResolution | null {
+  const clean = input.trim();
+  if (!clean) return null;
+
+  const rules: NotationRules = {
+    kind: pack.notation.kind,
+    ignore: pack.notation.ignore,
+    equivalent: pack.notation.equivalent,
+  };
+  const normInput = normalizeSound(clean, rules);
+
+  // 1. If targetWordId is provided, check if input matches the target word
+  if (targetWordId) {
+    const targetWord = pack.lexicon.find((w) => w.id === targetWordId);
+    if (targetWord) {
+      const matchSound = normalizeSound(targetWord.sound, rules) === normInput;
+      const matchAlso = targetWord.alsoAccept?.some((a) => normalizeSound(a, rules) === normInput);
+      const matchWritten = normalize(targetWord.written) === normalize(clean);
+      if (matchSound || matchAlso || matchWritten) {
+        return {
+          speakable: targetWord.speak ?? targetWord.written,
+          label: `“${targetWord.written}” [${targetWord.sound}]`,
+          source: "exact-target",
+        };
+      }
+    }
+  }
+
+  // 2. Check if input matches any word in the lexicon
+  for (const w of pack.lexicon) {
+    const matchSound = normalizeSound(w.sound, rules) === normInput;
+    const matchAlso = w.alsoAccept?.some((a) => normalizeSound(a, rules) === normInput);
+    const matchWritten = normalize(w.written) === normalize(clean);
+    if (matchSound || matchAlso || matchWritten) {
+      return {
+        speakable: w.speak ?? w.written,
+        label: `“${w.written}” [${w.sound}]`,
+        source: "lexicon",
+      };
+    }
+  }
+
+  // 3. Check if input matches a keyword in phonology
+  for (const p of pack.phonology) {
+    for (const k of p.keywords) {
+      if (normalizeSound(k.sound, rules) === normInput || normalize(k.written) === normalize(clean)) {
+        return {
+          speakable: k.written,
+          label: `keyword “${k.written}” [${k.sound}]`,
+          source: "keyword",
+        };
+      }
+    }
+  }
+
+  // 4. Check if input matches a single phoneme symbol (exact symbol first, then normalized)
+  const phoneme =
+    pack.phonology.find((p) => p.symbol.toLowerCase() === clean.toLowerCase()) ??
+    pack.phonology.find((p) => normalizeSound(p.symbol, rules) === normInput);
+  if (phoneme && phoneme.keywords.length > 0) {
+    const k = phoneme.keywords[0];
+    return {
+      speakable: k.written,
+      label: `[${phoneme.symbol}] in “${k.written}”`,
+      source: "phoneme",
+    };
+  }
+
+  // 5. Custom transcription sequence
+  if (pack.notation.kind === "ipa") {
+    const pronounceable = ipaToPronounceable(clean, pack.id);
+    return {
+      speakable: pronounceable || clean,
+      label: `[${clean}] → “${pronounceable || clean}”`,
+      source: "synthesized",
+    };
+  }
+
+  // Romanisation (e.g. Maru)
+  return {
+    speakable: clean,
+    label: `“${clean}”`,
+    source: "synthesized",
+  };
+}
+

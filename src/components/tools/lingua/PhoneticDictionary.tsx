@@ -1,6 +1,6 @@
 import React, { useMemo, useState } from "react";
 import { Search, Volume2 } from "lucide-react";
-import { normalizeSound } from "./maruPhonetics";
+import { normalizeSound, resolvePhoneticAudio } from "./maruPhonetics";
 import { speakText } from "./maruAudio";
 import { encounterOfWord, soundKnown, type Progress } from "./progress";
 import type { LanguagePack, PhonemeEntry } from "./packs/types";
@@ -83,6 +83,21 @@ export function PhoneticDictionary({
               aria-label="Search the phonetic dictionary"
               className="min-w-0 flex-1 bg-transparent text-sm outline-none placeholder:text-[var(--mx-ink)]/40"
             />
+            {query.trim() && (
+              <button
+                type="button"
+                onClick={() => {
+                  const res = resolvePhoneticAudio(query, pack);
+                  if (res) say(res.speakable);
+                  else say(query);
+                }}
+                title="Hear audio test for this phonetic query"
+                aria-label="Test sound"
+                className="flex items-center gap-1 border border-[var(--mx-ink)] bg-[var(--mx-gold)] px-2 py-0.5 text-xs font-mono hover:brightness-105"
+              >
+                <Volume2 size={12} /> Test sound
+              </button>
+            )}
           </label>
           {groups.map((g) => {
             const items = pack.phonology.filter((p) => p.kind === g.kind && matches(p));
@@ -119,9 +134,21 @@ export function PhoneticDictionary({
         {entry && (
           <div className="p-3 sm:p-4">
             <div className="flex items-start gap-3">
-              <span className="grid h-16 w-16 shrink-0 place-items-center border-2 border-[var(--mx-ink)] bg-[var(--mx-ink)] font-serif text-4xl text-[var(--mx-paper)]">
-                {entry.symbol}
-              </span>
+              <button
+                type="button"
+                onClick={() => {
+                  const res = resolvePhoneticAudio(entry.symbol, pack);
+                  if (res) say(res.speakable);
+                }}
+                title={`Hear sound of ${entry.symbol}`}
+                aria-label={`Hear sound of ${entry.symbol}`}
+                className="group relative grid h-16 w-16 shrink-0 place-items-center border-2 border-[var(--mx-ink)] bg-[var(--mx-ink)] font-serif text-4xl text-[var(--mx-paper)] transition-colors hover:bg-[var(--mx-gold)] hover:text-[var(--mx-ink)]"
+              >
+                <span>{entry.symbol}</span>
+                <span className="absolute bottom-1 right-1 opacity-60 group-hover:opacity-100">
+                  <Volume2 size={12} />
+                </span>
+              </button>
               <div>
                 <h3 className="font-serif text-lg text-[var(--mx-ink)]">{entry.name}</h3>
                 <p className="mt-1 text-sm leading-relaxed">{entry.how}</p>

@@ -2,7 +2,7 @@ import { test } from "node:test";
 import assert from "node:assert/strict";
 import { PACKS, da, maru, template } from "./_packs";
 import { validatePack, contrast } from "../../src/components/tools/lingua/packs/validate";
-import { grade, gradeSound, normalizeSound, syllablesOf } from "../../src/components/tools/lingua/maruPhonetics";
+import { grade, gradeSound, normalizeSound, syllablesOf, ipaToPronounceable, resolvePhoneticAudio } from "../../src/components/tools/lingua/maruPhonetics";
 import { findPath, buildGrid } from "../../src/components/tools/lingua/maruNav";
 import { pickVoice, rankVoices, installHints } from "../../src/components/tools/lingua/maruVoices";
 import { candidatesFor, emptyProgress, evidenceFor, verdicts, compatibility } from "../../src/components/tools/lingua/progress";
@@ -92,6 +92,56 @@ test("syllable counts", () => {
   assert.equal(syllablesOf("jeg", "ipa"), 1);
   assert.equal(syllablesOf("koponi", "romanisation"), 3);
   assert.equal(syllablesOf("naeno", "romanisation"), 3);
+});
+
+test("IPA to pronounceable Danish mapping", () => {
+  assert.equal(ipaToPronounceable("vanˀ", "da"), "van");
+  assert.equal(ipaToPronounceable("vænˀ", "da"), "væn");
+  assert.equal(ipaToPronounceable("kʰɔb̥", "da"), "kåb");
+  assert.equal(ipaToPronounceable("bɔːð", "da"), "båd");
+  assert.equal(ipaToPronounceable("ˈfɑˀ", "da"), "far");
+  assert.equal(ipaToPronounceable("[mæð]", "da"), "mæd");
+});
+
+test("phonetic audio test resolution finds exact targets, lexicon words, keywords and phonemes", () => {
+  // Empty input returns null
+  assert.equal(resolvePhoneticAudio("", da), null);
+  assert.equal(resolvePhoneticAudio("   ", da), null);
+
+  // Exact target word match
+  const resTarget = resolvePhoneticAudio("vanˀ", da, "vand");
+  assert.ok(resTarget);
+  assert.equal(resTarget.source, "exact-target");
+  assert.equal(resTarget.speakable, "vand");
+
+  // Lexicon match without targetId specified
+  const resLex = resolvePhoneticAudio("kɔp", da);
+  assert.ok(resLex);
+  assert.equal(resLex.source, "lexicon");
+  assert.equal(resLex.speakable, "kop");
+
+  // Keyword match (e.g. "far" [fɑˀ] keyword for open back vowel ɑ)
+  const resKw = resolvePhoneticAudio("fɑˀ", da);
+  assert.ok(resKw);
+  assert.equal(resKw.source, "keyword");
+  assert.equal(resKw.speakable, "far");
+
+  // Single phoneme symbol (e.g. "ð")
+  const resPh = resolvePhoneticAudio("ð", da);
+  assert.ok(resPh);
+  assert.equal(resPh.source, "phoneme");
+  assert.equal(resPh.speakable, "mad"); // keyword for ð
+
+  // Novel phonetic hypothesis synthesized to Danish
+  const resSynth = resolvePhoneticAudio("pɔl", da);
+  assert.ok(resSynth);
+  assert.equal(resSynth.source, "synthesized");
+  assert.equal(resSynth.speakable, "pål");
+
+  // Romanised pack (Maru)
+  const resMaru = resolvePhoneticAudio("tala", maru);
+  assert.ok(resMaru);
+  assert.equal(resMaru.speakable, "tala");
 });
 
 test("every drilled word is reachable on the nav grid from its encounter approach point", () => {
