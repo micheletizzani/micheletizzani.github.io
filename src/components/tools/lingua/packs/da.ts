@@ -36,6 +36,7 @@ export const da: LanguagePack = {
   nativeName: "Dansk",
   city: "Copenhagen",
   district: "Nyhavn",
+  intro: "You have just arrived at Nyhavn and you speak no Danish. Nobody will translate. Watch what people do, listen, write down the sounds, and work out what the words mean.",
   script: "latin",
   speech: { synth: "da-DK", recog: "da-DK", rate: 0.75, strict: true, testPhrase: "Goddag" },
   notation: {

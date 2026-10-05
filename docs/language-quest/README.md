@@ -3,11 +3,18 @@
 A point-and-click language-discovery game for the Study Hub. You arrive in a city knowing none of the language,
 watch what people do, listen, write down the sounds, and work out what the words mean from your own notes.
 
-| Document                                                                     | Read it to…                                                                    |
-| ---------------------------------------------------------------------------- | ------------------------------------------------------------------------------ |
-| [DESIGN.md](./DESIGN.md)                                                     | understand what the game is, why it works the way it does, and how it is built |
-| [PACK_TEMPLATE.md](./PACK_TEMPLATE.md)                                       | add a new language, a new city, or a new story chapter                         |
-| [`packs/_template.ts`](../../src/components/tools/lingua/packs/_template.ts) | copy a complete, type-checked, validator-passing starting point                |
+| Document                                                                     | Read it to…                                                                                |
+| ---------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------ |
+| [GAME_DESIGN_DOCUMENT.md](./GAME_DESIGN_DOCUMENT.md)                         | get the full, engine-independent concept: objectives, mechanics, art, content model, risks |
+| [NARRATIVE_DESIGN.md](./NARRATIVE_DESIGN.md)                                 | read the planned story, storyboard and chapter map (concept)                               |
+| [STORYBOARD_EVALUATION.md](./STORYBOARD_EVALUATION.md)                       | see how the storyboard meets the brief, its risks and proposed changes                     |
+| [CONTENT_ARCHITECTURE.md](./CONTENT_ARCHITECTURE.md)                         | keep content (Danish) separate from the dynamics; accuracy workflow and reference list     |
+| [OPEN_WORLD_AND_QUESTS.md](./OPEN_WORLD_AND_QUESTS.md)                       | etymology mode, cross-language notebook, recall levels, LLM-driven side quests             |
+| [CALVINO_GUIDE.md](./CALVINO_GUIDE.md)                                       | use Calvino's lenses as a cross-language guide for the style and description of each city  |
+| [STORY_BRIEF.md](./STORY_BRIEF.md)                                           | write a story: one-page rules, chapter shape and a fill-in template                        |
+| [DESIGN.md](./DESIGN.md)                                                     | understand what the game is, why it works the way it does, and how it is built             |
+| [PACK_TEMPLATE.md](./PACK_TEMPLATE.md)                                       | add a new language, a new city, or a new story chapter                                     |
+| [`packs/_template.ts`](../../src/components/tools/lingua/packs/_template.ts) | copy a complete, type-checked, validator-passing starting point                            |
 
 ## Run it
 

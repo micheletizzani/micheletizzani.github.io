@@ -253,6 +253,12 @@ Right-to-left or non-Latin real scripts are not supported yet.
 - [ ] `?debug` shows an acceptable frame rate on a mid-range phone.
 - [ ] No copyrighted assets, brand logos or real people were used. Place-inspired art is stylised, not copied.
 
+## 11b. Fields for references and history (optional)
+
+Each lexicon entry may carry `sources` (what a reviewer should open), `etymology` (older forms, shown only in etymology mode) and
+`cognates` (links such as `"da:vand"` for the cross-language notebook); the pack has an `intro` paragraph for the map screen. See
+[CONTENT_ARCHITECTURE.md](./CONTENT_ARCHITECTURE.md). Nothing reads `sources`, `etymology` or `cognates` yet.
+
 ## 12. Common mistakes (all seen while building the first packs)
 
 | Mistake                                                               | How the validator or tests catch it                |
