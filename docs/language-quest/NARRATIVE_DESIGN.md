@@ -135,7 +135,7 @@ This agrees with the existing art direction (flat pastel isometric terraces; [GA
 | 5 | Include **all linguistic references** to make the Danish as accurate as possible (the owner will review later); the structure must let content change without affecting dynamics or design | See [CONTENT_ARCHITECTURE.md](./CONTENT_ARCHITECTURE.md) |
 
 ### 8.1 Revised chapter map (9 chapters, Calvino themes)
-Theme names follow the groups of *Invisible Cities* as I recall them (to be checked against the book). Time-slips and etymology
+Themes follow the groups of *Invisible Cities* (see [CALVINO_GUIDE.md](./CALVINO_GUIDE.md), which also gives the style rules and a draft city card per chapter). Time-slips and etymology
 are side content inside chapters; the main chain stays in modern Danish.
 
 | Ch | Place and layer | Calvino theme | Culture | Language function | Recall level after |
@@ -144,11 +144,11 @@ are side content inside chapters; the main chain stays in modern Danish.
 | 2 | Nyhavn (the built pilot) | Names | Harbour, bicycles, coffee; the city's name | Objects, plural, negation, "because" | R1 (short) |
 | 3 | Slotsholmen, the medieval city, and the fire | Memory | Origins; a real manuscript-loss history (to be verified) | Questions, directions | |
 | 4 | Market and bakery | Desire | Food: bread, pastries, open sandwiches, coffee | Offers, wants, quantities | R2 |
-| 5 | Shoreline and Gefion | Hidden cities | Myth; landscape | Actions, land and water words | |
-| 6 | **Tivoli and the harbour** (new) | Trading | **Recreation**: amusement, harbour swimming, cycling | Tickets, prices, games, invitations | R3 |
+| 5 | Shoreline and Gefion | Thin | Myth; landscape | Actions, land and water words | |
+| 6 | **Tivoli and the harbour** (new) | The Sky (and Trading) | **Recreation**: amusement, harbour swimming, cycling | Tickets, prices, games, invitations | R3 |
 | 7 | Andersen's Copenhagen (the fairy-tale chapter) | Eyes | Literature; the Little Mermaid, the Emperor's New Clothes (authored tales) | Describing, true and false | |
 | 8 | **The train north**: Helsingør, Kronborg, Holger Danske | The Dead | **Territory**; national myth | Time, memory, identity | R4 (the big one) |
-| 9 | The archive and the first story | Continuous cities | All layers | Complex sentences, finale | final |
+| 9 | The archive and the first story | Hidden (coda: Continuous) | All layers | Complex sentences, finale | final |
 Side quests, anywhere: the nisse (household vocabulary), more recall errands, etymology doorways, culture errands (all card-driven; see the open-world design).
 
 ### 8.2 Still open

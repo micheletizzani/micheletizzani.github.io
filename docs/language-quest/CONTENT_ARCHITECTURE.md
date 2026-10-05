@@ -77,18 +77,19 @@ Add entry-level locators yourself when you check a word.
 - KorpusDK on [ordnet.dk](https://dsl.dk/projekter/ordnet.dk): a 56-million-word text collection for checking that a sentence is natural.
 
 **Historical Danish**
-- Ordbog over det danske Sprog (ODS), on ordnet.dk: 28 volumes (1918-56) plus supplements, covering Danish from 1700 to 1950. Use for older forms and meanings.
+- Ordbog over det danske Sprog (ODS), on ordnet.dk: 28 volumes (1918-56) plus supplements, covering Danish from 1700 to 1950; entries include etymology.
+- Gammeldansk Ordbog (DSL): scholarly dictionary of medieval Danish, about 1100 to 1515; a preliminary version and the slip collection (nearly one million slips) are online at gammeldanskordbog.dk, and the project is still being edited ([DSL page](https://dsl.dk/diverse/sprog/ordboger-og-sprogteknologi/gammeldansk-ordbog)). I could not open the pages (blocked here), so the details come from search results.
 
-**Phonetics and phonology (for IPA, stød, vowel and consonant descriptions)**
-- Hans Basbøll, *The Phonology of Danish* (Oxford University Press, 2005): [publisher page](https://global.oup.com/academic/product/the-phonology-of-danish-9780198242680).
-- Nina Grønnum, *Fonetik og fonologi: almen og dansk* (Akademisk Forlag, 2005): [KU research portal entry](https://researchprofiles.ku.dk/da/publications/fonetik-og-fonologi-almen-og-dansk/).
-- An IPA "Illustration" of Danish in the *Journal of the International Phonetic Association*: [Cambridge page](https://www.cambridge.org/core/journals/journal-of-the-international-phonetic-association/article/danish/BE517C492E106BFED6D55F1AC300E67F). Check the author and edition before citing.
+**Etymology (Danish)**
+- Niels Åge Nielsen, *Dansk etymologisk ordbog: Ordenes historie* (Gyldendal; first published 1966, sixth edition 2010, ISBN 978-87-02-09830-3). Described as the most widely used Danish etymological dictionary, with about 13,000 headwords and literature references. See the [Danish Wikipedia entry](https://da.wikipedia.org/wiki/Dansk_etymologisk_ordbog) and a bookseller listing ([plusbog.dk](https://www.plusbog.dk/dansk-etymologisk-ordbog-niels-aage-nielsen-9788702098303)). It is a printed book: no free online version was found. Confirm the edition you can access.
+- Edwin Jessen, *Dansk etymologisk Ordbog* (1893), scanned on [Project Runeberg](https://runeberg.org/danetym/) and the Internet Archive. Free but old; use only as a lead, not as the authority.
+- Den Danske Ordbog and ODS (above) both carry etymological information online.
 
 **Old Norse and runic forms (etymology mode)**
 - [ONP, Ordbog over det norrøne prosasprog](https://onp.ku.dk/onp/) (University of Copenhagen): Old Norse prose vocabulary, about 1150 to the end of the Middle Ages; free online.
 - Scandinavian Runic-text Database / Samnordisk runtextdatabas ([Uppsala University](https://www.uu.se/institution/nordiska/forskning/projekt/samnordisk-runtextdatabas?languageId=1)): transliterated runic inscriptions.
 
-**Not yet located** (I know of no confirmed source in this session): a Danish etymological dictionary to cite by name and edition; a source for Old Danish (as distinct from Old Norse) grammar; a corpus of spoken Danish for stød examples. Ask the reviewer which they trust. Wikipedia and Wiktionary may help to find leads but should not be cited as the authority for a transcription.
+**Still not located**: a corpus of spoken Danish for stød examples; a Danish source of cognates in other languages (Nielsen's dictionary likely gives them, to be checked by the reviewer). Wikipedia and Wiktionary may help to find leads but should not be cited as the authority for a transcription.
 
 ## 5. Checklist for the reviewer
 - [ ] Every `written` matches Retskrivningsordbogen (including inflected forms such as plurals and the definite form).

@@ -10,6 +10,7 @@ watch what people do, listen, write down the sounds, and work out what the words
 | [STORYBOARD_EVALUATION.md](./STORYBOARD_EVALUATION.md) | see how the storyboard meets the brief, its risks and proposed changes |
 | [CONTENT_ARCHITECTURE.md](./CONTENT_ARCHITECTURE.md) | keep content (Danish) separate from the dynamics; accuracy workflow and reference list |
 | [OPEN_WORLD_AND_QUESTS.md](./OPEN_WORLD_AND_QUESTS.md) | etymology mode, cross-language notebook, recall levels, LLM-driven side quests |
+| [CALVINO_GUIDE.md](./CALVINO_GUIDE.md) | use Calvino's lenses as a cross-language guide for the style and description of each city |
 | [STORY_BRIEF.md](./STORY_BRIEF.md) | write a story: one-page rules, chapter shape and a fill-in template |
 | [DESIGN.md](./DESIGN.md) | understand what the game is, why it works the way it does, and how it is built |
 | [PACK_TEMPLATE.md](./PACK_TEMPLATE.md) | add a new language, a new city, or a new story chapter |

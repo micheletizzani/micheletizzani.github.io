@@ -55,7 +55,7 @@ I checked what I could with web searches (below). Nothing here replaces a histor
 ## 4. Style: Anderson and Calvino
 
 - **Anderson** [Likely]: strong. Deadpan, notebooks, symmetric miniature tableaux, understated absurdity, even the bakery-shopping-list gag.
-- **Calvino** [Likely]: only atmospheric ("layers of the city"). *Invisible Cities* has a **structure**: a traveller describes cities to a listener, grouped by recurring themes. I recall the groups as Memory, Desire, Signs, Trading, Eyes, Names, the Dead, the Sky, Continuous and Hidden cities; check against the text before using them as chapter titles.
+- **Calvino** [Likely]: only atmospheric ("layers of the city"). *Invisible Cities* has a **structure**: a traveller describes cities to a listener, grouped by recurring themes. The groups (confirmed through secondary sources, see [CALVINO_GUIDE.md](./CALVINO_GUIDE.md)) are Memory, Desire, Signs, Thin, Trading, Eyes, Names, the Dead, the Sky, Continuous and Hidden. My first list omitted Thin.
 - **Proposal:** make each chapter an "invisible Copenhagen" with one Calvino theme, which also gives each chapter a *language* theme:
   Signs (airport, metro: reading), Names (medieval: the city's name and etymology), Memory (the fire: lost texts), Desire (food), Eyes (Emperor's clothes: describing), the Dead (Holger), Hidden (the archive). This ties literary style to learning objectives instead of decorating them.
 
