@@ -370,3 +370,8 @@ export const unlockAudio = () => {
   // Some browsers only populate voices after the first call.
   void whenVoicesReady();
 };
+
+/** Speak Danish text. Uses studio neural clips if available, otherwise picks the best Danish system voice (e.g. Sara on macOS). */
+export function speakDanish(text: string, rate = 0.85): SpeakResult {
+  return speakText(text, { lang: "da-DK", rate, strict: false });
+}
