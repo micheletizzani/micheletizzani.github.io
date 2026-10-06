@@ -1,6 +1,7 @@
 import React, { useEffect, useMemo, useState } from "react";
 import { BookOpen, Check, ChevronRight, Ear, Lightbulb, MapPin, RotateCcw, Volume2 } from "lucide-react";
 import { AFFIX_BY_ID, KIND_LABEL, WORD_BY_ID, confidence, entriesIn, literalReading, sentenceSound, truthOf, type Evidence } from "./language";
+import { speakText } from "./maruAudio";
 
 type SceneId = "fountain" | "stall" | "guard" | "gate" | "archive";
 type GameState = {
@@ -141,13 +142,7 @@ const scenes: Array<{
 ];
 
 function speak(text: string) {
-  if ("speechSynthesis" in window) {
-    window.speechSynthesis.cancel();
-    const utterance = new SpeechSynthesisUtterance(text.replace(/-/g, ""));
-    utterance.rate = 0.72;
-    utterance.pitch = 0.9;
-    window.speechSynthesis.speak(utterance);
-  }
+  speakText(text.replace(/-/g, ""), { lang: "da-DK", rate: 0.72, strict: false });
 }
 
 export const LinguaGame: React.FC<{ embedded?: boolean }> = ({ embedded = false }) => {

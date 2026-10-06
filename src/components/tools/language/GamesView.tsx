@@ -17,6 +17,7 @@ import {
 import { SYNTAX_PUZZLES, GENDER_SPRINT_ITEMS, MINIMAL_PAIRS, ORDLIG_WORDS } from "./defaultData";
 import type { StudyEnvironment, VocabularyItem, UncertaintyItem } from "./types";
 import { MaruExpedition } from "../lingua/MaruExpedition";
+import { speakDanish } from "../lingua/maruAudio";
 
 interface GamesViewProps {
   environment: StudyEnvironment;
@@ -35,15 +36,6 @@ export const GamesView: React.FC<GamesViewProps> = ({ environment, onUpdateEnvir
   const closeMaru = () => {
     setIsMaruOpen(false);
     if (document.fullscreenElement) document.exitFullscreen().catch(() => undefined);
-  };
-
-  const speakDanish = (text: string) => {
-    if (typeof window === "undefined" || !window.speechSynthesis) return;
-    window.speechSynthesis.cancel();
-    const utterance = new SpeechSynthesisUtterance(text);
-    utterance.lang = "da-DK";
-    utterance.rate = 0.9;
-    window.speechSynthesis.speak(utterance);
   };
 
   // ----------------------------------------------------
