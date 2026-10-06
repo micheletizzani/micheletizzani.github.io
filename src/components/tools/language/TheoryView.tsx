@@ -3,6 +3,7 @@ import { BookOpen, Volume2, Sparkles, ArrowRight, ShieldAlert, Search, CheckCirc
 import { MINIMAL_PAIRS } from "./defaultData";
 import { callLLM } from "./llmClient";
 import type { StudyEnvironment, UncertaintyItem } from "./types";
+import { speakDanish } from "../lingua/maruAudio";
 
 interface TheoryViewProps {
   environment: StudyEnvironment;
@@ -40,15 +41,6 @@ export const TheoryView: React.FC<TheoryViewProps> = ({ environment, onUpdateEnv
 
     setLoggedId(prompt);
     setTimeout(() => setLoggedId(null), 2500);
-  };
-
-  const speakDanish = (text: string) => {
-    if (typeof window === "undefined" || !window.speechSynthesis) return;
-    window.speechSynthesis.cancel();
-    const utterance = new SpeechSynthesisUtterance(text);
-    utterance.lang = "da-DK";
-    utterance.rate = 0.9;
-    window.speechSynthesis.speak(utterance);
   };
 
   const handleAskGrammar = async (e: React.FormEvent) => {

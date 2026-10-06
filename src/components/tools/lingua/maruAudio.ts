@@ -203,7 +203,7 @@ export function getNativeClipUrl(text: string, lang: string): string | null {
   return null;
 }
 
-export function playNativeClip(url: string, rate = 1): boolean {
+export function playNativeClip(url: string, rate = 1, onError?: () => void): boolean {
   if (typeof window === "undefined" || typeof Audio === "undefined") return false;
   try {
     if (currentAudio) {
@@ -217,16 +217,25 @@ export function playNativeClip(url: string, rate = 1): boolean {
     const unduck = () => duckMusic(false);
     a.addEventListener("ended", unduck, { once: true });
     a.addEventListener("pause", unduck, { once: true });
-    a.addEventListener("error", unduck, { once: true });
+    a.addEventListener(
+      "error",
+      () => {
+        unduck();
+        onError?.();
+      },
+      { once: true }
+    );
     const p = a.play();
     if (p !== undefined) {
       p.catch(() => {
         unduck();
+        onError?.();
       });
     }
     return true;
   } catch {
     duckMusic(false);
+    onError?.();
     return false;
   }
 }
@@ -254,11 +263,19 @@ function speakTextNow(text: string, options: SpeakOptions): SpeakResult {
 
   // Check if running under synthetic voice test harness (e.g. voices.mjs)
   const isSyntheticVoiceTest = typeof window !== "undefined" && Boolean((window as unknown as { __voices?: unknown }).__voices);
+  const chosen = chosenVoiceName(options.lang);
+  const useStudio = !chosen || chosen === "studio";
 
-  if (!isSyntheticVoiceTest) {
+  if (!isSyntheticVoiceTest && useStudio) {
     const clipUrl = getNativeClipUrl(text, options.lang);
     if (clipUrl) {
-      const ok = playNativeClip(clipUrl, options.rate ?? 1);
+      let fell = false;
+      const onClipError = () => {
+        if (fell) return;
+        fell = true;
+        speakWithBrowserVoice(text, options);
+      };
+      const ok = playNativeClip(clipUrl, options.rate ?? 1, onClipError);
       // Support test runners that assert on spoken calls
       if (typeof window !== "undefined" && (window as unknown as { __spoken?: unknown[] }).__spoken) {
         (window as unknown as { __spoken: unknown[] }).__spoken.push(`${text}|${options.lang}`);
@@ -353,3 +370,8 @@ export const unlockAudio = () => {
   // Some browsers only populate voices after the first call.
   void whenVoicesReady();
 };
+
+/** Speak Danish text. Uses studio neural clips if available, otherwise picks the best Danish system voice (e.g. Sara on macOS). */
+export function speakDanish(text: string, rate = 0.85): SpeakResult {
+  return speakText(text, { lang: "da-DK", rate, strict: false });
+}

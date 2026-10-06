@@ -17,6 +17,7 @@ import {
 } from "lucide-react";
 import { requestWritingEvaluation, type WritingEvaluation } from "./llmClient";
 import type { StudyEnvironment, VocabularyItem, ErrorLogItem, UncertaintyItem } from "./types";
+import { speakDanish } from "../lingua/maruAudio";
 
 interface PracticalViewProps {
   environment: StudyEnvironment;
@@ -54,15 +55,6 @@ export const PracticalView: React.FC<PracticalViewProps> = ({ environment, onUpd
   const [audioUrl, setAudioUrl] = useState<string | null>(null);
   const mediaRecorderRef = useRef<MediaRecorder | null>(null);
   const audioChunksRef = useRef<Blob[]>([]);
-
-  const speakDanish = (text: string) => {
-    if (typeof window === "undefined" || !window.speechSynthesis) return;
-    window.speechSynthesis.cancel();
-    const utterance = new SpeechSynthesisUtterance(text);
-    utterance.lang = "da-DK";
-    utterance.rate = 0.85;
-    window.speechSynthesis.speak(utterance);
-  };
 
   // Sample Copenhagen Scenario Dialogue
   const readingDialogue = [
@@ -319,13 +311,7 @@ export const PracticalView: React.FC<PracticalViewProps> = ({ environment, onUpd
 
   const handleRevealSpeakingSolution = () => {
     setSpeakingHelpStep("solution");
-    if (typeof window !== "undefined" && window.speechSynthesis) {
-      window.speechSynthesis.cancel();
-      const u = new SpeechSynthesisUtterance(targetSentence);
-      u.lang = "da-DK";
-      u.rate = 0.7; // Slow pedagogical rate
-      window.speechSynthesis.speak(u);
-    }
+    speakDanish(targetSentence, 0.7);
 
     const newUncertainty: UncertaintyItem = {
       id: `unc_${Date.now()}_${Math.random()}`,
