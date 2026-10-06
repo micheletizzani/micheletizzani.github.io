@@ -293,7 +293,7 @@ function speakTextNow(text: string, options: SpeakOptions): SpeakResult {
         }
         return "spoken";
       } catch {
-        unduck();
+        duckMusic(false);
       }
     }
   }
