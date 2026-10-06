@@ -266,38 +266,47 @@ function speakTextNow(text: string, options: SpeakOptions): SpeakResult {
       if (ok) return "spoken";
     }
 
-    // Try dynamic on-demand Edge TTS endpoint (active in dev mode)
-    if (typeof window !== "undefined" && options.lang.startsWith("da") && text.trim()) {
+    // A word with no recorded clip: in development the dev server can render one on demand (needs edge-tts on the
+    // developer's machine). The endpoint does not exist on the published site, and it may fail in development too, so
+    // whenever it does not play we fall back to the browser's own voice instead of staying silent.
+    if (import.meta.env.DEV && typeof window !== "undefined" && options.lang.startsWith("da") && text.trim()) {
       const endpoint = `/api/tts?text=${encodeURIComponent(text.trim())}&lang=${encodeURIComponent(options.lang)}`;
       try {
         const a = new Audio(endpoint);
         a.playbackRate = options.rate ?? 1;
-        duckMusic(true);
+        let fell = false;
+        const fallBack = () => {
+          if (fell) return;
+          fell = true;
+          duckMusic(false);
+          speakWithBrowserVoice(text, options);
+        };
         const unduck = () => duckMusic(false);
+        duckMusic(true);
         a.addEventListener("ended", unduck, { once: true });
-        a.addEventListener("pause", unduck, { once: true });
-        a.addEventListener("error", unduck, { once: true });
+        a.addEventListener("error", fallBack, { once: true });
         const p = a.play();
         if (p !== undefined) {
           p.then(() => {
-            if (currentAudio) {
-              currentAudio.pause();
-            }
+            if (currentAudio) currentAudio.pause();
             currentAudio = a;
-          }).catch(() => {
-            unduck();
-          });
+          }).catch(fallBack);
         }
         if ((window as unknown as { __spoken?: unknown[] }).__spoken) {
           (window as unknown as { __spoken: unknown[] }).__spoken.push(`${text}|${options.lang}`);
         }
         return "spoken";
       } catch {
-        duckMusic(false); // `unduck` only exists inside the try block
+        duckMusic(false);
       }
     }
   }
 
+  return speakWithBrowserVoice(text, options);
+}
+
+/** The browser's own voice (strict languages stay silent without a matching voice; see `speakNow`). */
+function speakWithBrowserVoice(text: string, options: SpeakOptions): SpeakResult {
   const s = synth();
   if (!s) return "unsupported";
   if (s.getVoices().length === 0) {

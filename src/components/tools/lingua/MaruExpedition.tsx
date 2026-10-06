@@ -501,12 +501,14 @@ export const MaruExpedition: React.FC<{ onExit?: () => void }> = ({ onExit }) =>
   const skipStory = useCallback(() => setQueue([]), []);
   const objective = useMemo(() => {
     const beats = pack.story?.beats ?? [];
+    const waiting = new Set(queue.map((b) => b.id)); // beats not yet shown must not change the goal
     for (const id of [...(progress.story ?? [])].reverse()) {
+      if (waiting.has(id)) continue;
       const b = beats.find((x) => x.id === id && x.objective);
       if (b) return b.objective!;
     }
     return null;
-  }, [pack, progress.story]);
+  }, [pack, progress.story, queue]);
 
   // --- encounters ---
   const openEncounter = useCallback(

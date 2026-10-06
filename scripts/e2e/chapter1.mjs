@@ -64,7 +64,7 @@ await p.waitForTimeout(150);
 await p.keyboard.press("Escape"); // skips the rest of the queue
 await p.waitForTimeout(500);
 ok((await story().count()) === 0, "Esc skips the queued story text");
-ok(await p.getByText("Find your way out of the airport.").count(), "the objective bar shows the goal");
+ok(await p.getByText("Study the two boards.").count(), "the objective bar shows the latest goal once the text is skipped");
 
 const chain = [
   {
@@ -116,6 +116,18 @@ for (const e of chain) {
     );
   ok((await dlg.count()) === 1, `${e.id}: the lesson opens after the walk and its checkpoint text`);
   await dlg.getByRole("tab", { name: /Sound/ }).click();
+  if (e.id === "boards") {
+    // the words of this chapter have no studio clip yet: Listen must still make a sound (the browser's Danish voice)
+    await dlg
+      .getByRole("button", { name: /Listen/ })
+      .first()
+      .click();
+    await p.waitForTimeout(600);
+    ok(
+      (await p.evaluate(() => window.__spoken.some((t) => /^ankomst/i.test(t)))) === true,
+      "boards: Listen speaks the word even though it has no recorded clip"
+    );
+  }
   for (const s of e.sounds) {
     await dlg.getByLabel("Type the sound you hear").fill(s);
     await p.keyboard.press("Enter");
