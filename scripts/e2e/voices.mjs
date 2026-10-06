@@ -40,7 +40,7 @@ const EN = [
 ];
 const DA = { name: "Sara", lang: "da-DK", localService: true };
 
-async function open(opts, pack = "da") {
+async function open(opts, pack = "da", marker = "fountain") {
   const ctx = await b.newContext({ viewport: { width: 1280, height: 720 } });
   const p = await ctx.newPage();
   p.on("pageerror", (e) => console.log("ERR:", e.message.slice(0, 300)));
@@ -53,7 +53,10 @@ async function open(opts, pack = "da") {
   await p.reload({ waitUntil: "networkidle" });
   await p.getByRole("button", { name: /^Enter / }).click();
   await p.waitForTimeout(2500);
-  await clickMarker(p, "fountain");
+  await p.keyboard.press("Escape"); // skip the chapter story text
+  await p.keyboard.press("Escape");
+  await p.waitForTimeout(300);
+  await clickMarker(p, marker);
   await p.waitForTimeout(2500);
   const dlg = p.getByRole("dialog", { name: /Pump|Fountain|Spring/ });
   await dlg.getByRole("tab", { name: /Sound/ }).click();
@@ -109,7 +112,7 @@ async function open(opts, pack = "da") {
 }
 // E. Greek is strict too: with English voices only it stays silent
 {
-  const { p, dlg } = await open({ voices: EN }, "el-1");
+  const { p, dlg } = await open({ voices: EN }, "el-1", "spring");
   await dlg.getByRole("button", { name: /^Listen/ }).click();
   await p.waitForTimeout(300);
   ok((await p.evaluate(() => window.__spoken.length)) === 0, "E: Greek is NOT spoken with English voices only");
