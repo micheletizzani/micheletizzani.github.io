@@ -12,7 +12,10 @@ const bundleFile = join(bundleDir, "extract.mjs");
 
 buildSync({
   stdin: {
-    contents: `import { da } from "./src/components/tools/lingua/packs/da";
+    contents: `import { PACKS } from "./src/components/tools/lingua/packs/index";
+      // every chapter of the Danish language (they share words and progress)
+      const packs = PACKS.filter((p) => (p.language ?? p.id) === "da");
+      const da = { speech: packs[0].speech, encounters: packs.flatMap((p) => p.encounters), lexicon: packs.flatMap((p) => p.lexicon), phonology: packs[0].phonology };
       const phrases = new Set();
       if (da.speech.testPhrase) phrases.add(da.speech.testPhrase);
       da.encounters.forEach(e => {
