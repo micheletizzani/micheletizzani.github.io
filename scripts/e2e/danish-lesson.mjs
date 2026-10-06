@@ -54,6 +54,9 @@ await p.evaluate(() => {
 await p.reload({ waitUntil: "networkidle" });
 await p.getByRole("button", { name: /Enter Nyhavn/i }).click();
 await p.waitForTimeout(2500);
+await p.keyboard.press("Escape"); // skip the chapter story text
+await p.keyboard.press("Escape");
+await p.waitForTimeout(300);
 ok(!(await p.evaluate(() => window.__spoken.length)), "walking near the pump makes no sound");
 
 // open the lesson by clicking the pump marker
@@ -154,6 +157,8 @@ console.log("   evidence:", (await dlg.locator("li").first().textContent()).repl
 await p.screenshot({ path: (process.env.SHOTS ?? "/tmp") + "/l6_meaning.png" });
 ok((await dlg.getByRole("radio", { name: /water/ }).getAttribute("aria-checked")) === "true", "a meaning card can be chosen");
 await dlg.getByRole("button", { name: /Record in notebook/ }).click();
+await p.waitForTimeout(500);
+await p.keyboard.press("Escape"); // skip the checkpoint story text
 await p.waitForTimeout(500);
 ok((await p.getByRole("dialog").count()) === 0, "recording closes the lesson");
 // --- notebook

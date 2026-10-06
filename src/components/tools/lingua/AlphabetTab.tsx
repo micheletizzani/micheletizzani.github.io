@@ -14,7 +14,7 @@ export function AlphabetTab({ pack, progress }: { pack: LanguagePack; progress: 
     const out: string[] = [];
     for (const p of PACKS) {
       if (languageOf(p) !== languageOf(pack)) continue;
-      for (const w of p.lexicon) if (progress.words[w.id]) out.push(w.written);
+      for (const w of p.lexicon) if (progress.words[w.id]?.sound) out.push(w.written);
     }
     return out;
   }, [pack, progress.words]);

@@ -1,6 +1,6 @@
 import { MEANING_LIBRARY } from "../maruPictureData";
 import { NPC_SPOTS, SPOTS, archiveHouse, gateWall, terraces, westHouses } from "./layout";
-import type { LanguagePack, PhonemeEntry } from "./types";
+import type { LanguagePack, PhonemeEntry, StoryBeat } from "./types";
 
 /**
  * Danish pack, set on the Nyhavn quay in Copenhagen.
@@ -29,6 +29,109 @@ const cons = (symbol: string, name: string, how: string, keywords: PhonemeEntry[
   keywords,
   ...extra,
 });
+
+// ---------------------------------------------------------------- chapter 2 story text (RPG-style boxes)
+// Beats describe and never translate: the validator checks them against the meanings of the words this pack teaches.
+const PAUL = "Paul Glotty";
+const beats: StoryBeat[] = [
+  {
+    id: "da:card",
+    trigger: "start",
+    kind: "card",
+    speaker: "Navn",
+    title: "Chapter 2 · Navn",
+    text: "In Navn every object is introduced before it is used. The quay is lined with houses repainted so often that each colour is somebody's opinion of the previous one. The traveller learns that a name is a small debt: whoever says it first is owed something by whoever hears it.",
+  },
+  {
+    id: "da:arrival",
+    trigger: "start",
+    speaker: PAUL,
+    text: "Nyhavn, late afternoon. The photocopied sentence is still in my pocket, and I now suspect it is not a sentence but a receipt. The houses are painted in eight colours. I counted eleven.",
+    objective: "Watch what the people at the pump are doing.",
+  },
+  {
+    id: "da:fountain-in",
+    trigger: "enter",
+    encounter: "fountain",
+    speaker: "Narrator",
+    text: "A child stands at the pump with a small vessel. The same word is painted on the pump, on the basin and on the bucket. A man on a boat shouts it across the quay. She answers without looking up, the way one answers a relative.",
+  },
+  {
+    id: "da:fountain-done",
+    trigger: "done",
+    encounter: "fountain",
+    speaker: PAUL,
+    text: "One word, three surfaces. I assumed names attach to things. In Navn they seem to attach to what the things are for. Note to self: stop assuming.",
+    objective: "Visit the kiosk on the west side of the quay.",
+  },
+  {
+    id: "da:vendor-in",
+    trigger: "enter",
+    encounter: "vendor",
+    speaker: "Narrator",
+    text: "At the kiosk a man counts out loud: one, then a little more than one. The word he counts with changes its ending as the quantity grows. Steam rises behind him. He appears to be arguing with it.",
+  },
+  {
+    id: "da:vendor-done",
+    trigger: "done",
+    encounter: "vendor",
+    speaker: PAUL,
+    text: "The word grows a tail when there are more of them. I find this oddly moving. Danish keeps its plurals the way some families keep their dogs.",
+    objective: "Speak to the harbour master at the striped counter.",
+  },
+  {
+    id: "da:guard-in",
+    trigger: "enter",
+    encounter: "guard",
+    speaker: "Narrator",
+    text: "The harbour master stands behind a striped counter and turns every visitor into a short sentence. To a man holding a small brass object he says one thing. To a man holding nothing he says almost exactly the same thing, with one word more. The man with nothing does not argue. He has heard it before.",
+  },
+  {
+    id: "da:guard-done",
+    trigger: "done",
+    encounter: "guard",
+    speaker: PAUL,
+    text: "The extra little word undoes the whole sentence. An efficient way to end a marriage. Notes: the speaker, the owning, the thing owned, in that order. Verify.",
+    objective: "Climb to the great doors on the top terrace.",
+  },
+  {
+    id: "da:gate-in",
+    trigger: "enter",
+    encounter: "gate",
+    speaker: "Narrator",
+    text: "The doors at the top of the quay do not move. A man leans on the wall beside them, holding the thing everyone has been asking about, and explains to nobody in particular why he has it. He gives his reasons in the order he thought of them.",
+  },
+  {
+    id: "da:gate-done",
+    trigger: "done",
+    encounter: "gate",
+    speaker: PAUL,
+    text: "He gave a reason. In Danish the reason follows a small linking word, a courtesy the language extends to the listener. Notes: the doors remain as they were.",
+    objective: "Find the archivist by the old wall.",
+  },
+  {
+    id: "da:archive-in",
+    trigger: "enter",
+    encounter: "archive",
+    speaker: "Narrator",
+    text: "The archivist's door is the one with no handle. On the lintel someone has scratched a sentence that is almost, but not quite, the photocopy in Paul's pocket.",
+  },
+  {
+    id: "da:archive-done",
+    trigger: "done",
+    encounter: "archive",
+    speaker: "Narrator",
+    text: "The door opens by itself, which Paul takes personally. Behind it there is only a staircase going down, and the smell of paper that has been left alone for a very long time.",
+  },
+  {
+    id: "da:end",
+    trigger: "end",
+    kind: "card",
+    speaker: PAUL,
+    title: "Chapter 3 · Minde",
+    text: "The archivist read the photocopy for a long time and said one word, softly. It was not one of mine. Notes: the sentence may be older than the city. Next: the stairs.",
+  },
+];
 
 export const da: LanguagePack = {
   id: "da",
@@ -675,6 +778,7 @@ export const da: LanguagePack = {
       },
     },
   ],
+  story: { protagonist: PAUL, beats },
   finale: {
     encounter: "archive",
     prompt: "Tell the archivist what the harbour master told you: he needs a key because the gate is closed.",

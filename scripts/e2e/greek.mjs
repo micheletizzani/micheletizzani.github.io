@@ -51,7 +51,7 @@ ok(/^νερό\|el-GR$/.test(spoken ?? ""), "Greek word is read by the Greek voic
 await dlg.getByLabel("Type the sound you hear").fill("neˈɾo");
 await p.keyboard.press("Enter");
 await p.waitForTimeout(400);
-ok((await dlg.getByText("Sound recorded").count()) === 1, "Greek IPA 'neˈɾo' records the sound (stress optional, ɾ~r)");
+ok((await dlg.getByText(/νερό” done/).count()) === 1, "Greek IPA 'neˈɾo' records the sound (stress optional, ɾ~r)");
 await p.keyboard.press("Escape");
 await p.waitForTimeout(300);
 await p.keyboard.press("n");

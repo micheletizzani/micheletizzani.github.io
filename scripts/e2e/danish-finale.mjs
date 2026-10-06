@@ -65,6 +65,9 @@ await p.addInitScript(() => {
 await p.goto(BASE + "/tools/maru/", { waitUntil: "networkidle" });
 await p.getByText("Archive Door").first().click(); // choose destination on the map: starts at its approach point
 await p.waitForTimeout(3000);
+await p.keyboard.press("Escape"); // skip the chapter story text
+await p.keyboard.press("Escape");
+await p.waitForTimeout(300);
 await p.keyboard.press("e");
 await p.waitForTimeout(800);
 const fin = p.getByRole("dialog", { name: /Archive Door/ });
@@ -82,6 +85,10 @@ for (const w of ["jeg", "har", "brug", "for", "en", "nøgle", "fordi", "porten",
     .first()
     .click();
 await fin.getByRole("button", { name: /Say my sentence/ }).click();
+for (let i = 0; i < 4; i++) {
+  await p.waitForTimeout(1500);
+  if ((await p.getByRole("dialog", { name: "Field notebook" }).count()) === 0) await p.keyboard.press("Escape"); // skip the story text
+}
 await p.waitForTimeout(800);
 const nb = p.getByRole("dialog", { name: "Field notebook" });
 ok((await nb.count()) === 1, "success opens the notebook with the verdicts");
