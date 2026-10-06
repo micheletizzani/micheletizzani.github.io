@@ -90,7 +90,7 @@ meaning, ideally of different kinds; each encounter should contain a decoy; scen
 ### 5.3 Sound: write or say what you hear
 
 - The word is shown in the pack's script (glyphs or lettering) with a **Listen** and a **Slowly** button.
-- The player writes the sound in the pack's notation (IPA for Danish, romanisation for Maru) with an on-screen
+- The player writes the sound in the pack's notation (IPA for Danish and Greek) with an on-screen
   symbol keyboard, or says it into the microphone.
 - **Typed** answers are graded by `gradeSound`: ignored marks (stress, length, stød) are stripped, sounds in the same
   _equivalence class_ count as one, and IPA allows one slip per five sounds. Romanisation must match exactly.
@@ -154,14 +154,14 @@ The look is a minimal indie style in the manner of _Monument Valley_ (the concep
 - **UI** keeps the cream paper-and-ink sheets so text stays readable (contrast checked by the validator); they stand out against the dark scene like a notebook lit by a lamp.
 - **Palette rule.** Dusty, mid-value colours with enough lightness that dark silhouettes and lit windows still read; each pack keeps a palette tied to its place and language.
 
-|              | Danish pack                                                                                                                              | Maru pack                                                         |
+|              | Danish pack                                                                                                                              | Greek pack (teaser)                                               |
 | ------------ | ---------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------- |
-| Place        | Nyhavn, Copenhagen                                                                                                                       | Højbro Plads, Copenhagen                                          |
-| Scenery key  | `nyhavn`                                                                                                                                 | `sandstone`                                                       |
-| Architecture | tall narrow gabled houses in mustard, brick red, harbour blue, orange, sage, rose and navy; white window frames; shopfronts with awnings | flat-roofed sandstone façades with arched windows and balustrades |
-| Palette      | Nyhavn at dusk: indigo sea and sky, dusty lilac cobbles, muted rose, mustard, blue and sage houses, amber lit windows                    | sandstone at dusk: dusty sand and apricot, plum sea, amber light  |
-| Props        | moored wooden boats, Dannebrog flags, bicycles, a red kiosk, a brass water pump                                                          | palms, a stone fountain, a market stall                           |
-| Writing      | Latin lettering (painted signs)                                                                                                          | invented glyphs (carved reliefs)                                  |
+| Place        | Nyhavn, Copenhagen                                                                                                                       | The old town (stylised Athens)                                    |
+| Scenery key  | `nyhavn`                                                                                                                                 | `athens`                                                          |
+| Architecture | tall narrow gabled houses in mustard, brick red, harbour blue, orange, sage, rose and navy; white window frames; shopfronts with awnings | whitewashed cubic houses, blue shutters, a colonnade              |
+| Palette      | Nyhavn at dusk: indigo sea and sky, dusty lilac cobbles, muted rose, mustard, blue and sage houses, amber lit windows                    | dusk blue and violet, lit amber windows                           |
+| Props        | moored wooden boats, Dannebrog flags, bicycles, a red kiosk, a brass water pump                                                          | a marble spring, a striped kiosk, a library door frame            |
+| Writing      | Latin lettering (painted signs)                                                                                                          | Greek capitals (frieze over the library door)                     |
 
 The Nyhavn look follows the real place (the 17th-century harbour known for its rows of brightly painted houses)
 but is stylised, not surveyed.
@@ -183,7 +183,7 @@ but is stylised, not surveyed.
 
 Key decisions:
 
-- **A pack is the only source of language content.** The engine contains no Danish and no Maru.
+- **A pack is the only source of language content.** The engine contains no Danish and no Greek.
 - **Encounter ids are story roles** (`fountain, vendor, guard, gate, archive`). Scenery components attach set pieces to
   them. A pack with different scenery can use other ids.
 - **Colours are CSS variables** set from `pack.ui`, so a pack re-themes every sheet without touching components.
@@ -205,7 +205,7 @@ Key decisions:
 | ------------------------------------------------------------ | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | Pack structure and design rules                              | `npm run packs:check` and `scripts/tests/packs.test.ts` (the validator is itself tested by breaking packs on purpose)                                                                           |
 | Sound grading, evidence meter, candidate cards, verdicts, A* | `npm run test:lingua`                                                                                                                                                                           |
-| Gameplay in a browser                                        | `scripts/e2e/*.mjs` (Playwright; needs a browser, see the header of each file): the Danish lesson flow, the finale and verdicts, the Maru pack. Run manually; not part of `npm run test:lingua` |
+| Gameplay in a browser                                        | `scripts/e2e/*.mjs` (Playwright; needs a browser, see the header of each file): the Danish lesson flow, the finale and verdicts, the Greek teaser (`greek.mjs`). Run manually; not part of `npm run test:lingua` |
 
 ## 11. Known limitations and open questions
 

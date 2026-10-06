@@ -50,4 +50,4 @@ docs/language-quest/  you are here
 ```
 
 The URL `/tools/maru/` and the component names (`MaruExpedition`, `Maru*`) predate the multi-language design and were
-kept so existing links keep working. "Maru" is the name of the invented-language pack.
+kept so existing links keep working. The invented "Maru" pack has been replaced by Greek (`el-1`); see GREEK_TEASER.md. Danish chapter 3 is a proposal only: CHAPTER_3_PROPOSAL.md.

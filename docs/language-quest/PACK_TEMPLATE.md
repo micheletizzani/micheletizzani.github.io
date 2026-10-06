@@ -14,7 +14,7 @@ cp src/components/tools/lingua/packs/_template.ts src/components/tools/lingua/pa
 ```
 
 1. In `es.ts` rename `template` to `es` and replace everything marked `REPLACE`.
-2. Register it in `packs/index.ts`: `import { es } from "./es"; export const PACKS = [da, maru, es];`
+2. Register it in `packs/index.ts`: `import { es } from "./es"; export const PACKS = [da1, da, el1, es];`
 3. `npm run packs:check`: fix every error; decide on every warning.
 4. `npm run dev`, open `/tools/maru/`, switch language on the map screen, and play it through (§11).
 

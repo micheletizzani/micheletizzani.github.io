@@ -74,7 +74,7 @@ Status: **built (phases 1 to 4 of section 6, first version); decisions approved 
 
 **Chapter 1 (airport) casting** (proposal): door man = Ø (the Gatekeeper), ticket-machine woman = Æ (Merchant), platform guard = T (Towering: "waits until you speak"), tourist = k (Messenger, asks the question), boards watcher = Å (Elder, watches the boards).
 
-**Other worlds.** The archetypes stay, the letters change: a Greek world uses Omega and Gamma; a Japanese world uses hiragana; the invented language (Maru) uses its own glyphs. Authoring an NPC is data: `{ archetype, letter, tint }` plus the shape library.
+**Other worlds.** The archetypes stay, the letters change: a Greek world uses Omega and Gamma; a Japanese world uses hiragana; the Greek teaser (`el-1`) uses λ ξ Θ Ω Γ. Authoring an NPC is data: `{ archetype, letter, tint }` plus the shape library.
 
 **Interaction ideas, with rules.**
 
@@ -121,4 +121,4 @@ Status: **built (phases 1 to 4 of section 6, first version); decisions approved 
 - **Speech marks:** accents float round the person you are studying for about two seconds after you press a Listen button. They are decorative and never show the transcription.
 - **Rules kept:** nothing here says whether a guess is right; colour and scarf only show what has been recorded. The Notebook still lists every word, so colour is never the only signal.
 - **Validator:** a person's `encounter` must exist, an archetype must stand on ground and name its letter, and an encounter should have one owner.
-- **Known gaps:** the pencil, look and travel poses; phone-sized legibility of the silhouettes is untested on a real device; the Maru pack uses archetype shapes with romanised letters, since its glyph script has no letterforms of its own yet.
+- **Known gaps:** the pencil, look and travel poses; phone-sized legibility of the silhouettes is untested on a real device; the letter-folk for Greek are drawn from Latin-looking placeholder shapes with Greek capital letters on the glyph texture; the silhouette library has no Greek-specific forms yet.

@@ -201,14 +201,14 @@ Pastel = high lightness, low-to-medium saturation. Method: list the 6–8 colour
 them, assign them to walls, ground, water and cloaks, and pick ink (dark version of the darkest place colour) and paper (warm light).
 Use national symbols the way they appear in the place, not everywhere.
 
-|              | Danish pack (Nyhavn)                                           | Maru pack (invented language, sandstone Copenhagen square) |
+|              | Danish pack (Nyhavn)                                           | Greek pack (teaser, stylised old town)                     |
 | ------------ | -------------------------------------------------------------- | ---------------------------------------------------------- |
-| Walls        | rose, butter, sky blue, sage, cream                            | sand, apricot, cream, dusty rose                           |
-| Water/sky    | powder blue to mist                                            | mint to white                                              |
-| Accent       | soft Dannebrog red                                             | dusty rose                                                 |
-| Architecture | tall narrow gabled houses, shopfronts, a crenellated back wall | flat-roofed façades, arched windows, balustrades           |
-| Props        | moored boats, bicycles, planters, kiosk, pump                  | palms, stone fountain, stall                               |
-| Writing      | lettering on painted signs                                     | invented carved glyphs                                     |
+| Walls        | rose, butter, sky blue, sage, cream                            | whitewash, shutter blue, marble, dusk violet               |
+| Water/sky    | powder blue to mist                                            | indigo to violet                                           |
+| Accent       | soft Dannebrog red                                             | shutter blue                                               |
+| Architecture | tall narrow gabled houses, shopfronts, a crenellated back wall | cubic houses, shutters, colonnade                          |
+| Props        | moored boats, bicycles, planters, kiosk, pump                  | marble spring, kiosk, door frame                           |
+| Writing      | lettering on painted signs                                     | Greek capitals on a frieze                                 |
 
 ### 5.4 Pictograms
 
@@ -236,7 +236,7 @@ The validator is itself tested by breaking packs on purpose.
 
 - **Danish / Nyhavn** (real language). 15 words, 5 encounters: water → cup/cups → "I have (not) a key" → "the gate is closed" because → say the whole sentence.
   Target: _Jeg har brug for en nøgle, fordi porten er lukket._ _Unverified:_ IPA and phoneme descriptions were not checked by a native speaker; flagged `verified:false` and labelled in the UI.
-- **Maru / Højbro Plads** (invented language). Same engine; romanisation instead of IPA; glyph writing; not strict.
+- **Greek / the old town** (teaser, `el-1`). Same engine; IPA notation; 9 words, 5 encounters; teaches the 24 letters through an Alphabet tab and a full phonetic dictionary. See GREEK_TEASER.md. _Unverified._
 
 ### 6.4 Teaching design notes
 
@@ -271,7 +271,7 @@ Pack file shape: see `src/components/tools/lingua/packs/types.ts`.
 | Check                                        | Tool                                                                 |
 | -------------------------------------------- | -------------------------------------------------------------------- |
 | Pack structure and design rules              | `npm run packs:check`; `npm run test:lingua` (20 tests)              |
-| Gameplay and voice honesty in a real browser | `scripts/e2e/*.mjs` (Danish lesson, finale, Maru pack, voices)       |
+| Gameplay and voice honesty in a real browser | `scripts/e2e/*.mjs` (Danish lesson, finale, Greek teaser, voices)       |
 | Visibility of walkable ground                | `scripts/e2e/visibility.mjs` (desktop and phone-landscape viewports) |
 | Real performance                             | `?debug` overlay on the target device (fps, GPU name)                |
 

@@ -9,14 +9,14 @@ game so that correcting the Danish never changes the game's dynamics or design.*
 | -------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------- | -------------------------------------------------- |
 | **Engine (dynamics)**            | Lesson loop, grading, evidence meter, notebook, navigation, camera, rendering. Contains no language                                                                          | The design changes                                  | `src/components/tools/lingua/*.ts(x)`, `world/`    |
 | **Rules (the contract)**         | The pack types and the validator: what any content must satisfy for the dynamics to work (clue support, decoys, finale from known words, contrast, reachability, visibility) | The design changes                                  | `packs/types.ts`, `packs/validate.ts`              |
-| **Content (language and story)** | Spellings, IPA, meanings, grammar notes, etymologies, clues, scenes, sentences, colours                                                                                      | A reviewer corrects Danish; a writer adds a chapter | `packs/da.ts`, `packs/maru.ts`, future story packs |
+| **Content (language and story)** | Spellings, IPA, meanings, grammar notes, etymologies, clues, scenes, sentences, colours                                                                                      | A reviewer corrects Danish; a writer adds a chapter | `packs/da.ts`, `packs/el-language.ts`, `packs/el1.ts`, future story packs |
 
 Rule of thumb: **fixing a spelling, a transcription, a meaning or a clue must need a content edit only, and the validator must tell you
 whether the edit still satisfies the design.** If an edit needs a code change, that is a bug in the architecture.
 
 ### 1.1 What was done in this iteration
 
-- Unit tests no longer use Danish or Maru: engine tests run on the template pack and on inline fixtures, so correcting real content cannot break tests of the dynamics. Content is checked only by the validator (`npm run packs:check`). [Certain: 20 tests pass.]
+- Unit tests no longer use Danish or Greek: engine tests run on the template pack and on inline fixtures, so correcting real content cannot break tests of the dynamics. Content is checked only by the validator (`npm run packs:check`). [Certain: 20 tests pass.]
 - Two places where the engine knew about Danish were removed: the map-screen paragraph (now `pack.intro`) and the map-water colour (now `pack.world.palette.water`).
 - The pack type gained optional fields for references and history: `sources`, `etymology`, `cognates` on each word, plus `intro` on the pack (see section 3). Nothing yet reads `sources`/`etymology`/`cognates`; they are the data contract for the features in [OPEN_WORLD_AND_QUESTS.md](./OPEN_WORLD_AND_QUESTS.md).
 

@@ -44,7 +44,7 @@ player can guess a meaning by etymology and similarity with languages they alrea
 
 **Data needs.** `cognates` on `LexiconEntry` (present), a `misleading` flag (to add), a notebook tab, a cross-pack progress reader (progress is stored per pack today: `language-quest-progress-v1:<id>`; reading several is straightforward).
 
-**Constraint.** Needs at least two real languages in the game; today only one real language (Danish) and one invented one exist. The invented Maru can carry deliberate cognates for testing.
+**Constraint.** Needs at least two real languages in the game; today Danish is full and Greek is a teaser. Danish and Greek share Indo-European cognates (for example the words for water and the Greek-derived names for the alphabet), which can seed the first cross-language notebook records once both are verified.
 
 ## 3. Open-world side quests, written by an LLM from small instructions
 
