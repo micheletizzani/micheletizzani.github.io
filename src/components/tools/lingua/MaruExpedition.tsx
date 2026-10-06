@@ -107,7 +107,7 @@ function MapScreen({
             aria-label={`Stylised map of central ${pack.city}`}
           >
             <rect width="100" height="100" fill="#dccfac" />
-            {pack.world.scenery === "airport" ? <TierMapArt pack={pack} /> : <CityMapArt water={pack.world.palette.water} />}
+            {pack.world.scenery === "airport" ? <TierMapArt pack={pack} /> : <CityMapArt water={pack.world.palette.water} labels={pack.world.mapLabels} />}
             {pack.encounters.map((e, index) => {
               const point = mapCoordinates(e.position);
               const available = isUnlocked(pack, e.id, done);

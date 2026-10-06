@@ -210,6 +210,34 @@ export const PICTURES: Record<PictureId, Shape[]> = {
     { d: circle(24, 24, 18), fill: "accent" },
     { d: "M13 33V15L24 27L35 15V33", width: 4 },
   ],
+  // alphabet chapter pictograms
+  cat: [
+    { d: "M12 40V22Q12 14 20 14H28Q36 14 36 22V40Z", fill: "paper" },
+    { d: "M14 14L12 6L20 12M34 14L36 6L28 12", width: 2.5 },
+    { d: circle(19, 24, 1.8), fill: "ink" },
+    { d: circle(29, 24, 1.8), fill: "ink" },
+    { d: "M36 36Q46 34 44 24", width: 2.5 },
+  ],
+  book: [
+    { d: "M6 12H22V38H6Z", fill: "accent" },
+    { d: "M26 12H42V38H26Z", fill: "paper" },
+    { d: "M22 12Q24 10 26 12V38H22Z", fill: "gold" },
+    { d: "M30 19H38M30 24H38M30 29H36", width: 2 },
+  ],
+  alphabet: [
+    { d: "M6 38L14 10L22 38M9 28H19", width: 3 },
+    { d: "M28 10V38H40M28 24H38", width: 3 },
+  ],
+  stairs: [
+    { d: "M6 40V32H16V24H26V16H36V8H44V40Z", fill: "paper" },
+  ],
+  sky: [
+    { d: circle(34, 16, 7), fill: "gold" },
+    { d: "M6 36Q6 26 16 26Q18 18 27 20Q36 20 36 28Q42 28 42 34Q42 38 38 38H10Q6 38 6 36Z", fill: "paper" },
+  ],
+  and: [
+    { d: "M24 8V40M8 24H40", width: 4 },
+  ],
   suitcase: [
     { d: "M8 16H40V38H8Z", fill: "wood" },
     { d: "M18 16V11H30V16", width: 2.5 },
@@ -227,6 +255,13 @@ export const PICTURE_IDS = Object.keys(PICTURES);
 /** Candidate meanings, shared by all packs. A pack selects the ones it needs (truths plus distractors). */
 export const MEANING_LIBRARY: Meaning[] = [
   { id: "water", label: "water", picture: "water" },
+  { id: "cat", label: "cat", picture: "cat" },
+  { id: "coffee", label: "coffee", picture: "coffee" },
+  { id: "book", label: "book", picture: "book" },
+  { id: "alphabet", label: "alphabet", picture: "alphabet" },
+  { id: "stairs", label: "stairs", picture: "stairs" },
+  { id: "sky", label: "sky", picture: "sky" },
+  { id: "and", label: "and", picture: "and" },
   { id: "arrive", label: "arrival", picture: "arrive" },
   { id: "depart", label: "departure", picture: "depart" },
   { id: "exit", label: "exit", picture: "exit" },

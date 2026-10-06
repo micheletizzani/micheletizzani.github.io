@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { BookOpen, Check, Volume2, X as XIcon } from "lucide-react";
 import { speakText } from "./maruAudio";
 import { Picture } from "./maruPictures";
+import { AlphabetTab } from "./AlphabetTab";
 import { PhoneticDictionary } from "./PhoneticDictionary";
 import { MeaningPicker } from "./Lesson";
 import { allClues, evidenceFor, noteOf, noticedClues, verdicts, type Progress } from "./progress";
@@ -9,7 +10,7 @@ import { allWords, encounter as encounterOf, meaning as meaningOf, word as wordO
 import type { LanguagePack, WordId } from "./packs/types";
 import { BTN_GOLD, BTN_PLAIN, CloseButton, Overlay, Written } from "./ui";
 
-export type NotebookTab = "words" | "sounds" | "story";
+export type NotebookTab = "words" | "sounds" | "alphabet" | "story";
 
 /** The field notebook: every word you met, what you noticed about it, your guesses, and the phonetic dictionary. */
 export function Notebook({
@@ -34,6 +35,7 @@ export function Notebook({
   const tabs: { id: NotebookTab; label: string }[] = [
     { id: "words", label: `Words (${known.length})` },
     { id: "sounds", label: "Sounds" },
+    ...(pack.alphabet ? [{ id: "alphabet" as const, label: "Alphabet" }] : []),
     { id: "story", label: "Story" },
   ];
   const current = selected && progress.words[selected] ? selected : known[0];
@@ -108,6 +110,8 @@ export function Notebook({
         ))}
 
       {tab === "sounds" && <PhoneticDictionary pack={pack} progress={progress} embedded />}
+
+      {tab === "alphabet" && pack.alphabet && <AlphabetTab pack={pack} progress={progress} />}
 
       {tab === "story" && (
         <>

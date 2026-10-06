@@ -1023,10 +1023,10 @@ export const GamesView: React.FC<GamesViewProps> = ({ environment, onUpdateEnvir
             <span className="text-[10px] font-mono uppercase tracking-wider text-[var(--accent-color)] font-bold">
               Point-and-click language exploration
             </span>
-            <h3 className="text-3xl font-serif font-bold text-[var(--heading-color)]">Language Quest: Nyhavn</h3>
+            <h3 className="text-3xl font-serif font-bold text-[var(--heading-color)]">Language Quest</h3>
             <p className="text-sm opacity-75 leading-relaxed">
-              Arrive in Copenhagen knowing no Danish. Watch what people do, listen, write down the sounds with the help of a phonetic dictionary, and
-              work out what the words mean from your own notes. An invented language, Maru, is included as a second pack. Nothing makes a sound until
+              Arrive in a city knowing none of its language (Danish, with a Greek teaser). Watch what people do, listen, write down the sounds with the help of a phonetic dictionary, and
+              work out what the words mean from your own notes. Nothing makes a sound until
               you ask for it.
             </p>
           </div>

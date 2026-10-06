@@ -55,7 +55,7 @@ async function open(opts, pack = "da") {
   await p.waitForTimeout(2500);
   await clickMarker(p, "fountain");
   await p.waitForTimeout(2500);
-  const dlg = p.getByRole("dialog", { name: /Pump|Fountain/ });
+  const dlg = p.getByRole("dialog", { name: /Pump|Fountain|Spring/ });
   await dlg.getByRole("tab", { name: /Sound/ }).click();
   return { p, dlg };
 }
@@ -107,12 +107,12 @@ async function open(opts, pack = "da") {
   ok(s.length === 1 && s[0].voice === "Sara", "C: Listen pressed before the voice list loaded waits, then speaks with the Danish voice");
   await p.close();
 }
-// E. Maru (invented language, not strict): still speaks with whatever voice exists
+// E. Greek is strict too: with English voices only it stays silent
 {
-  const { p, dlg } = await open({ voices: EN }, "maru");
+  const { p, dlg } = await open({ voices: EN }, "el-1");
   await dlg.getByRole("button", { name: /^Listen/ }).click();
   await p.waitForTimeout(300);
-  ok((await p.evaluate(() => window.__spoken.length)) === 1, "E: the invented language is still spoken (approximation) without a Danish voice");
+  ok((await p.evaluate(() => window.__spoken.length)) === 0, "E: Greek is NOT spoken with English voices only");
   await p.close();
 }
 await b.close();

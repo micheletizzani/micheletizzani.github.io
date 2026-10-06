@@ -270,7 +270,7 @@ function SoundTab({
     const level = Math.min(hints + 1, 3);
     setHints(level);
     update((p) => ({ ...p, words: { ...p.words, [id]: { ...noteOf(p, id), hintsUsed: noteOf(p, id).hintsUsed + 1 } } }));
-    const n = syllablesOf(w.written, pack.notation.kind);
+    const n = w.syllables ?? syllablesOf(w.written, pack.notation.kind);
     const msg =
       level === 1
         ? `It has ${n} syllable${n === 1 ? "" : "s"}.`

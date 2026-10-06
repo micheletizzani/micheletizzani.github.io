@@ -57,6 +57,8 @@ export interface LexiconEntry {
   pos: PartOfSpeech;
   /** Grammar note revealed in the notebook once the word is recorded. */
   note?: string;
+  /** Number of syllables, when it cannot be counted from the written form (for example Greek, or a hiatus such as βι-βλί-ο). Used by the first hint. */
+  syllables?: number;
   /** True only after a native speaker / authoritative dictionary confirmed `sound` and `speak`. */
   verified?: boolean;
   /** References a reviewer can use to check this entry. Empty until someone adds them. */
@@ -107,6 +109,25 @@ export interface Encounter {
   exposure?: WordId[];
   /** Shown after completion. */
   reveal: { line: string; discovery: string };
+}
+
+/** One letter of an alphabet that the game teaches (see `LanguagePack.alphabet`). */
+export interface AlphabetLetter {
+  upper: string;
+  lower: string;
+  /** The letter's name in the language, as it is written. */
+  name: string;
+  /** The usual sound, in the pack's notation. */
+  ipa: string;
+  /** Spelling-to-sound remarks (positions where the sound changes). */
+  note?: string;
+}
+
+/** A letter combination with its own sound (for example the digraph ου in Greek). */
+export interface Digraph {
+  text: string;
+  ipa: string;
+  note?: string;
 }
 
 /** One entry of the phonetic dictionary. */
@@ -230,7 +251,7 @@ export interface BuildingSpec {
   kind?: "house" | "wall";
 }
 
-export type SceneryKey = "sandstone" | "nyhavn" | "airport";
+export type SceneryKey = "sandstone" | "nyhavn" | "airport" | "athens";
 
 /**
  * A flat terrace floating above the sea. Terraces are stacked in height and joined by stairs, and are laid out so
@@ -267,6 +288,8 @@ export interface WorldSpec {
   buildings: BuildingSpec[];
   npcs: NpcSpec[];
   signs: SignSpec[];
+  /** Place names on the overview map (x, y in 0–100). Defaults to the Copenhagen plan when absent. */
+  mapLabels?: { x: number; y: number; text: string }[];
 }
 
 /**
@@ -314,6 +337,7 @@ export interface LanguagePack {
   district: string;
   /** The map-screen paragraph: who the player is and what to do. Written per pack so the engine has no language-specific text. */
   intro: string;
+  /** "latin" draws lettering in the system font for any alphabetic script (Latin, Greek, ...); "glyph" draws the invented glyphs. */
   script: "latin" | "glyph";
   speech: {
     /** BCP-47 tag for speech synthesis (what the player hears). */
@@ -330,6 +354,11 @@ export interface LanguagePack {
     testPhrase?: string;
   };
   notation: Notation;
+  /**
+   * Languages whose alphabet is itself part of the lesson (Greek): the letters, in order. The notebook gets an Alphabet tab
+   * where a letter unlocks once a recorded word contains it. Letters that appear only inside a digraph do not unlock.
+   */
+  alphabet?: { letters: AlphabetLetter[]; digraphs?: Digraph[] };
   phonology: PhonemeEntry[];
   meanings: Meaning[];
   lexicon: LexiconEntry[];

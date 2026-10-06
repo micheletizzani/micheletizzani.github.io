@@ -12,6 +12,7 @@ import type { Terrain } from "./maruTerrain";
 import { LOW_FURNITURE } from "./packs/visibility";
 import { NyhavnScenery } from "./world/Nyhavn";
 import { SandstoneScenery } from "./world/Sandstone";
+import { AthensScenery } from "./world/Athens";
 import { AirportScenery } from "./world/Airport";
 import { PackCtx, TerrainCtx } from "./world/toon";
 import { Paul } from "./world/characters/Characters";
@@ -475,7 +476,7 @@ export function MaruWorld({
               if (active) walkRef.current?.(event.point.x, event.point.z);
             }}
           >
-            {pack.world.scenery === "nyhavn" ? <NyhavnScenery /> : pack.world.scenery === "airport" ? <AirportScenery /> : <SandstoneScenery />}
+            {pack.world.scenery === "nyhavn" ? <NyhavnScenery /> : pack.world.scenery === "airport" ? <AirportScenery /> : pack.world.scenery === "athens" ? <AthensScenery /> : <SandstoneScenery />}
           </group>
           <People states={states} awakening={awakening} speaking={speaking} focus={focus} />
           {pack.encounters.map((e) => {

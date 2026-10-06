@@ -1,7 +1,25 @@
 import React from "react";
 
 /** Stylised plan of central Copenhagen (Indre By). A game map, not a survey: it only has to read at a glance. */
-export function CityMapArt({ water = "#82afb6" }: { water?: string }) {
+export interface MapLabel {
+  x: number;
+  y: number;
+  text: string;
+}
+
+const COPENHAGEN: MapLabel[] = [
+  { x: 6, y: 24, text: "NØRREPORT" },
+  { x: 4, y: 54, text: "INDRE BY" },
+  { x: 39, y: 55, text: "HØJBRO" },
+  { x: 65, y: 39, text: "KONGENS" },
+  { x: 65, y: 42, text: "NYTORV" },
+  { x: 54, y: 67, text: "SLOTSHOLMEN" },
+  { x: 71, y: 72, text: "NYHAVN" },
+  { x: 4, y: 78, text: "GAMMEL STRAND" },
+  { x: 61, y: 83, text: "INDERHAVN" },
+];
+
+export function CityMapArt({ water = "#82afb6", labels = COPENHAGEN }: { water?: string; labels?: MapLabel[] }) {
   return (
     <>
       <rect width="100" height="100" fill="#dccfac" />
@@ -18,33 +36,11 @@ export function CityMapArt({ water = "#82afb6" }: { water?: string }) {
       </g>
       <path d="M60 8 L68 8 L70 28 L64 37 L57 28Z" fill="#d4b56f" stroke="#795846" strokeWidth="0.7" />
       <g fontFamily="ui-monospace, monospace" fontSize="2.6" fill="#385054" letterSpacing="0.2">
-        <text x="6" y="24">
-          NØRREPORT
-        </text>
-        <text x="4" y="54">
-          INDRE BY
-        </text>
-        <text x="39" y="55">
-          HØJBRO
-        </text>
-        <text x="65" y="39">
-          KONGENS
-        </text>
-        <text x="65" y="42">
-          NYTORV
-        </text>
-        <text x="54" y="67">
-          SLOTSHOLMEN
-        </text>
-        <text x="71" y="72">
-          NYHAVN
-        </text>
-        <text x="4" y="78">
-          GAMMEL STRAND
-        </text>
-        <text x="61" y="83">
-          INDERHAVN
-        </text>
+        {labels.map((l) => (
+          <text key={l.text} x={l.x} y={l.y}>
+            {l.text}
+          </text>
+        ))}
       </g>
     </>
   );

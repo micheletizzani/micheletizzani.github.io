@@ -2,7 +2,7 @@ import { test } from "node:test";
 import assert from "node:assert/strict";
 import { PACKS, template } from "./_packs";
 
-// Engine tests run on the template pack and on inline fixtures, never on Danish or Maru: correcting the real
+// Engine tests run on the template pack and on inline fixtures, never on Danish or Greek: correcting the real
 // content (spellings, IPA, clues) must not break tests of the game's dynamics. Content is checked by the validator.
 import { validatePack, validateRegistry, contrast } from "../../src/components/tools/lingua/packs/validate";
 import {
@@ -454,4 +454,26 @@ test("music engine follows narrative arc and supports stopping anytime", () => {
   assert.equal(musicEngine.getEnabled(), false);
   musicEngine.setEnabled(true);
   assert.equal(musicEngine.getEnabled(), true);
+});
+
+test("alphabet: letters unlock from recorded words; digraphs count as themselves", async () => {
+  const { alphabetFindings, plainLetters } = await import("../../src/components/tools/lingua/alphabet");
+  const { greek } = await import("../../src/components/tools/lingua/packs/el-language");
+  const alphabet = greek.alphabet!;
+  assert.equal(alphabet.letters.length, 24);
+  assert.equal(plainLetters("Καφές"), "καφεσ");
+  assert.equal(plainLetters("ψωμί"), "ψωμι");
+  const found = alphabetFindings(alphabet, ["νερό"]);
+  assert.deepEqual([...found.letters].sort(), [..."νερο"].sort());
+  const ou = alphabetFindings(alphabet, ["ουρανός"]);
+  assert.ok(ou.digraphs.has("ου"), "ου is found as a pair");
+  assert.ok(!ou.letters.has("υ"), "ου does not unlock υ");
+  assert.ok(ou.letters.has("ρ") && ou.letters.has("σ"), "final ς counts as σ");
+});
+
+test("greek pack: every phoneme has keywords and the alphabet covers all 24 letters once", async () => {
+  const { greek } = await import("../../src/components/tools/lingua/packs/el-language");
+  const lower = greek.alphabet!.letters.map((l) => l.lower.replace("ς", "σ"));
+  assert.equal(new Set(lower).size, 24);
+  for (const ph of greek.phonology) assert.ok(ph.keywords.length > 0, `phoneme ${ph.symbol} has a keyword`);
 });

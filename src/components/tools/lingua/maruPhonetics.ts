@@ -3,14 +3,15 @@ import type { LanguagePack, WordId } from "./packs/types";
 
 const FOLD: Record<string, string> = { æ: "ae", ø: "o", å: "a", œ: "oe", ß: "ss" };
 
-/** Lower-case letters only: no spaces, hyphens, accents. Speech recognisers return Danish spellings, so æ/ø/å are folded. */
+/** Lower-case letters only (any script): no spaces, hyphens, accents. Speech recognisers return Danish spellings, so æ/ø/å are folded; Greek tonos and final sigma are folded too. */
 export const normalize = (text: string) =>
   text
     .toLowerCase()
     .replace(/[æøåœß]/g, (c) => FOLD[c])
+    .replace(/ς/g, "σ") // Greek final sigma
     .normalize("NFD")
     .replace(/[̀-ͯ]/g, "")
-    .replace(/[^a-z]/g, "");
+    .replace(/[^\p{L}]/gu, ""); // letters of any script
 
 export function distance(a: string, b: string) {
   const row = Array.from({ length: b.length + 1 }, (_, i) => i);
@@ -53,7 +54,7 @@ export function grade(target: string, guess: string, spoken = false): Grade {
   let i = 0;
   const pattern = Array.from(target.toLowerCase())
     .map((c) => {
-      if (!/[a-z]/.test(c)) return c;
+      if (!/\p{L}/u.test(c)) return c;
       const ok = g[i] === t[i];
       i += 1;
       return ok ? c : "·";
@@ -165,10 +166,46 @@ const IPA_DANISH_MAP: [string, string][] = [
   ["ː", ""],
 ];
 
+const IPA_GREEK_MAP: [string, string][] = [
+  ["ts", "τσ"],
+  ["dz", "τζ"],
+  ["ʝ", "γι"],
+  ["ʎ", "λι"],
+  ["ç", "χ"],
+  ["ɣ", "γ"],
+  ["ð", "δ"],
+  ["ɾ", "ρ"],
+  ["ɡ", "γκ"],
+  ["g", "γκ"],
+  ["b", "μπ"],
+  ["d", "ντ"],
+  ["u", "ου"],
+  ["a", "α"],
+  ["e", "ε"],
+  ["i", "ι"],
+  ["o", "ο"],
+  ["p", "π"],
+  ["t", "τ"],
+  ["k", "κ"],
+  ["f", "φ"],
+  ["v", "β"],
+  ["θ", "θ"],
+  ["s", "σ"],
+  ["z", "ζ"],
+  ["x", "χ"],
+  ["m", "μ"],
+  ["n", "ν"],
+  ["l", "λ"],
+];
+
 /** Map common IPA sequences to pronounceable orthography for a target language */
 export function ipaToPronounceable(ipa: string, lang = "da"): string {
   let s = ipa.replace(/[\[\]\/ˈˌ.]/g, "").toLowerCase();
-  if (lang.startsWith("da")) {
+  if (lang.startsWith("el")) {
+    // Greek: write the transcription in Greek letters so that a Greek voice reads it with Greek sounds
+    for (const [from, to] of IPA_GREEK_MAP) s = s.replaceAll(from, to);
+    s = s.replace(/[ˀː]/g, "");
+  } else if (lang.startsWith("da")) {
     for (const [from, to] of IPA_DANISH_MAP) {
       s = s.replaceAll(from, to);
     }
