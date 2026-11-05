@@ -1,0 +1,227 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>What the Shadow Keeps</title>
+    <meta
+      name="description"
+      content="Memory in time and connection. An interactive reading of a paper on node memory and tie memory in temporal networks: one object, two shadows."
+    />
+    <meta name="theme-color" content="#15171a" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500&family=Geist+Mono:wght@400;500&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <header class="top">
+      <div style="display: flex; align-items: center; gap: 1.25rem">
+        <a class="mark" href="/art/digital" style="opacity: 0.65; text-decoration: none; display: inline-flex; align-items: center; gap: 0.35rem"
+          >← The Gallery</a
+        >
+        <span style="opacity: 0.25">/</span>
+        <a class="mark" href="#hero" aria-label="What the Shadow Keeps, top of page">What the Shadow Keeps</a>
+      </div>
+      <button class="pill" id="sound" type="button" aria-pressed="false">
+        <span class="dot" aria-hidden="true"></span><span id="sound-label">Sound off</span>
+      </button>
+    </header>
+
+    <section class="hero" id="hero" aria-labelledby="h-intro">
+      <div class="pin">
+        <canvas
+          id="cv-hero"
+          tabindex="0"
+          role="img"
+          aria-label="A sculpture of tangled points and links on a turntable, lit so that it casts a shadow on the wall behind it. Turned to one angle the shadow shows two people shaking hands. Turned a quarter of a way round it shows two people walking past each other. Use the left and right arrow keys, drag, or scroll to turn it."
+        ></canvas>
+        <div class="hero-copy">
+          <p class="eyebrow">Memory in time and connection</p>
+          <h1 id="h-intro">What the<br />Shadow Keeps</h1>
+          <p class="lede">
+            One object, two shadows. A shadow keeps some of what casts it and loses the rest. Contact data is a shadow too: different causes can leave
+            the same trace.
+          </p>
+          <p class="hint">Scroll to turn the sculpture, or drag it.</p>
+        </div>
+        <div class="hero-ui">
+          <p class="legend mono">
+            <span><i class="n"></i>a person</span><span><i class="t"></i>a contact</span>
+          </p>
+          <p class="cap" id="hero-cap" aria-live="polite"></p>
+          <div class="bar">
+            <button class="pill" id="go-a" type="button">Friends</button>
+            <button class="pill" id="go-b" type="button">Random encounters</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <main>
+      <!-- I -->
+      <section class="scene" id="s1" aria-labelledby="h-s1">
+        <div class="copy">
+          <p class="num">I</p>
+          <h2 id="h-s1">The photograph</h2>
+          <p>
+            Both panels show the same people and the same links. Nothing in the picture says which one remembers through its <em>people</em> and which
+            through its <em>friendships</em>.
+          </p>
+          <p>
+            Press play. The contacts start to flow, at the same average rate in both. Then click a node to drop one infection into both worlds at
+            once.
+          </p>
+          <p class="note">Toy model for illustration. 48 people, a fixed neighbourhood graph, SIR spreading.</p>
+        </div>
+        <div class="stage">
+          <div class="duo">
+            <figure class="panel">
+              <canvas id="cv-a" role="img" aria-label="Network panel A. Click a node to seed an infection."></canvas>
+              <figcaption><span class="tag" id="tag-a">A</span><span class="meta mono" id="rate-a">&mdash;</span></figcaption>
+            </figure>
+            <figure class="panel">
+              <canvas id="cv-b" role="img" aria-label="Network panel B. Click a node to seed an infection."></canvas>
+              <figcaption><span class="tag" id="tag-b">B</span><span class="meta mono" id="rate-b">&mdash;</span></figcaption>
+            </figure>
+          </div>
+          <div class="bar">
+            <button class="pill primary" id="play" type="button">Press play</button>
+            <button class="pill" id="seed" type="button">Seed a random node</button>
+            <button class="pill ghost" id="reset" type="button">Back to the photograph</button>
+          </div>
+          <canvas id="cv-spark" class="spark" role="img" aria-label="Share of people ever infected over time, panel A and B"></canvas>
+          <p class="readout mono" id="out-1" aria-live="polite">Same photograph. Press play.</p>
+        </div>
+      </section>
+
+      <!-- II -->
+      <section class="scene" id="s2" aria-labelledby="h-s2">
+        <div class="copy">
+          <p class="num">II</p>
+          <h2 id="h-s2">Shuffle the beat</h2>
+          <p>
+            Each row is one person, each tick a contact. Shuffling the order of a person's waiting times keeps the rhythm texture and destroys any
+            memory of what came before.
+          </p>
+          <p>
+            A number fitted to the waiting times barely moves. A statistic that looks at order collapses. In the paper's real records the fitted node
+            memory sits near 0.9, and shuffling changes it by under 10%.
+          </p>
+          <p class="note">
+            The first dial is a simple stand-in estimator that reads only waiting times, not the paper's fit. Synthetic bursty records.
+          </p>
+        </div>
+        <div class="stage">
+          <canvas id="cv-beat" class="beat" role="img" aria-label="Raster of contact times for twelve people with a moving playhead"></canvas>
+          <div class="bar">
+            <button class="pill primary" id="shuffle" type="button" aria-pressed="false">Shuffle the order</button>
+            <button class="pill ghost" id="newrec" type="button">New record</button>
+          </div>
+          <dl class="dials">
+            <div class="dial">
+              <dt>Memory read from waiting times</dt>
+              <dd><span class="big mono" id="d1">&mdash;</span><span class="was mono" id="d1w"></span></dd>
+              <div class="meter"><i id="m1"></i></div>
+            </div>
+            <div class="dial">
+              <dt>Order memory, model-free</dt>
+              <dd><span class="big mono" id="d2">&mdash;</span><span class="was mono" id="d2w"></span></dd>
+              <div class="meter"><i id="m2" class="alt"></i></div>
+            </div>
+          </dl>
+          <p class="readout mono" id="out-2" aria-live="polite">Original order.</p>
+        </div>
+      </section>
+
+      <!-- III -->
+      <section class="scene" id="s3" aria-labelledby="h-s3">
+        <div class="copy">
+          <p class="num">III</p>
+          <h2 id="h-s3">Who called whom</h2>
+          <p>
+            Every contact has an initiator. When it is recorded, the timing of events and the choice of partner can be studied separately, like two
+            clean strands.
+          </p>
+          <p>
+            When it is not, as in most proximity data, the strands tangle. A missing-information term couples them, and tie reinforcement looks
+            stronger than it is, by 28% to 45% in the paper's tests.
+          </p>
+          <p class="note">Schematic. The slider is the share of contacts whose initiator is recorded.</p>
+        </div>
+        <div class="stage">
+          <canvas id="cv-yarn" class="yarn" role="img" aria-label="Forty strands that sort into two groups as more initiators are recorded"></canvas>
+          <div class="field">
+            <label for="rec">Initiators recorded <span class="mono" id="rec-v">0%</span></label>
+            <input id="rec" type="range" min="0" max="100" step="1" value="0" />
+            <div class="meter wide"><i id="fog"></i><span class="mono">missing information</span></div>
+          </div>
+          <p class="readout mono" id="out-3" aria-live="polite"></p>
+        </div>
+      </section>
+
+      <!-- IV -->
+      <section class="scene" id="s4" aria-labelledby="h-s4">
+        <div class="copy">
+          <p class="num">IV</p>
+          <h2 id="h-s4">The forecast</h2>
+          <p>
+            On a high-school contact record, a model built from the fitted node memory was used to forecast outbreaks. Move the slider to change how
+            contagious the disease is.
+          </p>
+          <p>
+            The node-memory forecast falls short, by almost a factor of 2 at its worst. Keeping tie reinforcement alone does better when the disease
+            is weak and overshoots when it is strong.
+          </p>
+          <p class="note">These are the paper's numbers (Sec. II H), not a toy: 314 students, 6 transmissibility values.</p>
+        </div>
+        <div class="stage">
+          <canvas
+            id="cv-fore"
+            class="fore"
+            role="img"
+            aria-label="Outbreak size against transmissibility for the real record, the fitted node-memory model and the tie-reinforcement model"
+          ></canvas>
+          <div class="field">
+            <label for="beta">Transmissibility <span class="mono" id="beta-v"></span></label>
+            <input id="beta" type="range" min="0" max="5" step="1" value="2" />
+          </div>
+          <div class="dots3">
+            <figure>
+              <div class="dots" id="dots-real" aria-hidden="true"></div>
+              <figcaption><span class="sw real"></span>Real contacts <b class="mono" id="v-real"></b></figcaption>
+            </figure>
+            <figure>
+              <div class="dots" id="dots-fit" aria-hidden="true"></div>
+              <figcaption><span class="sw node"></span>Node memory <b class="mono" id="v-fit"></b></figcaption>
+            </figure>
+            <figure>
+              <div class="dots" id="dots-tie" aria-hidden="true"></div>
+              <figcaption><span class="sw tie"></span>Tie reinforcement only <b class="mono" id="v-tie"></b></figcaption>
+            </figure>
+          </div>
+          <p class="readout mono" id="out-4" aria-live="polite"></p>
+        </div>
+      </section>
+
+      <section class="coda" aria-labelledby="h-coda">
+        <h2 id="h-coda">What to take away</h2>
+        <ol class="takeaways">
+          <li>Record who initiates each contact.</li>
+          <li>Before reading a fitted node memory as memory, test it against shuffled and model-free benchmarks.</li>
+        </ol>
+        <p class="ref">
+          M. Tizzani, <em>Fundamental limits to identifying node and tie memory in temporal networks: marginal artefacts and spreading dynamics</em>,
+          Physical Review Research, doi <a href="https://doi.org/10.1103/n24h-kkc6">10.1103/n24h-kkc6</a> &middot;
+          <a href="https://arxiv.org/abs/2609.10399">arXiv:2609.10399</a> &middot;
+          <a href="https://github.com/micheletizzani/temporal-memory-epidemics">code</a> &middot; <a href="/publications">publications</a>
+        </p>
+        <p class="ref small">Scenes I to III are illustrative models. Scene IV plots the paper's published values.</p>
+      </section>
+    </main>
+
+    <noscript><p class="ns">This piece needs JavaScript to run.</p></noscript>
+    <script src="silhouettes.js"></script>
+    <script src="main.js"></script>
+  </body>
+</html>
